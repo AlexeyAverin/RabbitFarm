@@ -58,8 +58,8 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {
 // Изменений данных кролика
 if ( (isset($_POST['rabbitid'])) && $_POST['action'] == 'mod' ) {
     $rabbits = array_from_file( $file_rabbits );
-    $string_to_array = $_POST['rabbitid'].','.$_POST['name'].',,'.$_POST['breedingid'].','.$_POST['breed'].','.date('d.m.Y', $_POST['birth']).','.$_POST['gender'].','.$_POST['label'].','.$_POST['women'].','.$_POST['men'].','.$_POST['place'].','.date('d.m.Y', $_POST['injection']);
-    $rabbits[$_POST['rabbitid']] = implode(',', $string_to_array);
+    $string_to_array = $_POST['name'].',,'.$_POST['breedingid'].','.$_POST['breed'].','.date('d.m.Y', $_POST['birth']).','.$_POST['gender'].','.$_POST['label'].','.$_POST['women'].','.$_POST['men'].','.$_POST['place'].','.date('d.m.Y', $_POST['injection']);
+    $rabbits[$_POST['rabbitid']] = explode(',', $string_to_array);
     array_to_file( $file_rabbits, $rabbits );
 }
 
