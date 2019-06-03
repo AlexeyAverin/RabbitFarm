@@ -20,25 +20,37 @@
 
 
 
-$file_rabbits = 'rabbits.csv';
-$filerabbits_creater_text = "1,Ушастик, ,1,Калифорнийская,01.01.2001,Мужской,Клеймо01,Лапочка,Ушастик,Клетка 01,01.07.2001\r\n2,Лапочка, ,2,Беспородная,03.03.2003,Женский,Клеймо02,Mather02,Pather02,Клетка 02,01.07.2001";
-if ( (isset($_POST['rabbitid'])) && $_POST['action'] == 'ins' ) {
-    //echo "Good Day!!!";
-    mb_internal_encoding("UTF-8");
-    $string_to_file = "\n".$_POST['rabbitid'].','.$_POST['name'].',,'.$_POST['breedingid'].','.$_POST['breed'].','.date('d.m.Y', $_POST['birth']).','.$_POST['gender'].','.$_POST['label'].','.$_POST['women'].','.$_POST['men'].','.$_POST['place'].','.date('d.m.Y', $_POST['injection']);
-    $fo = fopen($file_rabbits, 'a') or die ('Сбой открытия файла');
-    fwrite($fo, $string_to_file) or die ('Сбой записи файла');
 
-    fclose($fo);
+$file_rabbits = 'rabbits.csv';
+// Массив женских имен
+$womens = array('Крольчиха Мать', 'Нет данных');
+// Массив мужский имен
+$mens = array('Кролик Отец', 'Нет данных');
+//Массив клеток
+$places = array('Выберите клетку', 'Нет данных', 'Клетка 01', 'Клетка 02', 'Клетка 03', 'Клетка 05', 'Клетка 06');
+//Массив полов
+$genders = array('Выберите пол', 'Нет данных', 'Мужской', 'Женский');
+//Массив прививок (дни)
+$injections = array('Ассоциированная' => 180, 'ВКГБ' => 90, 'Ангина' => 3650);
+// Массив пород
+$breeds = array('Выберите породу', 'Нет данных', 'Беспородная', 'Калифорнийская');
+// Массив окролов
+$breedingid = array('Выберите ID окрола', 'Нет данных', '1', '2', '3');
+
+
+//Строка Файла ID,Имя, ,Окрол ID,Порода,Дата рождения,Пол,Клеймо,Мама,Папа,Клетка,Дата прививки
+//Массив спортсменов   "001" => array("Имя", "", "Окрол ID", "Порода", "Дата рождения", "Пол", "Клеймо", "Мама", "Папа", "Клетка", "Дата прививки"),
+
+
+if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
+    write_string_rabbits($file_rabbits);
 }
 
 
 
-// Создание файла rabbits.csv в случае его отсутствия
+// Файла rabbits.csv отсутствует
 if (!file_exists($file_rabbits)) { //echo "Добрый день!!!";
-    $fo = fopen($file_rabbits, 'w') or die ('Добрый день, создать файл rabbits.csv не удалось!');
-    fwrite($fo, $filerabbits_creater_text) or die ('Добрый день, сбой записи rabbits.csv при создании!');
-    fclose($fo);
+    file_rabbits_noexist($file_rabbits);
 }
 
 
@@ -56,22 +68,16 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {
 
 
 // Изменений данных кролика
-if ( (isset($_POST['rabbitid'])) && $_POST['action'] == 'mod' ) {
+if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'mod' ) {
     $rabbits = array_from_file( $file_rabbits );
-    $string_to_array = $_POST['name'].',,'.$_POST['breedingid'].','.$_POST['breed'].','.date('d.m.Y', $_POST['birth']).','.$_POST['gender'].','.$_POST['label'].','.$_POST['women'].','.$_POST['men'].','.$_POST['place'].','.date('d.m.Y', $_POST['injection']);
-    $rabbits[$_POST['rabbitid']] = explode(',', $string_to_array);
+    $string_to_array = $_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injection']);
+    $rabbits[$_GET['rabbitid']] = explode(',', $string_to_array);
     array_to_file( $file_rabbits, $rabbits );
 }
 
 
 
 
-// Считывание файла rabbits.csv с превращением данных в ассациативный массив
-$rabbits = array();
-// Массив женских имен
-$womens = array('Крольчиха Мать', 'Нет данных');
-// Массив мужский имен
-$mens = array('Кролик Отец', 'Нет данных');
 
 
 
@@ -79,26 +85,11 @@ $mens = array('Кролик Отец', 'Нет данных');
 $rabbits = array_from_file( $file_rabbits );
 
 
-//Строка Файла ID,Имя, ,Окрол ID,Порода,Дата рождения,Пол,Клеймо,Мама,Папа,Клетка,Дата прививки
-//Массив спортсменов   "001" => array("Имя", "", "Окрол ID", "Порода", "Дата рождения", "Пол", "Клеймо", "Мама", "Папа", "Клетка", "Дата прививки"),
-
-//Массив клеток
-$places = array('Выберите клетку', 'Нет данных', 'Клетка 01', 'Клетка 02', 'Клетка 03', 'Клетка 05', 'Клетка 06');
-//Массив полов
-$genders = array('Выберите пол', 'Нет данных', 'Мужской', 'Женский');
-//Массив прививок (дни)
-$injections = array('Ассоциированная' => 180, 'ВКГБ' => 90, 'Ангина' => 3650);
-// Массив пород
-$breeds = array('Выберите породу', 'Нет данных', 'Беспородная', 'Калифорнийская');
-// Массив окролов
-$breedingid = array('Выберите ID окрола', 'Нет данных', '1', '2', '3');
 
 
-
-
-
-
-if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' ) {
+// Отображение страницы
+// Отображается список кроликов в при простом отображении и при удалении кролика
+if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['rabbitid']) && $_GET['action'] == 'ins') ) {
         $string_rabbits = '';
         $rabbit_new_id = 1;
         foreach ( $rabbits as $rabbit_id => $rabbit ){
@@ -106,7 +97,6 @@ if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' ) {
             mb_internal_encoding("UTF-8");
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
             $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>$rabbit[4]</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>$rabbit[10]</td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
-
             $string_rabbits .= $string_rabbit;
             ++$rabbit_new_id;
         }
@@ -122,7 +112,7 @@ EOD;
 
 }
 
-// Вывод данных кролика
+// Отображение общей информации по кролику, отображается при 'Вывод информации кролика' 'Добавление нового кролика' 
 elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
     $rabbit_id = $_GET['rabbitid'];
      $rabbit_name            = $rabbits[$rabbit_id][0];
@@ -138,10 +128,10 @@ elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
     $rabbit_injection_date  = date('Y-m-d', strtotime($rabbits[$rabbit_id][10]));
     
 
-    if ( (array_key_exists($_GET['rabbitid'], $rabbits)) ) { $action_type = 'mod'; } else { $action_type = 'ins'; }
+    (array_key_exists($_GET['rabbitid'], $rabbits)) ? $action_type = 'mod' : $action_type = 'ins';
 
     $string_middle = "
-    <form method='post' action='index.php' enctype='application/x-www-form-urlncoded'>
+    <form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'>
         <table class='rabbit'>
             <tr><th colspan='5'>Персональный данные</th></tr>
             <tr><td>ID Кролика</td><td>Кличка</td><td>Порода</td><td>Пол</td><td>Клеймо</td></tr>
@@ -156,8 +146,7 @@ elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
         </table>
     </form>";
     
-    // Информация не выводиться по новым кроликам
-
+    // Отображается дополнительная информация по кроликам 'Вывод информации кролика'
     if ( (array_key_exists($_GET['rabbitid'], $rabbits)) ) {
         $string_middle .= "<table class='ferma'>
             <tr><td colspan='3'>Данные по вакцинации</td></tr>
@@ -178,70 +167,40 @@ elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
     }
 }
 
-$string_up = <<<EOD
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <style>
 
-            
-            html, body { margin: 0; padding: 0; font-family: monospace; --color-grey-soft: rgb(170, 170, 170); --color-grey-dark: rgb(110, 110, 110); }
-            div.contact { height: 50px; padding: 0 10px; display: flex; justify-content: space-between; color: rgb(170, 170, 170); }
-            div.contact div { line-height: 50px; }
-            header { width: 100%; display: flex; flex-direction: col; height: 70px; font-size: 20px; }
-            header div.logotip { width: 70px; height: 100%; }
-            header div.brand   { width: 210px; height: 100%; color: var(--color-grey-soft); line-height: 70px; }
-            header nav         { height: ; 100%; flex-direction: row; justify-content: flex-end; display: flex; flex-grow: 1; }
-            header nav:last-child { margin-right: 10px; }
 
-            header nav a { color: var(--color-grey-soft); padding: 0 10px; line-height: 70px; text-decoration: none; font-size:; }
-            header nav a:hover { background-color: var(--color-grey-dark); }
-            section { width: 100%; height: calc(100vh - 120px); font-size: 15px; background-color: white; }
-            table.ferma                       { width: 100%; margin: 0 0 50px 0; border-style: hidden; color: blue; }
-            table.ferma td a                  { color: orange; text-decoration: none; }
-
-            table.ferma th                    { text-align: left; color: white; background-color: var(--color-grey-dark); }
-            table.ferma tr:nth-child(odd)     { color: var(--color-grey-soft); }
-            table.ferma tr:nth-child(even)    { color: var(--color-grey-dark); }
-            table.rabbit                    { width: 100%; margin: 0 0 50px 0; color: blue; border-style: hidden; }
-            table.rabbit th                 { text-align: left; color: var(--color-grey-dark); }
-            table.rabbit tr                 { text-align: center;  }
-            table.rabbit tr:nth-child(odd)  { background-color: ; }
-
-            table.rabbit tr:nth-child(even) { background-color: ; color: var(--color-grey-soft); }
-            table.rabbit select             { width: 150px; margin-bottom: 19px; color: var(--color-grey-dark); }
-            table.rabbit input              { width: 135px; margin-bottom: 19px; color: var(--color-grey-dark); }
-            table.rabbit input[type=submit] { width: 340px; }
-
-        </style>
-        <title>Ферма кроликов</title>
-    </head>
-    <body>
-
-        <form action="index.php"  method="GET">
-        <header>
-            <div class="logotip"><a href="index.php"><img src="rabbit.png"></a></div>
-            <div class="brand">Добрый день!!!</div>
-            <nav><a href="index.php">Главная</a><a href="index.php">Кролики</a><a href="">Статистика</a></nav>
-        </header>
-        </form>
-        <section>
-EOD;
-$string_down = <<<EOD
-        </section>
-
-        <div class="contact">
-            <div class="address">Советский Союз</div>
-            <div class="phone">+7 (xxx) xxx-xx-xx</div>
-            <div class="right">Все права защищены</div>
-        </div>
-    </body>
-
-</html>
-EOD;
+require_once "htmlup.php";
+require_once "htmldown.php";
 
 echo $string_up.$string_middle.$string_down;
+
+
+
+
+
+
+
+
+
+
+
+// Создает файл rabbits.csv и добавляет две записи
+function file_rabbits_noexist($file_rabbits) { //echo "Добрый день!!!";
+    $filerabbits_creater_text = "1,Ушастик, ,1,Калифорнийская,01.01.2001,Мужской,Клеймо01,Лапочка,Ушастик,Клетка 01,01.07.2001\r\n2,Лапочка, ,2,Беспородная,03.03.2003,Женский,Клеймо02,Mather02,Pather02,Клетка 02,01.07.2001";
+    $fo = fopen($file_rabbits, 'w') or die ('Добрый день, создать файл rabbits.csv не удалось!');
+    fwrite($fo, $filerabbits_creater_text) or die ('Добрый день, сбой записи rabbits.csv при создании!');
+    fclose($fo);
+}
+
+// Добавляет новую строку в rabbits.csv
+function write_string_rabbits($file_rabbits) { //&& $_GET['action'] == 'ins' ) {
+    //echo "Good Day!!!";
+    mb_internal_encoding("UTF-8");
+    $string_to_file = "\n".$_GET['rabbitid'].','.$_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injection']);
+    $fo = fopen($file_rabbits, 'a') or die ('Сбой открытия файла');
+    fwrite($fo, $string_to_file) or die ('Сбой записи файла');
+    fclose($fo);
+}
 
 // Перезапись массива данных в файл
 function array_to_file ($file_rabbits, $rabbits) {
