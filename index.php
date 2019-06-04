@@ -32,7 +32,7 @@ $genders = array('Выберите пол', 'Нет данных', 'Мужско
 //Массив прививок (дни)
 $injections = array('1' => 180, '2' => 90, '3' => 3650);
 // Количество дней за которое начинаются формироваться письма
-$injections_limit_day = 10;
+$injections_limit_day = 10*500;
 // Массив пород
 $breeds = array('Выберите породу', 'Нет данных', 'Беспородная', 'Калифорнийская');
 // Массив окролов
@@ -96,7 +96,7 @@ if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['ra
             mb_internal_encoding("UTF-8");
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
 
-            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections, 3)."<em>".days_priorto_injection($rabbit[10], $injections, 3)."</em></td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
+            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections, 3)."".wrapper_days_prior_to_injection($rabbit[10], $injections, 3, $injections_limit_day)."</td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
             $string_rabbits .= $string_rabbit;
             $rabbit_new_id = ++$rabbit_id;
         }
@@ -193,6 +193,16 @@ function days_priorto_injection($date, $injections, $injection){
     return $days->format('%a');
 }
 
+
+// Оборачивает колличество дней в теги html и возращает если дней осталось меньше чем $injections_limit_day
+function wrapper_days_prior_to_injection($date, $injections, $injection, $injections_limit_day){
+    $days = days_priorto_injection($date, $injections, $injection);
+
+    $days = $days <= $injections_limit_day ? $days = '<em>'.$days.'</em>' : '';
+    
+    return $days;
+}
+
 // Удаляет запись зайца из массива и вызывает функцию записи массива в файл
 function erase_string_rabbits($file_rabbits, $rabbitid){
     $rabbits = array_from_file( $file_rabbits );
@@ -254,8 +264,8 @@ function array_from_file($file_rabbits) {
     return $rabbits;
 }
 
-
 function fill_select($array, $name, $value){
+
     $tag = '';
     foreach ( $array as $item ) {
         if ($tag == '') {
@@ -272,5 +282,4 @@ function fill_select($array, $name, $value){
      $tag = "<select name='$name'>$tag</select>";
     return $tag;
 }
-
 ?>
