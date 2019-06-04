@@ -64,7 +64,8 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {//echo "Добр�
 if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'mod' ) {
     $rabbits = array_from_file( $file_rabbits );
     $string_to_array = $_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injection']);
-    //echo $string_to_array;
+    //$string_to_array = ',Test,,,,,,,,,';
+    echo '<pre>'.trim($string_to_array).'</pre>';
     $rabbits[$_GET['rabbitid']] = explode(',', $string_to_array);
     //$rabbits = array_values($rabbits);
     //print_r ($rabbits);
@@ -90,14 +91,14 @@ $rabbits = array_from_file( $file_rabbits );
 // Отображается список кроликов в при простом отображении и при удалении кролика
 if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['rabbitid']) && $_GET['action'] == 'ins') ) {
         $string_rabbits = '';
-        $rabbit_new_id = 0;
+        //$rabbit_new_id = 0;
         foreach ( $rabbits as $rabbit_id => $rabbit ){
 
             mb_internal_encoding("UTF-8");
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
             $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>$rabbit[4]</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>$rabbit[10]</td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
             $string_rabbits .= $string_rabbit;
-            ++$rabbit_new_id;
+            $rabbit_new_id = ++$rabbit_id;
         }
         $string_middle = <<<EOD
             <table class="ferma">
@@ -203,11 +204,8 @@ function file_rabbits_noexist($file_rabbits) { //echo "Добрый день!!!"
 function write_string_rabbits($file_rabbits) { //&& $_GET['action'] == 'ins' ) {
     //echo "Good Day!!!";
     mb_internal_encoding("UTF-8");
-    $string_to_file = "\n".$_GET['rabbitid'].','.$_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injection']);
+    $string_to_file = "\n".$_GET['rabbitid'].','.$_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.$_GET['birth'].','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.$_GET['injection'];
     file_put_contents( $file_rabbits, $string_to_file, FILE_APPEND | LOCK_EX ); 
-    //$fo = fopen($file_rabbits, 'a') or die ('Сбой открытия файла');
-    //fwrite($fo, $string_to_file) or die ('Сбой записи файла');
-    //fclose($fo);
 }
 
 // Перезапись массива данных в файл
