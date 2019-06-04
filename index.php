@@ -96,7 +96,7 @@ if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['ra
             mb_internal_encoding("UTF-8");
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
 
-            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections, 3)."</td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
+            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections, 3)."<em>".days_priorto_injection($rabbit[10], $injections, 3)."</em></td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
             $string_rabbits .= $string_rabbit;
             $rabbit_new_id = ++$rabbit_id;
         }
@@ -176,7 +176,6 @@ echo $string_up.$string_middle.$string_down;
 
 
 
-
 // Дата следующей прививки
 function date_next_injection($date, $injections, $injection){
     $date = new DateTime($date);
@@ -187,11 +186,11 @@ function date_next_injection($date, $injections, $injection){
 }
 
 // Возращает количество дней до прививки
-function days_priorto_injection($date){
-
-
-
-
+function days_priorto_injection($date, $injections, $injection){
+    $date_next = new DateTime(date_next_injection($date, $injections, $injection));
+    $date_now = new DateTime('now');
+    $days = $date_now->diff($date_next);
+    return $days->format('%a');
 }
 
 // Удаляет запись зайца из массива и вызывает функцию записи массива в файл
