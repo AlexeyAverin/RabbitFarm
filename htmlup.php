@@ -23,8 +23,9 @@ $string_up = <<<EOD
             header nav a:hover { background-color: var(--color-grey-dark); }
             section { width: 100%; height: calc(100vh - 120px); font-size: 15px; background-color: white; }
             table.ferma                       { width: 100%; margin: 0 0 50px 0; border-style: hidden; color: blue; }
+            table.ferma td                    {  }
             table.ferma td a                  { color: orange; text-decoration: none; }
-            table.ferma td em                 { color: var(--color-grey-dark); margin-left: 7px; padding: 2px; font-size: 11px; border-radius: 50%; border: 1px solid red; }
+            table.ferma td em               { color: var(--color-grey-dark); margin-left: 7px; padding: 3px; font-size: 10px; border-radius: 35%; border: 1px solid red; }
             table.ferma th                    { text-align: left; color: white; background-color: var(--color-grey-dark); }
             table.ferma tr:hover              { background-color: var(--color-grey-soft); }
             table.ferma tr:nth-child(odd)     { color: var(--color-grey-middle); }
