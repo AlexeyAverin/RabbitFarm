@@ -90,13 +90,12 @@ $rabbits = array_from_file( $file_rabbits );
 // Отображение страницы
 // Отображается список кроликов в при простом отображении и при удалении кролика
 if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['rabbitid']) && $_GET['action'] == 'ins') ) {
-        $string_rabbits = '';
-        //$rabbit_new_id = 0;
+        $string_rabbits = '';        
         foreach ( $rabbits as $rabbit_id => $rabbit ){
-
             mb_internal_encoding("UTF-8");
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
-            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>$rabbit[4]</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>$rabbit[10]</td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
+
+            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date('d-m-Y', strtotime($rabbit[10]))."</td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
             $string_rabbits .= $string_rabbit;
             $rabbit_new_id = ++$rabbit_id;
         }
