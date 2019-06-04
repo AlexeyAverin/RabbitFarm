@@ -95,7 +95,7 @@ if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['ra
             mb_internal_encoding("UTF-8");
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
 
-            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date('d-m-Y', strtotime($rabbit[10]))."</td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
+            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], 10)."</td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
             $string_rabbits .= $string_rabbit;
             $rabbit_new_id = ++$rabbit_id;
         }
@@ -176,7 +176,14 @@ echo $string_up.$string_middle.$string_down;
 
 
 
+// Дата следующей прививки
+function date_next_injection($date, $injection){
+    
 
+
+
+    return date('d-m-Y', strtotime($date));
+}
 
 // Удаляет запись зайца из массива и вызывает функцию записи массива в файл
 function erase_string_rabbits($file_rabbits, $rabbitid){
