@@ -204,9 +204,10 @@ function write_string_rabbits($file_rabbits) { //&& $_GET['action'] == 'ins' ) {
     //echo "Good Day!!!";
     mb_internal_encoding("UTF-8");
     $string_to_file = "\n".$_GET['rabbitid'].','.$_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injection']);
-    $fo = fopen($file_rabbits, 'a') or die ('Сбой открытия файла');
-    fwrite($fo, $string_to_file) or die ('Сбой записи файла');
-    fclose($fo);
+    file_put_contents( $file_rabbits, $string_to_file, FILE_APPEND | LOCK_EX ); 
+    //$fo = fopen($file_rabbits, 'a') or die ('Сбой открытия файла');
+    //fwrite($fo, $string_to_file) or die ('Сбой записи файла');
+    //fclose($fo);
 }
 
 // Перезапись массива данных в файл
