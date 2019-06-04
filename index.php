@@ -178,11 +178,11 @@ echo $string_up.$string_middle.$string_down;
 
 // Дата следующей прививки
 function date_next_injection($date, $injection){
-    
+    $date = new DateTime($date);
+    $date->add(new DateInterval('P10D'));
 
 
-
-    return date('d-m-Y', strtotime($date));
+    return $date->format('d-m-Y');
 }
 
 // Удаляет запись зайца из массива и вызывает функцию записи массива в файл
