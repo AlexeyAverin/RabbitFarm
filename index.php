@@ -55,15 +55,8 @@ if (!file_exists($file_rabbits)) { //echo "Добрый день!!!";
 
 
 // Удаление кролика
-if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {
-    //echo "Добрый вечер!!!";
-
-    $rabbits = array_from_file( $file_rabbits );
-    unset($rabbits[$_GET['rabbitid']]);
-    $rabbits = array_values( $rabbits );
-
-    array_to_file($file_rabbits, $rabbits);
-
+if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {//echo "Добрый вечер!!!";
+    erase_string_rabbits($file_rabbits, $_GET['rabbitid']);
 }
 
 
@@ -71,8 +64,14 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {
 if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'mod' ) {
     $rabbits = array_from_file( $file_rabbits );
     $string_to_array = $_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injection']);
+    //echo $string_to_array;
     $rabbits[$_GET['rabbitid']] = explode(',', $string_to_array);
-    array_to_file( $file_rabbits, $rabbits );
+    //$rabbits = array_values($rabbits);
+    //print_r ($rabbits);
+    echo "<pre>";
+    var_dump($rabbits);
+    echo "</pre>";
+    //array_to_file( $file_rabbits, $rabbits );
 }
 
 
@@ -91,7 +90,7 @@ $rabbits = array_from_file( $file_rabbits );
 // Отображается список кроликов в при простом отображении и при удалении кролика
 if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['rabbitid']) && $_GET['action'] == 'ins') ) {
         $string_rabbits = '';
-        $rabbit_new_id = 1;
+        $rabbit_new_id = 0;
         foreach ( $rabbits as $rabbit_id => $rabbit ){
 
             mb_internal_encoding("UTF-8");
@@ -179,7 +178,14 @@ echo $string_up.$string_middle.$string_down;
 
 
 
+// Удаляет запись зайца из массива и вызывает функцию записи массива в файл
+function erase_string_rabbits($file_rabbits, $rabbitid){
+    $rabbits = array_from_file( $file_rabbits );
+    unset($rabbits[$rabbitid]);
+    $rabbits = array_values( $rabbits );
+    array_to_file($file_rabbits, $rabbits);
 }
+
 
 
 
