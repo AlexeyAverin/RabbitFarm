@@ -38,7 +38,7 @@ $string_up = <<<EOD
             table.rabbit tr:nth-child(even) { background-color: ; color: var(--color-grey-middle); }
             table.rabbit select             { width: 150px; margin-bottom: 19px; color: var(--color-grey-dark); }
             table.rabbit input              { width: 135px; margin-bottom: 19px; color: var(--color-grey-dark); }
-            table.rabbit input[type=submit] { width: 340px; }
+            table.rabbit input[type=submit] { width: 150px; }
 
         </style>
         <title>Ферма кроликов</title>
