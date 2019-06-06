@@ -64,7 +64,7 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {//echo "Добр�
 // Изменений данных кролика
 if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'mod' ) {
     $rabbits = array_from_file( $file_rabbits );
-    $string_to_array = $_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injectiondate']);
+    $string_to_array = $_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injectiondate']).', '.$_GET['injectiontype'];
     //$string_to_array = ',Test,,,,,,,,,';
     echo '<pre>'.trim($string_to_array).'</pre>';
     $rabbits[$_GET['rabbitid']] = explode(',', $string_to_array);
@@ -138,11 +138,8 @@ elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
             <tr><td><input type='text' name='rabbitid' value='$rabbit_id' disabled></td><td><input name='name' placeholder='Введите имя' value='".$rabbit_name."' type='text'></td><td>".fill_select($breeds, 'breed', $rabbit_breed)."</td><td>".fill_select($genders, 'gender', $rabbit_gender)."</td><td><input type='text' name='label' placeholder='Введите клеймо' value='$rabbit_label'></td></tr>
             <tr><td>ID Окрола</td><td>Крольчиха Мама</td><td>Кролик Отец</td><td>Дата рождения</td><td>Линия</td></tr>
             <tr><td>".fill_select($breedingid, 'breedingid', $rabbit_breedingid)."</td><td>".fill_select($womens, 'women', $rabbit_women)."<td>".fill_select($mens, 'men', $rabbit_men)."</td><td><input name='birth' type='date' value=$rabbit_birth_date></td><td><select name='pedigree'><option>Мать - Отец</option><option>Матушка - Батюшка</option></select></td></tr>
-            <tr><td>Клетка</td><td>Вид</td><td>Дата прививки</td><td>Прививка</td><td> </td></tr>
-            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><select><option>Такой</option><option>Сякой</option><option>Эдакий</option></select></td><td><input type='date' name='injectiondate' value='$rabbit_injection_date'></td><td>".fill_ass_select($injections, 'injectiontype', $injections)."</td><td></td></tr>
-
-
-            <tr><td>  </td><td colspan='2'><input type='hidden' value='".$action_type."' name='action'><input type='hidden' name='rabbitid' value=".$rabbit_id."></td><td colspan='2'><input type='submit' value='Записать изменения'></td></tr>
+            <tr><td>Клетка</td><td>Дата прививки</td><td>Прививка</td><td></td><td> </td></tr>
+            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><input type='date' name='injectiondate' value='$rabbit_injection_date'></td><td>".fill_ass_select($injections, 'injectiontype', $injections)."</td><td> </td><td><input type='hidden' value='".$action_type."' name='action'><input type='hidden' name='rabbitid' value=".$rabbit_id."><input type='submit' value='Записать'>  </td></tr>
         </table>
     </form>";
     
