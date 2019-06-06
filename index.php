@@ -30,7 +30,7 @@ $places = array('Выберите клетку', 'Нет данных', 'Кле�
 //Массив полов
 $genders = array('Выберите пол', 'Нет данных', 'Мужской', 'Женский');
 //Массив прививок (дни)
-$injections = array('1' => 180, '2' => 90, '3' => 3650);
+$injections = array('Выберите прививку' => '', 'Нет данных' => '', '1' => 180, '2' => 90, '3' => 3650);
 // Количество дней за которое начинаются формироваться письма
 $injections_limit_day = 10*500;
 // Массив пород
@@ -64,7 +64,7 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {//echo "Добр�
 // Изменений данных кролика
 if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'mod' ) {
     $rabbits = array_from_file( $file_rabbits );
-    $string_to_array = $_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injection']);
+    $string_to_array = $_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injectiondate']);
     //$string_to_array = ',Test,,,,,,,,,';
     echo '<pre>'.trim($string_to_array).'</pre>';
     $rabbits[$_GET['rabbitid']] = explode(',', $string_to_array);
@@ -139,7 +139,7 @@ elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
             <tr><td>ID Окрола</td><td>Крольчиха Мама</td><td>Кролик Отец</td><td>Дата рождения</td><td>Линия</td></tr>
             <tr><td>".fill_select($breedingid, 'breedingid', $rabbit_breedingid)."</td><td>".fill_select($womens, 'women', $rabbit_women)."<td>".fill_select($mens, 'men', $rabbit_men)."</td><td><input name='birth' type='date' value=$rabbit_birth_date></td><td><select name='pedigree'><option>Мать - Отец</option><option>Матушка - Батюшка</option></select></td></tr>
             <tr><td>Клетка</td><td>Вид</td><td>Дата прививки</td><td> </td><td> </td></tr>
-            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><select><option>Такой</option><option>Сякой</option><option>Эдакий</option></select></td><td><input type='date' name='injection' value='$rabbit_injection_date'></td><td></td><td></td></tr>
+            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><select><option>Такой</option><option>Сякой</option><option>Эдакий</option></select></td><td><input type='date' name='injectiondate' value='$rabbit_injection_date'></td><td>".fill_ass_select($injections, 'injectiontype', $injections)."</td><td></td></tr>
 
 
             <tr><td>  </td><td colspan='2'><input type='hidden' value='".$action_type."' name='action'><input type='hidden' name='rabbitid' value=".$rabbit_id."></td><td colspan='2'><input type='submit' value='Записать изменения'></td></tr>
@@ -228,7 +228,7 @@ function file_rabbits_noexist($file_rabbits) { //echo "Добрый день!!!"
 function write_string_rabbits($file_rabbits) { //&& $_GET['action'] == 'ins' ) {
     //echo "Good Day!!!";
     mb_internal_encoding("UTF-8");
-    $string_to_file = "\n".$_GET['rabbitid'].','.$_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.$_GET['birth'].','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.$_GET['injection'];
+    $string_to_file = "\n".$_GET['rabbitid'].','.$_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.$_GET['birth'].','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.$_GET['injectiondate'];
     file_put_contents( $file_rabbits, $string_to_file, FILE_APPEND | LOCK_EX ); 
 }
 
@@ -264,6 +264,32 @@ function array_from_file($file_rabbits) {
     return $rabbits;
 }
 
+
+
+// Формирование ассоциативное Select
+function fill_ass_select($array, $name, $value){
+    $tag = '';
+    foreach ( $array as $type => $time ) {
+        if ($tag == '') {
+            $tag .= "<option disabled>$type</option>";
+        }
+        elseif ( $item == $value ) {
+
+        
+                $tag .= "<option selected value='$time' >$type</option>";
+        }
+        else {
+
+            $tag .= "<option value='$time'>$type</option>";
+        }
+    }
+
+    $tag = "<select name='$name'>$tag</select>";
+    return $tag;
+}
+
+
+// Формирование простое Select
 function fill_select($array, $name, $value){
 
     $tag = '';
