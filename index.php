@@ -94,9 +94,9 @@ if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['ra
         $string_rabbits = '';        
         foreach ( $rabbits as $rabbit_id => $rabbit ){
             mb_internal_encoding("UTF-8");
-            $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
 
-            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections, 3)."".wrapper_days_prior_to_injection($rabbit[10], $injections, 3, $injections_limit_day)."</td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
+            $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
+            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $rabbit[11])."".wrapper_days_prior_to_injection($rabbit[10], $rabbit[11], $injections_limit_day)."</td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
             $string_rabbits .= $string_rabbit;
             $rabbit_new_id = ++$rabbit_id;
         }
@@ -138,7 +138,7 @@ elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
             <tr><td><input type='text' name='rabbitid' value='$rabbit_id' disabled></td><td><input name='name' placeholder='Введите имя' value='".$rabbit_name."' type='text'></td><td>".fill_select($breeds, 'breed', $rabbit_breed)."</td><td>".fill_select($genders, 'gender', $rabbit_gender)."</td><td><input type='text' name='label' placeholder='Введите клеймо' value='$rabbit_label'></td></tr>
             <tr><td>ID Окрола</td><td>Крольчиха Мама</td><td>Кролик Отец</td><td>Дата рождения</td><td>Линия</td></tr>
             <tr><td>".fill_select($breedingid, 'breedingid', $rabbit_breedingid)."</td><td>".fill_select($womens, 'women', $rabbit_women)."<td>".fill_select($mens, 'men', $rabbit_men)."</td><td><input name='birth' type='date' value=$rabbit_birth_date></td><td><select name='pedigree'><option>Мать - Отец</option><option>Матушка - Батюшка</option></select></td></tr>
-            <tr><td>Клетка</td><td>Вид</td><td>Дата прививки</td><td> </td><td> </td></tr>
+            <tr><td>Клетка</td><td>Вид</td><td>Дата прививки</td><td>Прививка</td><td> </td></tr>
             <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><select><option>Такой</option><option>Сякой</option><option>Эдакий</option></select></td><td><input type='date' name='injectiondate' value='$rabbit_injection_date'></td><td>".fill_ass_select($injections, 'injectiontype', $injections)."</td><td></td></tr>
 
 
@@ -177,29 +177,30 @@ echo $string_up.$string_middle.$string_down;
 
 
 // Дата следующей прививки
-function date_next_injection($date, $injections, $injection){
+function date_next_injection($date, $interval){
     $date = new DateTime($date);
-    $interval = $injections[$injection];    
-    $interval = 'P'.$interval.'D';
+    $interval = 'P'.trim($interval).'D';
     $date->add(new DateInterval($interval));
     return $date->format('d-m-Y');
 }
 
+
 // Возращает количество дней до прививки
-function days_priorto_injection($date, $injections, $injection){
-    $date_next = new DateTime(date_next_injection($date, $injections, $injection));
+function days_priorto_injection($date, $interval){
+    $date_next = new DateTime(date_next_injection($date, $interval));
     $date_now = new DateTime('now');
+
     $days = $date_now->diff($date_next);
     return $days->format('%a');
 }
 
 
 // Оборачивает колличество дней в теги html и возращает если дней осталось меньше чем $injections_limit_day
-function wrapper_days_prior_to_injection($date, $injections, $injection, $injections_limit_day){
-    $days = days_priorto_injection($date, $injections, $injection);
+function wrapper_days_prior_to_injection($date, $interval, $injections_limit_day){
+
+    $days = days_priorto_injection($date, $interval);
 
     $days = $days <= $injections_limit_day ? $days = '<em>'.$days.'</em>' : '';
-    
     return $days;
 }
 
@@ -218,7 +219,7 @@ function erase_string_rabbits($file_rabbits, $rabbitid){
 
 // Создает файл rabbits.csv и добавляет две записи
 function file_rabbits_noexist($file_rabbits) { //echo "Добрый день!!!";
-    $filerabbits_creater_text = "1,Ушастик, ,1,Калифорнийская,01.01.2001,Мужской,Клеймо01,Лапочка,Ушастик,Клетка 01,01.07.2001\r\n2,Лапочка, ,2,Беспородная,03.03.2003,Женский,Клеймо02,Mather02,Pather02,Клетка 02,01.07.2001";
+    $filerabbits_creater_text = "1,Ушастик, ,1,Калифорнийская,01.01.2001,Мужской,Клеймо01,Лапочка,Ушастик,Клетка 01,01.07.2015,3650\r\n2,Лапочка, ,2,Беспородная,03.03.2003,Женский,Клеймо02,Mather02,Pather02,Клетка 02,01.07.2015,3650";
     $fo = fopen($file_rabbits, 'w') or die ('Добрый день, создать файл rabbits.csv не удалось!');
     fwrite($fo, $filerabbits_creater_text) or die ('Добрый день, сбой записи rabbits.csv при создании!');
     fclose($fo);
@@ -228,7 +229,7 @@ function file_rabbits_noexist($file_rabbits) { //echo "Добрый день!!!"
 function write_string_rabbits($file_rabbits) { //&& $_GET['action'] == 'ins' ) {
     //echo "Good Day!!!";
     mb_internal_encoding("UTF-8");
-    $string_to_file = "\n".$_GET['rabbitid'].','.$_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.$_GET['birth'].','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.$_GET['injectiondate'];
+    $string_to_file = "\n".$_GET['rabbitid'].','.$_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.$_GET['birth'].','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.$_GET['injectiondate'].','.$_GET['injectiontype'];
     file_put_contents( $file_rabbits, $string_to_file, FILE_APPEND | LOCK_EX ); 
 }
 
