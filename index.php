@@ -2,10 +2,10 @@
 
 
 
-
-
-
-
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+require 'vendor/autoload.php';
+require 'secret.php';
 
 
 
@@ -30,7 +30,7 @@ $places = array('Выберите клетку', 'Нет данных', 'Кле�
 //Массив полов
 $genders = array('Выберите пол', 'Нет данных', 'Мужской', 'Женский');
 //Массив прививок (дни)
-$injections = array('Выберите прививку' => '', 'Нет данных' => '', '1' => 180, '2' => 90, '3' => 3650);
+$injections = array('Выберите прививку' => '', 'Нет данных' => '', 'ABC' => 180, 'EFG' => 90, 'HKL' => 3650);
 // Количество дней за которое начинаются формироваться письма
 $injections_limit_day = 10*500;
 // Массив пород
@@ -66,7 +66,7 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'mod' ) {
     $rabbits = array_from_file( $file_rabbits );
     $string_to_array = $_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injectiondate']).', '.$_GET['injectiontype'];
     //$string_to_array = ',Test,,,,,,,,,';
-    echo '<pre>'.trim($string_to_array).'</pre>';
+    //echo '<pre>'.trim($string_to_array).'</pre>';
     $rabbits[$_GET['rabbitid']] = explode(',', $string_to_array);
     //$rabbits = array_values($rabbits);
     //print_r ($rabbits);
@@ -170,8 +170,38 @@ require_once "htmlup.php";
 require_once "htmldown.php";
 
 echo $string_up.$string_middle.$string_down;
+sender_mail($mail_user, $mail_pass);
 
 
+
+
+
+function sender_mail($mail_user, $mail_pass){
+    //echo 'Добрый день!!!';
+    $mail = new PHPMailer(true);
+    $mail->From = 'yvp777@list.ru';
+    $mail->FromName ='Rabbit Farm';
+    $mail->addAddress('yvp777@list.ru', 'Фермер');
+    $mail->isHTML(true);
+    $mail->CharSet = 'UTF-8';
+
+    $mail->SMTPDebug = 3;
+    $mail->isSMTP();
+    $mail->Host = 'smtp.list.ru';
+    $mail->SMTPAuth = true;
+    $mail->Username = $mail_user;
+    $mail->Password = $mail_pass;
+    $mail->SMTPSecure = 'ssl';
+    $mail->Port = 465;
+
+    $mail->Subject = 'Письмо от RabbitFarm';
+    $mail->Body = '<div>Good Day!!!<br />Проверка почтового сообщения!!!</div>';
+    $mail->send();
+
+    //echo $mail->ErrorInfo;
+ 
+    //if ( $mail->send() ) { echo 'Добрый день!!! Письмо!!!'; }
+}
 
 // Дата следующей прививки
 function date_next_injection($date, $interval){

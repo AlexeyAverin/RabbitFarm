@@ -1,2 +1,0 @@
-# RabbitFarm
-Rabbit accounting
