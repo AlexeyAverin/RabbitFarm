@@ -22,14 +22,16 @@ $string_up = <<<EOD
             header nav a { color: var(--color-grey-middle); padding: 0 10px; line-height: 70px; text-decoration: none; font-size:; }
             header nav a:hover { background-color: var(--color-grey-dark); }
             section { width: 100%; height: calc(100vh - 120px); font-size: 15px; background-color: white; }
-            table.ferma                       { width: 100%; margin: 0 0 50px 0; border-style: hidden; color: blue; }
-            table.ferma td                    {  }
-            table.ferma td a                  { color: orange; text-decoration: none; }
+            table.ferma                     { width: 100%; margin: 0 0 50px 0; border-style: hidden; color: blue; }
+            table.ferma td                  {  }
+            table.ferma td a                { color: orange; text-decoration: none; }
             table.ferma td em               { color: var(--color-grey-dark); margin-left: 7px; padding: 3px; font-size: 10px; border-radius: 35%; border: 1px solid red; }
-            table.ferma th                    { text-align: left; color: white; background-color: var(--color-grey-dark); }
-            table.ferma tr:hover              { background-color: var(--color-grey-soft); }
-            table.ferma tr:nth-child(odd)     { color: var(--color-grey-middle); }
-            table.ferma tr:nth-child(even)    { color: var(--color-grey-dark); }
+                            .erase-rabbit   { cursor: pointer; color: orange; }
+                            .erase-rabbit a { margin: 0 30px; }
+            table.ferma th                  { text-align: left; color: white; background-color: var(--color-grey-dark); }
+            table.ferma tr:hover            { background-color: var(--color-grey-soft); }
+            table.ferma tr:nth-child(odd)   { color: var(--color-grey-middle); }
+            table.ferma tr:nth-child(even)  { color: var(--color-grey-dark); }
             table.rabbit                    { width: 100%; margin: 0 0 50px 0; color: blue; border-style: hidden; }
             table.rabbit th                 { text-align: left; color: var(--color-grey-dark); }
             table.rabbit tr                 { text-align: center;  }
@@ -52,6 +54,8 @@ $string_up = <<<EOD
             <nav><a href="index.php">Главная</a><a href="index.php">Кролики</a><a href="">Статистика</a></nav>
         </header>
         </form>
+        <script src="men.js">
+        </script>
         <section>
 EOD;
 ?>

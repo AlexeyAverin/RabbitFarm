@@ -96,7 +96,7 @@ if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['ra
             mb_internal_encoding("UTF-8");
 
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
-            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $rabbit[11])."".wrapper_days_prior_to_injection($rabbit[10], $rabbit[11], $injections_limit_day)."</td><td><a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";
+            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $rabbit[11])."".wrapper_days_prior_to_injection($rabbit[10], $rabbit[11], $injections_limit_day, $mail_user, $mail_pass, $rabbit[0])."</td><td><div class='erase-rabbit' rabbitid='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
             $string_rabbits .= $string_rabbit;
             $rabbit_new_id = ++$rabbit_id;
         }
@@ -170,22 +170,22 @@ require_once "htmlup.php";
 require_once "htmldown.php";
 
 echo $string_up.$string_middle.$string_down;
-sender_mail($mail_user, $mail_pass);
+//sender_mail($mail_user, $mail_pass);
 
 
 
 
 
-function sender_mail($mail_user, $mail_pass){
-    //echo 'Добрый день!!!';
+// Отправляет письмо
+function sender_mail($mail_user, $mail_pass, $mail_msg){ //echo 'Добрый день!!!';
     $mail = new PHPMailer(true);
     $mail->From = 'yvp777@list.ru';
     $mail->FromName ='Rabbit Farm';
     $mail->addAddress('yvp777@list.ru', 'Фермер');
     $mail->isHTML(true);
     $mail->CharSet = 'UTF-8';
-
-    $mail->SMTPDebug = 3;
+ 
+    $mail->SMTPDebug = 0;
     $mail->isSMTP();
     $mail->Host = 'smtp.list.ru';
     $mail->SMTPAuth = true;
@@ -193,14 +193,13 @@ function sender_mail($mail_user, $mail_pass){
     $mail->Password = $mail_pass;
     $mail->SMTPSecure = 'ssl';
     $mail->Port = 465;
-
+ 
     $mail->Subject = 'Письмо от RabbitFarm';
-    $mail->Body = '<div>Good Day!!!<br />Проверка почтового сообщения!!!</div>';
+    $mail->Body = $mail_msg; //'Good Day!!! Проверка почтового сообщения!!!';
     $mail->send();
 
-    //echo $mail->ErrorInfo;
- 
-    //if ( $mail->send() ) { echo 'Добрый день!!! Письмо!!!'; }
+    //echo $mail->ErrorInfo; //if ( $mail->send() ) { echo 'Добрый день!!! Письмо!!!'; }
+
 }
 
 // Дата следующей прививки
@@ -223,12 +222,14 @@ function days_priorto_injection($date, $interval){
 
 
 // Оборачивает колличество дней в теги html и возращает если дней осталось меньше чем $injections_limit_day
-function wrapper_days_prior_to_injection($date, $interval, $injections_limit_day){
-
+function wrapper_days_prior_to_injection($date, $interval, $injections_limit_day, $mail_user, $mail_pass, $rabbit_name){
     $days = days_priorto_injection($date, $interval);
-
-    $days = $days <= $injections_limit_day ? $days = '<em>'.$days.'</em>' : '';
-    return $days;
+    if ( $days <= $injections_limit_day ) {
+        $days = '<em>'.$days.'</em>';
+        $mail_msg = "<div style='color: orange;'>Добрый день, Виталька!!!<br />Здесь будет информация о кроликах!!!<br />$rabbit_name</div>";
+        sender_mail($mail_user, $mail_pass, $mail_msg);
+        return $days;
+    }   
 }
 
 // Удаляет запись зайца из массива и вызывает функцию записи массива в файл
