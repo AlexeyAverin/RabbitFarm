@@ -63,17 +63,7 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {//echo "Добр�
 
 // Изменений данных кролика
 if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'mod' ) {
-    $rabbits = array_from_file( $file_rabbits );
-    $string_to_array = $_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injectiondate']).', '.$_GET['injectiontype'];
-    //$string_to_array = ',Test,,,,,,,,,';
-    //echo '<pre>'.trim($string_to_array).'</pre>';
-    $rabbits[$_GET['rabbitid']] = explode(',', $string_to_array);
-    //$rabbits = array_values($rabbits);
-    //print_r ($rabbits);
-    echo "<pre>";
-    var_dump($rabbits);
-    echo "</pre>";
-    //array_to_file( $file_rabbits, $rabbits );
+    change_data_rabit($file_rabbits);
 }
 
 
@@ -115,7 +105,7 @@ EOD;
 // Отображение общей информации по кролику, отображается при 'Вывод информации кролика' 'Добавление нового кролика' 
 elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
     $rabbit_id = $_GET['rabbitid'];
-     $rabbit_name            = $rabbits[$rabbit_id][0];
+    $rabbit_name            = $rabbits[$rabbit_id][0];
     $rabbit_breedingid      = $rabbits[$rabbit_id][2];
     $rabbit_breed           = $rabbits[$rabbit_id][3];
     $rabbit_birth_date      = date('Y-m-d', strtotime($rabbits[$rabbit_id][4]));    
@@ -175,6 +165,22 @@ echo $string_up.$string_middle.$string_down;
 
 
 
+
+// Изменений данных кролике
+function change_data_rabit($file_rabbits){
+    $rabbits = array_from_file($file_rabbits);
+    $string_to_array = $_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injectiondate']).', '.$_GET['injectiontype'];
+    //$string_to_array = ',Test,,,,,,,,,';
+    //echo '<pre>'.trim($string_to_array).'</pre>';
+    $rabbits[$_GET['rabbitid']] = explode(',', $string_to_array);
+
+    //$rabbits = array_values($rabbits);
+    //print_r ($rabbits);
+    echo "<pre>";
+    var_dump($rabbits);
+    echo "</pre>";
+    //array_to_file( $file_rabbits, $rabbits );
+}
 
 // Отправляет письмо
 function sender_mail($mail_user, $mail_pass, $mail_msg){ //echo 'Добрый день!!!';
