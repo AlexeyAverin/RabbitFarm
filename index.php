@@ -63,7 +63,7 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {//echo "Добр�
 
 // Изменений данных кролика
 if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'mod' ) {
-    change_data_rabit($file_rabbits);
+    change_data_rabbit($file_rabbits);
 }
 
 
@@ -167,7 +167,7 @@ echo $string_up.$string_middle.$string_down;
 
 
 // Изменений данных кролике
-function change_data_rabit($file_rabbits){
+function change_data_rabbit($file_rabbits){
     $rabbits = array_from_file($file_rabbits);
     $string_to_array = $_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.date('d.m.Y', $_GET['birth']).','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.date('d.m.Y', $_GET['injectiondate']).', '.$_GET['injectiontype'];
     //$string_to_array = ',Test,,,,,,,,,';
