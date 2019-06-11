@@ -6,9 +6,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 require 'secret.php';
-
-
-
+//ini_set('display_errors', 1);
+//ini_set('display_atartup_errors',1);
+//ini_set('error_reporting', E_ALL);
 
 
 
@@ -129,7 +129,7 @@ elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
             <tr><td>ID Окрола</td><td>Крольчиха Мама</td><td>Кролик Отец</td><td>Дата рождения</td><td>Линия</td></tr>
             <tr><td>".fill_select($breedingid, 'breedingid', $rabbit_breedingid)."</td><td>".fill_select($womens, 'women', $rabbit_women)."<td>".fill_select($mens, 'men', $rabbit_men)."</td><td><input name='birth' type='date' value=$rabbit_birth_date></td><td><select name='pedigree'><option>Мать - Отец</option><option>Матушка - Батюшка</option></select></td></tr>
             <tr><td>Клетка</td><td>Дата прививки</td><td>Прививка</td><td></td><td> </td></tr>
-            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><input type='date' name='injectiondate' value='$rabbit_injection_date'></td><td>".fill_ass_select($injections, 'injectiontype', $injections)."</td><td> </td><td><input type='hidden' value='".$action_type."' name='action'><input type='hidden' name='rabbitid' value=".$rabbit_id."><input type='submit' value='Записать'>  </td></tr>
+            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><input type='date' name='injectiondate' id='id' value='$rabbit_injection_date'></td><td>".fill_ass_select($injections, 'injectiontype', 'it', $injections)."</td><td> </td><td><input type='hidden' value='".$action_type."' name='action'><input type='hidden' name='rabbitid' value=".$rabbit_id."><input type='submit' value='Записать'>  </td></tr>
         </table>
     </form>";
     
@@ -211,6 +211,7 @@ function sender_mail($mail_user, $mail_pass, $mail_msg){ //echo 'Добрый д
 // Дата следующей прививки
 function date_next_injection($date, $interval){
     $date = new DateTime($date);
+    //$interval = isset($interval) ? $interval : 0;
     $interval = 'P'.trim($interval).'D';
     $date->add(new DateInterval($interval));
     return $date->format('d-m-Y');
@@ -233,7 +234,8 @@ function wrapper_days_prior_to_injection($date, $interval, $injections_limit_day
     if ( $days <= $injections_limit_day ) {
         $days = '<em>'.$days.'</em>';
         $mail_msg = "<div style='color: orange;'>Добрый день, Виталька!!!<br />Здесь будет информация о кроликах!!!<br />$rabbit_name</div>";
-        sender_mail($mail_user, $mail_pass, $mail_msg);
+
+        //sender_mail($mail_user, $mail_pass, $mail_msg);
         return $days;
     }   
 }
@@ -302,24 +304,20 @@ function array_from_file($file_rabbits) {
 
 
 // Формирование ассоциативное Select
-function fill_ass_select($array, $name, $value){
+function fill_ass_select($array, $name, $id, $value){
     $tag = '';
     foreach ( $array as $type => $time ) {
         if ($tag == '') {
             $tag .= "<option disabled>$type</option>";
         }
         elseif ( $item == $value ) {
-
-        
                 $tag .= "<option selected value='$time' >$type</option>";
         }
         else {
-
             $tag .= "<option value='$time'>$type</option>";
         }
     }
-
-    $tag = "<select name='$name'>$tag</select>";
+    $tag = "<select id='$id' name='$name'>$tag</select>";
     return $tag;
 }
 
