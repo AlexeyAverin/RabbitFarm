@@ -46,8 +46,14 @@ document.body.addEventListener("click", function(event){
         divMenu.style.backgroundColor = 'white';
         //divMenu.style.visibility = 'hidden';
 
-        var rabbitid = divMenu.getAttribute('rabbitid');
+        var rabbitid = event.target.getAttribute('rabbitid');
         divMenu.innerHTML= 'Добрый день, Вы точно хотите удалить запись<p><a href="index.php?rabbitid=' + rabbitid + '&action=del">Да</a><a href="index.php">Нет</a></p>';
+    }
+});
+
+document.body.addEventListener("click", function(event){
+    if ( event.target.id == "id" ) {// alert("Добрый день!");
+    
     }
 });
 
