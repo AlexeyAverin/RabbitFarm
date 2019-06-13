@@ -51,9 +51,23 @@ document.body.addEventListener("click", function(event){
     }
 });
 
-document.body.addEventListener("click", function(event){
+// Две функции связанны для при изменении даты автоматически выбирался тип прививки
+document.body.addEventListener("focusin", function(event){
+    if ( event.target.id == "id" ) {// alert("Добрый день!"); console.log('Добрый день!!!' + event.target.value);
+        event.target.setAttribute('old-value', event.target.value);
+    }
+});
+
+// Две функции связанны для при изменении даты автоматически выбирался тип прививки
+document.body.addEventListener("focusout", function(event){
     if ( event.target.id == "id" ) {// alert("Добрый день!");
-    
+        if ( event.target.value != event.target.getAttribute('old-value') ) { //console.log('Добрый день!!!' + ' <=> ');
+            $('it').style.color = 'orange';
+            // По индексу
+            $('it').selectedIndex = 2;
+            // По значению
+            $('it').value = 'ABC';
+        }
     }
 });
 
