@@ -30,7 +30,7 @@ $places = array('Выберите клетку', 'Нет данных', 'Кле�
 //Массив полов
 $genders = array('Выберите пол', 'Нет данных', 'Мужской', 'Женский');
 //Массив прививок (дни)
-$injections = array('Выберите прививку' => '', 'Нет данных' => '', 'ABC' => 180, 'EFG' => 90, 'HKL' => 3650);
+$injections = array('Выберите прививку' => '', 'Нет данных' => 1, 'ABC' => 180, 'EFG' => 90, 'HKL' => 3650);
 // Количество дней за которое начинаются формироваться письма
 $injections_limit_day = 10*500;
 // Массив пород
@@ -86,7 +86,7 @@ if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['ra
             mb_internal_encoding("UTF-8");
 
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
-            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $rabbit[11])."".wrapper_days_prior_to_injection($rabbit[10], $rabbit[11], $injections_limit_day, $mail_user, $mail_pass, $rabbit[0])."</td><td><div class='erase-rabbit' rabbitid='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
+            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections[trim($rabbit[11])], $injections_limit_day, $mail_user, $mail_pass, $rabbit[0])."</td><td><div class='erase-rabbit' rabbitid='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
             $string_rabbits .= $string_rabbit;
             $rabbit_new_id = ++$rabbit_id;
         }
@@ -105,20 +105,28 @@ EOD;
 // Отображение общей информации по кролику, отображается при 'Вывод информации кролика' 'Добавление нового кролика' 
 elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
     $rabbit_id = $_GET['rabbitid'];
-    $rabbit_name            = $rabbits[$rabbit_id][0];
-    $rabbit_breedingid      = $rabbits[$rabbit_id][2];
-    $rabbit_breed           = $rabbits[$rabbit_id][3];
-    $rabbit_birth_date      = date('Y-m-d', strtotime($rabbits[$rabbit_id][4]));    
-    $rabbit_gender          = $rabbits[$rabbit_id][5];
+    if ( array_key_exists($_GET['rabbitid'], $rabbits) ) {
+        $action_type = 'mod';
+        $rabbit_name            = $rabbits[$rabbit_id][0];
+        $rabbit_breedingid      = $rabbits[$rabbit_id][2];
 
-    $rabbit_label           = $rabbits[$rabbit_id][6];
-    $rabbit_women           = $rabbits[$rabbit_id][7];
-    $rabbit_men             = $rabbits[$rabbit_id][8];
-    $rabbit_place           = $rabbits[$rabbit_id][9];
-    $rabbit_injection_date  = date('Y-m-d', strtotime($rabbits[$rabbit_id][10]));
-    
+        $rabbit_breed           = $rabbits[$rabbit_id][3];
+        $rabbit_birth_date      = date('Y-m-d', strtotime($rabbits[$rabbit_id][4]));    
+        $rabbit_gender          = $rabbits[$rabbit_id][5];
+        $rabbit_label           = $rabbits[$rabbit_id][6];
+        $rabbit_women           = $rabbits[$rabbit_id][7];
+        $rabbit_men             = $rabbits[$rabbit_id][8];
+        $rabbit_place           = $rabbits[$rabbit_id][9];
+        $rabbit_injection_date  = date('Y-m-d', strtotime($rabbits[$rabbit_id][10]));
 
-    (array_key_exists($_GET['rabbitid'], $rabbits)) ? $action_type = 'mod' : $action_type = 'ins';
+        $rabbit_injection_type  = $rabbits[$rabbit_id[11]];
+
+    } else {
+        $action_type = 'ins';
+        $rabbit_birth_date      = date('Y-m-d', time());
+        $rabbit_injection_date  = date('Y-m-d', time());
+        $rabbit_injection_type = 'Нет данных';
+    }
 
     $string_middle = "
     <form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'>
@@ -129,7 +137,7 @@ elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
             <tr><td>ID Окрола</td><td>Крольчиха Мама</td><td>Кролик Отец</td><td>Дата рождения</td><td>Линия</td></tr>
             <tr><td>".fill_select($breedingid, 'breedingid', $rabbit_breedingid)."</td><td>".fill_select($womens, 'women', $rabbit_women)."<td>".fill_select($mens, 'men', $rabbit_men)."</td><td><input name='birth' type='date' value=$rabbit_birth_date></td><td><select name='pedigree'><option>Мать - Отец</option><option>Матушка - Батюшка</option></select></td></tr>
             <tr><td>Клетка</td><td>Дата прививки</td><td>Прививка</td><td></td><td> </td></tr>
-            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><input type='date' name='injectiondate' id='id' value='$rabbit_injection_date'></td><td>".fill_ass_select($injections, 'injectiontype', 'it', $injections)."</td><td> </td><td><input type='hidden' value='".$action_type."' name='action'><input type='hidden' name='rabbitid' value=".$rabbit_id."><input type='submit' value='Записать'>  </td></tr>
+            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><input type='date' name='injectiondate' id='id' value='$rabbit_injection_date'></td><td>".fill_select(array_keys($injections), 'injectiontype', $rabbit_injection_type)."</td><td> </td><td><input type='hidden' value='".$action_type."' name='action'><input type='hidden' name='rabbitid' value=".$rabbit_id."><input type='submit' value='Записать'>  </td></tr>
         </table>
     </form>";
     
@@ -255,18 +263,18 @@ function erase_string_rabbits($file_rabbits, $rabbitid){
 
 // Создает файл rabbits.csv и добавляет две записи
 function file_rabbits_noexist($file_rabbits) { //echo "Добрый день!!!";
-    $filerabbits_creater_text = "1,Ушастик, ,1,Калифорнийская,01.01.2001,Мужской,Клеймо01,Лапочка,Ушастик,Клетка 01,01.07.2015,3650\r\n2,Лапочка, ,2,Беспородная,03.03.2003,Женский,Клеймо02,Mather02,Pather02,Клетка 02,01.07.2015,3650";
+    $filerabbits_creater_text = "1,Ушастик,,1,Калифорнийская,01.01.2001,Мужской,Клеймо01,Лапочка,Ушастик,Клетка 01,01.07.2015,ABC\r\n2,Лапочка,,2,Беспородная,03.03.2003,Женский,Клеймо02,Mather02,Pather02,Клетка 02,01.07.2015,HKL";
     $fo = fopen($file_rabbits, 'w') or die ('Добрый день, создать файл rabbits.csv не удалось!');
     fwrite($fo, $filerabbits_creater_text) or die ('Добрый день, сбой записи rabbits.csv при создании!');
     fclose($fo);
 }
 
 // Добавляет новую строку в rabbits.csv
-function write_string_rabbits($file_rabbits) { //&& $_GET['action'] == 'ins' ) {
-    //echo "Good Day!!!";
+function write_string_rabbits($file_rabbits) { //echo "Good Day!!!";
     mb_internal_encoding("UTF-8");
     $string_to_file = "\n".$_GET['rabbitid'].','.$_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.$_GET['birth'].','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.$_GET['injectiondate'].','.$_GET['injectiontype'];
     file_put_contents( $file_rabbits, $string_to_file, FILE_APPEND | LOCK_EX ); 
+
 }
 
 // Перезапись массива данных в файл
@@ -310,7 +318,7 @@ function fill_ass_select($array, $name, $id, $value){
         if ($tag == '') {
             $tag .= "<option disabled>$type</option>";
         }
-        elseif ( $item == $value ) {
+        elseif ( $type == $value ) {
                 $tag .= "<option selected value='$time' >$type</option>";
         }
         else {
@@ -338,7 +346,7 @@ function fill_select($array, $name, $value){
         }
      }
 
-     $tag = "<select name='$name'>$tag</select>";
+     $tag = "<select id='$name' name='$name'>$tag</select>";
     return $tag;
 }
 ?>

@@ -62,11 +62,11 @@ document.body.addEventListener("focusin", function(event){
 document.body.addEventListener("focusout", function(event){
     if ( event.target.id == "id" ) {// alert("Добрый день!");
         if ( event.target.value != event.target.getAttribute('old-value') ) { //console.log('Добрый день!!!' + ' <=> ');
-            $('it').style.color = 'orange';
+            $('injectiontype').style.color = 'orange';
             // По индексу
-            $('it').selectedIndex = 2;
+            $('injectiontype').selectedIndex = 2;
             // По значению
-            $('it').value = 'ABC';
+            $('injectiontype').value = 'ABC';
         }
     }
 });
