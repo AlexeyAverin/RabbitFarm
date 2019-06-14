@@ -9,7 +9,7 @@ require 'secret.php';
 //ini_set('display_errors', 1);
 //ini_set('display_atartup_errors',1);
 //ini_set('error_reporting', E_ALL);
-
+mb_internal_encoding("UTF-8");
 
 
 
@@ -73,8 +73,8 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'mod' ) {
 
 
 
-$rabbits = array_from_file( $file_rabbits );
-
+//$rabbits = array_from_file( $file_rabbits );
+$rabbits = array_from_mysql($mysql_node, $mysql_user, $mysql_passwd, $mysql_dbase);
 
 
 
@@ -83,19 +83,18 @@ $rabbits = array_from_file( $file_rabbits );
 if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['rabbitid']) && $_GET['action'] == 'ins') ) {
         $string_rabbits = '';        
         foreach ( $rabbits as $rabbit_id => $rabbit ){
-            mb_internal_encoding("UTF-8");
-
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
             $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections[trim($rabbit[11])], $injections_limit_day, $mail_user, $mail_pass, $rabbit[0])."</td><td><div class='erase-rabbit' rabbitid='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
+
             $string_rabbits .= $string_rabbit;
             $rabbit_new_id = ++$rabbit_id;
         }
         $string_middle = <<<EOD
             <table class="ferma">
-
                 <tr><th>№</th><th>Кличка</th><th>Клемо</th><th>Дата рождения</th><th>Пол</th><th>Порода</th><th>Клетка</th><th>Прививка</th><th></th></tr>
                 $string_rabbits
                 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+
                 <tr><td>...</td><td><a href="index.php?rabbitid=$rabbit_new_id">Добавить нового кроллика</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
             </table>
 EOD;
@@ -219,7 +218,6 @@ function sender_mail($mail_user, $mail_pass, $mail_msg){ //echo 'Добрый д
 // Дата следующей прививки
 function date_next_injection($date, $interval){
     $date = new DateTime($date);
-    //$interval = isset($interval) ? $interval : 0;
     $interval = 'P'.trim($interval).'D';
     $date->add(new DateInterval($interval));
     return $date->format('d-m-Y');
@@ -271,10 +269,8 @@ function file_rabbits_noexist($file_rabbits) { //echo "Добрый день!!!"
 
 // Добавляет новую строку в rabbits.csv
 function write_string_rabbits($file_rabbits) { //echo "Good Day!!!";
-    mb_internal_encoding("UTF-8");
     $string_to_file = "\n".$_GET['rabbitid'].','.$_GET['name'].',,'.$_GET['breedingid'].','.$_GET['breed'].','.$_GET['birth'].','.$_GET['gender'].','.$_GET['label'].','.$_GET['women'].','.$_GET['men'].','.$_GET['place'].','.$_GET['injectiondate'].','.$_GET['injectiontype'];
     file_put_contents( $file_rabbits, $string_to_file, FILE_APPEND | LOCK_EX ); 
-
 }
 
 // Перезапись массива данных в файл
@@ -286,6 +282,24 @@ function array_to_file ($file_rabbits, $rabbits) {
         file_put_contents( $file_rabbits, $string_to_file, FILE_APPEND | LOCK_EX );
     }
 
+}
+
+// Считывание данных зайцев из mysql
+function array_from_mysql($mysql_node, $mysql_user, $mysql_passwd, $mysql_dbase){
+    $connect_mysql = new mysqli($mysql_node, $mysql_user, $mysql_passwd, $mysql_dbase);
+    if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
+
+    $query_mysql = 'SELECT * FROM rabbits;';
+    $results_mysql = $connect_mysql->query($query_mysql);
+    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
+    $rows_mysql = $results_mysql->num_rows;
+    for ( $i = 0; $i < $rows_mysql; ++$i ) {
+
+        $results_mysql->data_seek($i);
+        echo "Добрый день!!!"." ".$i." ".$results_mysql->fetch_assoc()['name']."<br />";
+    }
+    $results_mysql->close();
+    $connect_mysql->close();
 }
 
 // Считывание файла rabbits.csv с превращением данных особей в ассациативный массив, формирование массивов женских и мужских имен
