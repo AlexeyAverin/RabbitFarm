@@ -6,9 +6,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 require 'secret.php';
-//ini_set('display_errors', 1);
-//ini_set('display_atartup_errors',1);
-//ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_atartup_errors',1);
+ini_set('error_reporting', E_ALL);
 mb_internal_encoding("UTF-8");
 
 
@@ -285,21 +285,58 @@ function array_to_file ($file_rabbits, $rabbits) {
 }
 
 // Считывание данных зайцев из mysql
-function array_from_mysql($mysql_node, $mysql_user, $mysql_passwd, $mysql_dbase){
+function array_from_mysql($mysql_node, $mysql_user, $mysql_passwd, $mysql_dbase){ //"Добрый день!!!"
     $connect_mysql = new mysqli($mysql_node, $mysql_user, $mysql_passwd, $mysql_dbase);
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
 
+    //$connect_mysql->set_charset('UTF-8');
+    $query_mysql = 'SET NAMES "UTF-8"';
+    $results_mysql = $connect_mysql->query($query_mysql);
+
     $query_mysql = 'SELECT * FROM rabbits;';
     $results_mysql = $connect_mysql->query($query_mysql);
+
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
+
+   
     $rows_mysql = $results_mysql->num_rows;
     for ( $i = 0; $i < $rows_mysql; ++$i ) {
-
+        
         $results_mysql->data_seek($i);
-        echo "Добрый день!!!"." ".$i." ".$results_mysql->fetch_assoc()['name']."<br />";
+        $id = $results_mysql->fetch_assoc()['id'];
+        $results_mysql->data_seek($i);
+
+        $name = $results_mysql->fetch_assoc()['name']; //echo mb_detect_encoding($name)."<br />";
+        $results_mysql->data_seek($i);
+        $type = $results_mysql->fetch_assoc()['type'];
+        $results_mysql->data_seek($i);
+        $breedingid = $results_mysql->fetch_assoc()['breedingid'];
+        $results_mysql->data_seek($i);
+        $breed = $results_mysql->fetch_assoc()['breed'];
+        $results_mysql->data_seek($i);
+
+        $birthdate = $results_mysql->fetch_assoc()['birthdate'];
+        $results_mysql->data_seek($i);
+        $gender = $results_mysql->fetch_assoc()['gender'];
+        $results_mysql->data_seek($i);
+        $label = $results_mysql->fetch_assoc()['label'];
+        $results_mysql->data_seek($i);
+        $women = $results_mysql->fetch_assoc()['women'];
+        $results_mysql->data_seek($i);
+        $men = $results_mysql->fetch_assoc()['men'];
+        $results_mysql->data_seek($i);
+        $place = $results_mysql->fetch_assoc()['place'];
+        $results_mysql->data_seek($i);
+        $injectiondate = $results_mysql->fetch_assoc()['injectiondate'];
+        $results_mysql->data_seek($i);
+        $injectiontype = $results_mysql->fetch_assoc()['injectiontype'];
+        //("Имя", "", "Окрол ID", "Порода", "Дата рождения", "Пол", "Клеймо", "Мама", "Папа", "Клетка", "Дата прививки")
+        $arr =  array( $name, $type, $breedingid, $breed, $birthdate, $gender, $label, $women, $men, $place, $injectiondate, $injectiontype );
+        $rabbits[$id] = $arr;
     }
     $results_mysql->close();
     $connect_mysql->close();
+    return $rabbits;
 }
 
 // Считывание файла rabbits.csv с превращением данных особей в ассациативный массив, формирование массивов женских и мужских имен
