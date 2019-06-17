@@ -28,7 +28,8 @@ $mens = array('Кролик Отец', 'Нет данных');
 //Массив клеток
 $places = array('Выберите клетку', 'Нет данных', 'Клетка 01', 'Клетка 02', 'Клетка 03', 'Клетка 05', 'Клетка 06');
 //Массив полов
-$genders = array('Выберите пол', 'Нет данных', 'Мужской', 'Женский');
+
+$genders = array('Выберите пол', 'Нет данных', 'M', 'W');
 //Массив прививок (дни)
 $injections = array('Выберите прививку' => '', 'Нет данных' => 1, 'ABC' => 180, 'EFG' => 90, 'HKL' => 3650);
 // Количество дней за которое начинаются формироваться письма
@@ -42,9 +43,11 @@ $breedingid = array('Выберите ID окрола', 'Нет данных', '
 //Строка Файла ID,Имя, ,Окрол ID,Порода,Дата рождения,Пол,Клеймо,Мама,Папа,Клетка,Дата прививки
 //Массив спортсменов   "001" => array("Имя", "", "Окрол ID", "Порода", "Дата рождения", "Пол", "Клеймо", "Мама", "Папа", "Клетка", "Дата прививки"),
 
-
-if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-    write_string_rabbits($file_rabbits);
+// Добавление данных зайца в MySQL
+if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
+    string_to_mysql( $mysql ); ###
+    
+    //write_string_rabbits($file_rabbits);
 }
 
 
@@ -57,13 +60,15 @@ if (!file_exists($file_rabbits)) { //echo "Добрый день!!!";
 
 // Удаление кролика
 if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {//echo "Добрый вечер!!!";
-    erase_string_rabbits($file_rabbits, $_GET['rabbitid']);
+    string_delete_mysql( $mysql, $_GET['rabbitid'] ); ###
+    // erase_string_rabbits($file_rabbits, $_GET['rabbitid']);
 }
 
 
 // Изменений данных кролика
-if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'mod' ) {
-    change_data_rabbit($file_rabbits);
+if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'upd' ) {
+    update_string_mysql( $mysql, $_GET['rabbitid'] ); ###
+    // change_data_rabbit($file_rabbits);
 }
 
 
@@ -74,17 +79,18 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'mod' ) {
 
 
 //$rabbits = array_from_file( $file_rabbits );
-$rabbits = array_from_mysql($mysql_node, $mysql_user, $mysql_passwd, $mysql_dbase);
+$rabbits = array_from_mysql($mysql);
 
 
 
 // Отображение страницы
 // Отображается список кроликов в при простом отображении и при удалении кролика
-if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['rabbitid']) && $_GET['action'] == 'ins') ) {
-        $string_rabbits = '';        
+if ( !isset($_GET['action']) || $_GET['action'] == 'upd' || $_GET['action'] == 'del' ) {
+        $string_rabbits = '';
+        $rabbit_new_id = 0;
         foreach ( $rabbits as $rabbit_id => $rabbit ){
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
-            $string_rabbit = "<tr><td>$rabbit_id => $rabbit_new_id</td><td><a href='index.php?rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections[trim($rabbit[11])], $injections_limit_day, $mail_user, $mail_pass, $rabbit[0])."</td><td><div class='erase-rabbit' rabbitid='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
+            $string_rabbit = "<tr><td>$rabbit_id</td><td><a href='index.php?action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections[trim($rabbit[11])], $injections_limit_day, $mail_user, $mail_pass, $rabbit[0])."</td><td><div class='erase-rabbit' rabbitid='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
 
             $string_rabbits .= $string_rabbit;
             $rabbit_new_id = ++$rabbit_id;
@@ -95,17 +101,18 @@ if ( !(isset($_GET['rabbitid'])) || $_GET['action'] == 'del' || (isset($_GET['ra
                 $string_rabbits
                 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
 
-                <tr><td>...</td><td><a href="index.php?rabbitid=$rabbit_new_id">Добавить нового кроллика</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+                <tr><td>...</td><td><a href="index.php?action=new&rabbit">Добавить нового кроллика</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
             </table>
 EOD;
 
 }
 
 // Отображение общей информации по кролику, отображается при 'Вывод информации кролика' 'Добавление нового кролика' 
-elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
+elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
+
     $rabbit_id = $_GET['rabbitid'];
-    if ( array_key_exists($_GET['rabbitid'], $rabbits) ) {
-        $action_type = 'mod';
+    if ( $_GET['action'] == 'mod' ) {
+        $action_type = 'upd';
         $rabbit_name            = $rabbits[$rabbit_id][0];
         $rabbit_breedingid      = $rabbits[$rabbit_id][2];
 
@@ -120,7 +127,7 @@ elseif ( isset($_GET['rabbitid']) && !(isset($_GET['action'])) ) {
 
         $rabbit_injection_type  = $rabbits[$rabbit_id[11]];
 
-    } else {
+    } elseif ( $_GET['action'] == 'new' ) {
         $action_type = 'ins';
         $rabbit_birth_date      = date('Y-m-d', time());
         $rabbit_injection_date  = date('Y-m-d', time());
@@ -284,53 +291,47 @@ function array_to_file ($file_rabbits, $rabbits) {
 
 }
 
-// Считывание данных зайцев из mysql
-function array_from_mysql($mysql_node, $mysql_user, $mysql_passwd, $mysql_dbase){ //"Добрый день!!!"
-    $connect_mysql = new mysqli($mysql_node, $mysql_user, $mysql_passwd, $mysql_dbase);
+// Соединение с MySQL
+function connect_mysql( $mysql ){
+    $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
 
-    //$connect_mysql->set_charset('UTF-8');
-    $query_mysql = 'SET NAMES "UTF-8"';
-    $results_mysql = $connect_mysql->query($query_mysql);
+    return $connect_mysql;
+}
 
-    $query_mysql = 'SELECT * FROM rabbits;';
-    $results_mysql = $connect_mysql->query($query_mysql);
+// Посыл запроса MySQL
+function send_query_mysql( $connect_mysql, $query_mysql ){
 
+    $results_mysql = $connect_mysql->query($query_mysql);
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
+    return $results_mysql;
+}
 
-   
+// Считывание данных зайцев из mysql
+function array_from_mysql( $mysql ){ //"Добрый день!!!"
+    $connect_mysql = connect_mysql( $mysql );    //$connect_mysql->set_charset('UTF-8');    //$query_mysql = 'SET NAMES "UTF-8"';
+    $query_mysql = 'SELECT * FROM rabbits;';
+
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     $rows_mysql = $results_mysql->num_rows;
     for ( $i = 0; $i < $rows_mysql; ++$i ) {
         
         $results_mysql->data_seek($i);
-        $id = $results_mysql->fetch_assoc()['id'];
-        $results_mysql->data_seek($i);
+        $string_musql = $results_mysql->fetch_array(MYSQLI_ASSOC);
+        $id = $string_musql['id'];
+        $name = $string_musql['name']; //echo mb_detect_encoding($name)."<br />";
+        $type = $string_musql['type'];
 
-        $name = $results_mysql->fetch_assoc()['name']; //echo mb_detect_encoding($name)."<br />";
-        $results_mysql->data_seek($i);
-        $type = $results_mysql->fetch_assoc()['type'];
-        $results_mysql->data_seek($i);
-        $breedingid = $results_mysql->fetch_assoc()['breedingid'];
-        $results_mysql->data_seek($i);
-        $breed = $results_mysql->fetch_assoc()['breed'];
-        $results_mysql->data_seek($i);
-
-        $birthdate = $results_mysql->fetch_assoc()['birthdate'];
-        $results_mysql->data_seek($i);
-        $gender = $results_mysql->fetch_assoc()['gender'];
-        $results_mysql->data_seek($i);
-        $label = $results_mysql->fetch_assoc()['label'];
-        $results_mysql->data_seek($i);
-        $women = $results_mysql->fetch_assoc()['women'];
-        $results_mysql->data_seek($i);
-        $men = $results_mysql->fetch_assoc()['men'];
-        $results_mysql->data_seek($i);
-        $place = $results_mysql->fetch_assoc()['place'];
-        $results_mysql->data_seek($i);
-        $injectiondate = $results_mysql->fetch_assoc()['injectiondate'];
-        $results_mysql->data_seek($i);
-        $injectiontype = $results_mysql->fetch_assoc()['injectiontype'];
-        //("Имя", "", "Окрол ID", "Порода", "Дата рождения", "Пол", "Клеймо", "Мама", "Папа", "Клетка", "Дата прививки")
+        $breedingid = $string_musql['breedingid'];
+        $breed = $string_musql['breed'];
+        $birthdate = $string_musql['birthdate'];
+        $gender = $string_musql['gender'];
+        $label = $string_musql['label'];
+        $women = $string_musql['women'];
+        $men = $string_musql['men'];
+        $place = $string_musql['place'];
+        $injectiondate = $string_musql['injectiondate'];
+        $injectiontype = $string_musql['injectiontype'];
         $arr =  array( $name, $type, $breedingid, $breed, $birthdate, $gender, $label, $women, $men, $place, $injectiondate, $injectiontype );
         $rabbits[$id] = $arr;
     }
@@ -338,6 +339,46 @@ function array_from_mysql($mysql_node, $mysql_user, $mysql_passwd, $mysql_dbase)
     $connect_mysql->close();
     return $rabbits;
 }
+
+// Добавляем нового зайца в MySQL
+function string_to_mysql( $mysql ){
+    $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
+
+    if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
+    $query_mysql = 'INSERT INTO rabbits (name, type, breedingid, breed, birthdate, gender, label, women, men, place, injectiondate, injectiontype) VALUES ("'.$_GET['name'].'", "'.$_GET['type'].'", "'.$_GET['breedingid'].'", "'.$_GET['breed'].'", "'.$_GET['birth'].'", "'.$_GET['gender'].'", "'.$_GET['label'].'", "'.$_GET['women'].'", "'.$_GET['men'].'", "'.$_GET['place'].'", "'.$_GET['injectiondate'].'", "'.$_GET['injectiontype'].'");';
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+
+    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
+    //$results_mysql->close();
+    $connect_mysql->close();
+}
+
+// Изменение данных зайца в MySQL
+function update_string_mysql( $mysql, $rabbit_id ){
+    $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);    
+
+    if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
+    $query_mysql = 'UPDATE rabbits SET name="'.$_GET['name'].'", type="", breedingid="'.$_GET['breedingid'].'", breed="'.$_GET['breed'].'", birthdate="'.$_GET['birth'].'", gender="'.$_GET['gender'].'", label="'.$_GET['label'].'", women="'.$_GET['women'].'", men="'.$_GET['men'].'", place="'.$_GET['place'].'", injectiondate="'.$_GET['injectiondate'].'", injectiontype="'.$_GET['injectiontype'].'" WHERE id="'.$rabbit_id.'";';
+    //echo $query_mysql;
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+
+    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
+
+    //$results_mysql->close();
+    $connect_mysql->close();
+}
+
+// Удаление данных зайца из MySQL
+function string_delete_mysql( $mysql, $rabbit_id ){
+    $connect_mysql = connect_mysql( $mysql );
+    $query_mysql = 'DELETE FROM rabbits WHERE id="'.$rabbit_id.'";';
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+    //$results_mysql->close();
+    $connect_mysql->close();
+    
+}
+
+
 
 // Считывание файла rabbits.csv с превращением данных особей в ассациативный массив, формирование массивов женских и мужских имен
 function array_from_file($file_rabbits) {
