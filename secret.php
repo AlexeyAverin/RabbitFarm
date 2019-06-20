@@ -3,8 +3,8 @@
 
 
 // Mail
-$mail_user = 'yvp777';
-$mail_pass = 'Mail@YvP';
+$mail = array ('user' => 'yvp777',
+               'pass' => 'Mail@YvP');
 
 // MySQL
 $mysql = array ('node'   => 'localhost',
