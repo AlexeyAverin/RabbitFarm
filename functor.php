@@ -39,7 +39,7 @@ $breedingid = array('1', '2', '3');
 
 
 // Отправляет письмо
-function sender_mail($mail_user, $mail_pass, $mail_msg){ //echo 'Добрый день!!!';
+function sender_mail( $mail, $mail_msg ){ //echo 'Добрый день!!!';
     $mail = new PHPMailer(true);
     $mail->From = 'yvp777@list.ru';
     $mail->FromName ='Rabbit Farm';
@@ -89,9 +89,18 @@ function wrapper_days_prior_to_injection($date, $interval, $injections_limit_day
         $days = '<em>'.$days.'</em>';
         $mail_msg = "<div style='color: orange;'>Добрый день, Виталька!!!<br />Здесь будет информация о кроликах!!!<br />$rabbit_name</div>";
 
-        //sender_mail($mail_user, $mail_pass, $mail_msg);
+        //sender_mail($mail, $mail_msg);
         return $days;
     }   
+}
+
+
+function get_msg_mail( $mail, $mens, $womens, $mail_msg, $mysql ){
+    $rabbits = array_from_mysql( $mysql, $mens, $womens );
+    foreach ( $rabbits as $rabbit_id => $rabbit ){
+        $name = $rabbit[0];
+        echo $name;
+    }
 }
 
 // Соединение с MySQL
