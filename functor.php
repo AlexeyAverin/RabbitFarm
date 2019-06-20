@@ -6,9 +6,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 require 'secret.php';
-ini_set('display_errors', 1);
-ini_set('display_atartup_errors',1);
-ini_set('error_reporting', E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_atartup_errors',1);
+//ini_set('error_reporting', E_ALL);
 mb_internal_encoding("UTF-8");
 
 
@@ -39,7 +39,7 @@ $breedingid = array('1', '2', '3');
 
 
 // Отправляет письмо
-function sender_mail( $mail, $mail_msg ){ //echo 'Добрый день!!!';
+function sender_mail( $mail_account, $mail_msg ){ //echo 'Добрый день!!!';
     $mail = new PHPMailer(true);
     $mail->From = 'yvp777@list.ru';
     $mail->FromName ='Rabbit Farm';
@@ -50,8 +50,8 @@ function sender_mail( $mail, $mail_msg ){ //echo 'Добрый день!!!';
     $mail->isSMTP();
     $mail->Host = 'smtp.list.ru';
     $mail->SMTPAuth = true;
-    $mail->Username = $mail_user;
-    $mail->Password = $mail_pass;
+    $mail->Username = $mail_account['user'];
+    $mail->Password = $mail_account['pass'];
     $mail->SMTPSecure = 'ssl';
     $mail->Port = 465;
  
@@ -83,23 +83,26 @@ function days_priorto_injection($date, $interval){
 
 
 // Оборачивает колличество дней в теги html и возращает если дней осталось меньше чем $injections_limit_day
-function wrapper_days_prior_to_injection($date, $interval, $injections_limit_day, $mail_user, $mail_pass, $rabbit_name){
+function wrapper_days_prior_to_injection( $date, $interval, $injections_limit_day ){
     $days = days_priorto_injection($date, $interval);
+
     if ( $days <= $injections_limit_day ) {
         $days = '<em>'.$days.'</em>';
-        $mail_msg = "<div style='color: orange;'>Добрый день, Виталька!!!<br />Здесь будет информация о кроликах!!!<br />$rabbit_name</div>";
-
-        //sender_mail($mail, $mail_msg);
         return $days;
     }   
 }
 
 
-function get_msg_mail( $mail, $mens, $womens, $mail_msg, $mysql ){
+function get_msg_mail( $mail_account, $mens, $womens, $mail_msg, $injections_limit_day, $injections, $mysql ){
     $rabbits = array_from_mysql( $mysql, $mens, $womens );
     foreach ( $rabbits as $rabbit_id => $rabbit ){
-        $name = $rabbit[0];
-        echo $name;
+        $days = days_priorto_injection($rabbit[10], $injections[trim($rabbit[11])] );
+
+        if ( $days <= $injections_limit_day ) {
+            $name = $rabbit[0];
+            $mail_msg = '<p> Добрый день!!!'.$name.' '.$days.' </p>';
+            sender_mail( $mail_account, $mail_msg );
+        }
     }
 }
 
