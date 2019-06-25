@@ -14,36 +14,12 @@ mb_internal_encoding("UTF-8");
 
 
 
-
-/*// Массив женских имен
-$womens = array('Крольчиха Мать', 'Нет данных');
-// Массив мужский имен
-$mens = array('Кролик Отец', 'Нет данных');
-//Массив клеток
-
-$places = array('Клетка 01', 'Клетка 02', 'Клетка 03', 'Клетка 05', 'Клетка 06');
-//Массив полов
-$genders = array('M', 'W');
-//Массив прививок (дни)
-$injections = array('ABC' => 180, 'EFG' => 90, 'HKL' => 3650);
-// Количество дней за которое начинаются формироваться письма
-$injections_limit_day = 10*500;
-// Массив пород
-
-$breeds = array('Беспородная', 'Калифорнийская');
-// Массив окролов
-$breedingid = array('1', '2', '3');*/
-
-
-
-
-
-
 // Отправляет письмо
 function sender_mail( $mail_account, $mail_msg ){ //echo 'Добрый день!!!';
     $mail = new PHPMailer(true);
     $mail->From = 'yvp777@list.ru';
     $mail->FromName ='Rabbit Farm';
+
     $mail->addAddress('yvp777@list.ru', 'Фермер');
     $mail->isHTML(true);
     $mail->CharSet = 'UTF-8';
@@ -52,16 +28,14 @@ function sender_mail( $mail_account, $mail_msg ){ //echo 'Добрый день!
     $mail->Host = 'smtp.list.ru';
     $mail->SMTPAuth = true;
     $mail->Username = $mail_account['user'];
+
     $mail->Password = $mail_account['pass'];
     $mail->SMTPSecure = 'ssl';
     $mail->Port = 465;
- 
     $mail->Subject = 'Письмо от RabbitFarm';
     $mail->Body = $mail_msg; //'Good Day!!! Проверка почтового сообщения!!!';
     $mail->send();
-
     //echo $mail->ErrorInfo; //if ( $mail->send() ) { echo 'Добрый день!!! Письмо!!!'; }
-
 }
 
 // Дата следующей прививки
@@ -102,6 +76,7 @@ function get_msg_mail( $mail_account, $mens, $womens, $mail_msg, $injections_lim
             $name = $rabbit[0];
             $mail_msg = '<p> Добрый день!!!'.$name.' '.$days.' </p>';
             sender_mail( $mail_account, $mail_msg );
+
         }
     }
 }
@@ -116,27 +91,26 @@ function connect_mysql( $mysql ){
 
 // Посыл запроса MySQL
 function send_query_mysql( $connect_mysql, $query_mysql ){
-
     $results_mysql = $connect_mysql->query($query_mysql);
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     return $results_mysql;
+
 }
 
 // Считывание данных зайцев из mysql
 function array_from_mysql( $mysql, $mens, $womens ){ //"Добрый день!!!"
     $connect_mysql = connect_mysql( $mysql );
-    $query_mysql = 'SELECT * FROM rabbits;';
 
+    $query_mysql = 'SELECT * FROM rabbits;';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     $rows_mysql = $results_mysql->num_rows;
     for ( $i = 0; $i < $rows_mysql; ++$i ) {
-        
         $results_mysql->data_seek($i);
         $string_musql = $results_mysql->fetch_array(MYSQLI_ASSOC);
         $id = $string_musql['id'];
         $name = $string_musql['name']; //echo mb_detect_encoding($name)."<br />";
-        $type = $string_musql['type'];
 
+        $type = $string_musql['type'];
         $breedingid = $string_musql['breedingid'];
         $breed = $string_musql['breed'];
         $birthdate = $string_musql['birthdate'];
@@ -144,19 +118,18 @@ function array_from_mysql( $mysql, $mens, $womens ){ //"Добрый день!!!
         $label = $string_musql['label'];
         $women = $string_musql['women'];
         $men = $string_musql['men'];
+
         $place = $string_musql['place'];
         $injectiondate = $string_musql['injectiondate'];
         $injectiontype = $string_musql['injectiontype'];
         $arr =  array( $name, $type, $breedingid, $breed, $birthdate, $gender, $label, $women, $men, $place, $injectiondate, $injectiontype );
         $rabbits[$id] = $arr;
 
-
-
         if ( $gender == 'M' ) {
             $mens[] = $name;
+
         }
         if ( $gender == 'W' ) {
- 
             $womens[] = $name;
         }
     }
@@ -170,7 +143,6 @@ function array_from_mysql( $mysql, $mens, $womens ){ //"Добрый день!!!
 // Добавляем нового зайца в MySQL
 function string_to_mysql( $mysql ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
-
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
     $query_mysql = 'INSERT INTO rabbits (name, type, breedingid, breed, birthdate, gender, label, women, men, place, injectiondate, injectiontype) VALUES ("'.$_GET['name'].'", "", "'.$_GET['breedingid'].'", "'.$_GET['breed'].'", "'.$_GET['birth'].'", "'.$_GET['gender'].'", "'.$_GET['label'].'", "'.$_GET['women'].'", "'.$_GET['men'].'", "'.$_GET['place'].'", "'.$_GET['injectiondate'].'", "'.$_GET['injectiontype'].'");';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
@@ -182,14 +154,10 @@ function string_to_mysql( $mysql ){
 // Изменение данных зайца в MySQL
 function update_string_mysql( $mysql, $rabbit_id ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);    
-
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
     $query_mysql = 'UPDATE rabbits SET name="'.$_GET['name'].'", type="", breedingid="'.$_GET['breedingid'].'", breed="'.$_GET['breed'].'", birthdate="'.$_GET['birth'].'", gender="'.$_GET['gender'].'", label="'.$_GET['label'].'", women="'.$_GET['women'].'", men="'.$_GET['men'].'", place="'.$_GET['place'].'", injectiondate="'.$_GET['injectiondate'].'", injectiontype="'.$_GET['injectiontype'].'" WHERE id="'.$rabbit_id.'";';
-    //echo $query_mysql;
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
-
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
-
     //$results_mysql->close();
     $connect_mysql->close();
 }
