@@ -106,22 +106,22 @@ function array_from_mysql( $mysql, $mens, $womens ){ //"Добрый день!!!
     $rows_mysql = $results_mysql->num_rows;
     for ( $i = 0; $i < $rows_mysql; ++$i ) {
         $results_mysql->data_seek($i);
-        $string_musql = $results_mysql->fetch_array(MYSQLI_ASSOC);
-        $id = $string_musql['id'];
-        $name = $string_musql['name']; //echo mb_detect_encoding($name)."<br />";
+        $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
+        $id = $string_mysql['id'];
+        $name = $string_mysql['name']; //echo mb_detect_encoding($name)."<br />";
 
-        $type = $string_musql['type'];
-        $breedingid = $string_musql['breedingid'];
-        $breed = $string_musql['breed'];
-        $birthdate = $string_musql['birthdate'];
-        $gender = $string_musql['gender'];
-        $label = $string_musql['label'];
-        $women = $string_musql['women'];
-        $men = $string_musql['men'];
+        $type = $string_mysql['type'];
+        $breedingid = $string_mysql['breedingid'];
+        $breed = $string_mysql['breed'];
+        $birthdate = $string_mysql['birthdate'];
+        $gender = $string_mysql['gender'];
+        $label = $string_mysql['label'];
+        $women = $string_mysql['women'];
+        $men = $string_mysql['men'];
 
-        $place = $string_musql['place'];
-        $injectiondate = $string_musql['injectiondate'];
-        $injectiontype = $string_musql['injectiontype'];
+        $place = $string_mysql['place'];
+        $injectiondate = $string_mysql['injectiondate'];
+        $injectiontype = $string_mysql['injectiontype'];
         $arr =  array( $name, $type, $breedingid, $breed, $birthdate, $gender, $label, $women, $men, $place, $injectiondate, $injectiontype );
         $rabbits[$id] = $arr;
 
@@ -202,4 +202,32 @@ function fill_select( $array, $name, $value ){
      $tag = "<select id='$name' name='$name'>$tag</select>";
     return $tag;
 }
+
+// Считывание данных случек из mysql
+function copulations_from_mysql( $mysql ){
+    $connect_mysql = connect_mysql( $mysql );
+    $query_mysql = 'SELECT * FROM copulatios;';
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+
+    $rows_mysql = $results_mysql->num_rows;
+    for ( $i = 0; $i < $rows_mysql; ++$i ) {
+        $results_mysql->data_seek($i);
+        $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
+        $couplingid = $string_mysql['couplingid'];
+        $date = $string_mysql['date'];
+        $men = $string_mysql['men'];
+
+
+        $women = $string_mysql['women'];
+        $place = $string_mysql['place'];
+        $arr = array( $couplingid, $date, $men, $women, $place );
+        $copulations[$couplingid] = $arr;
+    }
+    $results_mysql->close();
+    $connect_mysql->close();
+
+    return $copulations;
+
+}
+
 ?>
