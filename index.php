@@ -31,10 +31,16 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'upd' ) {
 }
 
 // Считывание данных MySQL
-$rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
-$rabbits = $rabbits_mens_womens[0];
-$mens = $rabbits_mens_womens[1];
-$womens = $rabbits_mens_womens[2];
+if ( !isset($_GET['str']) ) {
+    $rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
+    $rabbits = $rabbits_mens_womens[0];
+    $mens = $rabbits_mens_womens[1];
+    $womens = $rabbits_mens_womens[2];
+}
+
+if ( $_GET['str'] == 'cop' ) {
+    $copulations = copulations_from_mysql( $mysql );
+}
 
 // Отображение страницы
 $string_up = <<<EOD
@@ -51,7 +57,7 @@ $string_up = <<<EOD
         <header>
             <div class="logotip"><a href="index.php"><img src="rabbit.png"></a></div>
             <div class="brand">Добрый день!!!</div>
-            <nav><a href="index.php">Кролики</a><a href="index.php?str=okr">Окролы</a><a href="">Статистика</a></nav>
+            <nav><a href="index.php">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a></nav>
         </header>
         </form>
         <script src="men.js">
@@ -59,8 +65,9 @@ $string_up = <<<EOD
         <section>
 EOD;
 
-// Отображается список кроликов в при простом отображении и при удалении кролика
-if ( !isset($_GET['action']) || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
+if ( !isset($_GET['str']) ) {
+  // Отображается список кроликов в при простом отображении и при удалении кролика
+  if ( !isset($_GET['action']) || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
     $string_rabbits = '';
 
     $rabbit_new_id = 0;
@@ -73,7 +80,7 @@ if ( !isset($_GET['action']) || $_GET['action'] == 'upd' || $_GET['action'] == '
         }
         $string_middle = <<<EOD
             <table class="ferma">
-                <tr><th>№</th><th>Кличка</th><th>Клемо</th><th>Дата рождения</th><th>Пол</th><th>Порода</th><th>Клетка</th><th>Прививка</th><th></th></tr>
+                <tr><th>ID Кролика</th><th>Кличка</th><th>Клемо</th><th>Дата рождения</th><th>Пол</th><th>Порода</th><th>Клетка</th><th>Прививка</th><th></th></tr>
                 $string_rabbits
                 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
 
@@ -82,7 +89,7 @@ if ( !isset($_GET['action']) || $_GET['action'] == 'upd' || $_GET['action'] == '
 EOD;
 
 // Отображение общей информации по кролику, отображается при 'Вывод информации кролика' 'Добавление нового кролика' 
-} elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
+ } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
     $rabbit_id = $_GET['rabbitid'];
 
     if ( $_GET['action'] == 'mod' ) {
@@ -123,23 +130,41 @@ EOD;
     
     // Отображается дополнительная информация по кроликам 'Вывод информации кролика'
     if ( (array_key_exists($_GET['rabbitid'], $rabbits)) ) {
-        $string_middle .= "<table class='ferma'>
-            <tr><td colspan='3'>Данные по вакцинации</td></tr>
-            <tr><th>Наименование</th><th>Дата проведения</th><th>Следующая дата</th></tr>
-            <tr><td>Ассоциированная</td><td>01.01.2001</td><td>01.07.2001</td></tr>
-        </table>
-        <table class='ferma'>
-            <tr><td colspan='3'>Данные по случке</td></tr>
-            <tr><th>Партнер</th><th>Дата проведения</th><th>Дата ожидаемая</th></tr>
-            <tr><td>Тарзан</td><td>01.01.2001</td><td>01.07.2001</td></tr>
-        </table>
-        <table class='ferma'>
-            <tr><td colspan='3'>Данные по окролу</td></tr>
-            <tr><th>Наименование</th><th>Дата проведения</th><th>Следующая дата</th></tr>
-            <tr><td>Ассоциированная</td><td>01.01.2001</td><td>01.07.2001</td></tr>
-
-        </table>";
+            $string_middle .= "<table class='ferma'>
+                <tr><td colspan='3'>Данные по вакцинации</td></tr>
+                <tr><th>Наименование</th><th>Дата проведения</th><th>Следующая дата</th></tr>
+                <tr><td>Ассоциированная</td><td>01.01.2001</td><td>01.07.2001</td></tr>
+            </table>
+            <table class='ferma'>
+                <tr><td colspan='3'>Данные по случке</td></tr>
+                <tr><th>Партнер</th><th>Дата проведения</th><th>Дата ожидаемая</th></tr>
+                <tr><td>Тарзан</td><td>01.01.2001</td><td>01.07.2001</td></tr>
+            </table>
+            <table class='ferma'>
+                <tr><td colspan='3'>Данные по окролу</td></tr>
+                <tr><th>Наименование</th><th>Дата проведения</th><th>Следующая дата</th></tr>
+                <tr><td>Ассоциированная</td><td>01.01.2001</td><td>01.07.2001</td></tr>
+            </table>";
+        }
     }
+}  elseif ( $_GET['str'] == 'bre' ) {
+    $string_middle = "<table class='ferma'>
+    <tr><th>ID Окрола</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Кол-во М</th><th>Кол-во Ж</th><th>ID Случки</th><th></th></tr>
+    <tr><td><a href=''>1</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
+    <tr><td><a href=''>2</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
+    <tr><td><a href=''>3</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
+    <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+    <tr><td><a href=''>Добавить новый окрол</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+    </table>";
+}  elseif ( $_GET['str'] == 'cop' ) {
+    $string_middle = "<table class='ferma'>
+    <tr><th>ID Случки</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Клетка</th><th></th></tr>
+    <tr><td><a href=''>1</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
+    <tr><td><a href=''>2</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
+    <tr><td><a href=''>3</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
+    <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+    <tr><td><a href=''>Добавить новый окрол</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+    </table>";
 }
 
 $string_down = <<<EOD
