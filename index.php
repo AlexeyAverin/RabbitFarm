@@ -31,7 +31,10 @@ if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'upd' ) {
 }
 
 // Считывание данных MySQL
-$rabbits = array_from_mysql( $mysql, $mens, $womens );
+$rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
+$rabbits = $rabbits_mens_womens[0];
+$mens = $rabbits_mens_womens[1];
+$womens = $rabbits_mens_womens[2];
 
 // Отображение страницы
 $string_up = <<<EOD
@@ -91,12 +94,11 @@ $string_up = <<<EOD
         <section>
 EOD;
 
-
-
 // Отображается список кроликов в при простом отображении и при удалении кролика
 if ( !isset($_GET['action']) || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
-        $string_rabbits = '';
-        $rabbit_new_id = 0;
+    $string_rabbits = '';
+
+    $rabbit_new_id = 0;
         foreach ( $rabbits as $rabbit_id => $rabbit ){
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
             $string_rabbit = "<tr><td>$rabbit_id</td><td><a href='index.php?action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections[trim($rabbit[11])], $injections_limit_day)."</td><td><div class='erase-rabbit' rabbitid='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!

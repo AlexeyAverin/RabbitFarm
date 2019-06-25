@@ -92,9 +92,8 @@ function wrapper_days_prior_to_injection( $date, $interval, $injections_limit_da
     }   
 }
 
-
 function get_msg_mail( $mail_account, $mens, $womens, $mail_msg, $injections_limit_day, $injections, $mysql ){
-    $rabbits = array_from_mysql( $mysql, $mens, $womens );
+    $rabbits = array_from_mysql( $mysql, $mens, $womens )[0];
     foreach ( $rabbits as $rabbit_id => $rabbit ){
         $days = days_priorto_injection($rabbit[10], $injections[trim($rabbit[11])] );
 
@@ -163,7 +162,8 @@ function array_from_mysql( $mysql, $mens, $womens ){ //"Добрый день!!!
 
     $results_mysql->close();
     $connect_mysql->close();
-    return $rabbits;
+    $rabbits_mens_womens = array($rabbits, $mens, $womens);
+    return $rabbits_mens_womens;
 }
 
 // Добавляем нового зайца в MySQL
