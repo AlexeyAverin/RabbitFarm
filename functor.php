@@ -6,6 +6,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 require 'secret.php';
+require 'setting.php';
 //ini_set('display_errors', 1);
 //ini_set('display_atartup_errors',1);
 //ini_set('error_reporting', E_ALL);
@@ -14,7 +15,7 @@ mb_internal_encoding("UTF-8");
 
 
 
-// Массив женских имен
+/*// Массив женских имен
 $womens = array('Крольчиха Мать', 'Нет данных');
 // Массив мужский имен
 $mens = array('Кролик Отец', 'Нет данных');
@@ -31,7 +32,7 @@ $injections_limit_day = 10*500;
 
 $breeds = array('Беспородная', 'Калифорнийская');
 // Массив окролов
-$breedingid = array('1', '2', '3');
+$breedingid = array('1', '2', '3');*/
 
 
 

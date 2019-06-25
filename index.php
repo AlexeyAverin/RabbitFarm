@@ -8,7 +8,7 @@ mb_internal_encoding("UTF-8");
 // sendmail.php
 // men.js
 // secret.php
-
+// seting.php
 
 
 
