@@ -38,8 +38,14 @@ if ( !isset($_GET['str']) ) {
     $womens = $rabbits_mens_womens[2];
 }
 
+// Считывание данных MySQ по случке
 if ( $_GET['str'] == 'cop' ) {
-    $copulations = copulations_from_mysql( $mysql );
+    // $copulations = copulations_from_mysql( $mysql );
+}
+
+//Считывание данных MySQL по окролам
+if ( $_GET['str'] == 'bre' ) {
+    // $copulations = copulations_from_mysql( $mysql );
 }
 
 // Отображение страницы
@@ -84,7 +90,7 @@ if ( !isset($_GET['str']) ) {
                 $string_rabbits
                 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
 
-                <tr><td>...</td><td><a href="index.php?action=new&rabbit">Добавить нового кроллика</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+                <tr><td>...</td><td><a href="index.php?action=new">Добавить нового кроллика</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
             </table>
 EOD;
 
@@ -118,7 +124,7 @@ EOD;
     $string_middle = "
     <form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'>
         <table class='rabbit'>
-            <tr><th colspan='5'>Персональный данные</th></tr>
+            <tr><th colspan='5'>Персональный данные кролика</th></tr>
             <tr><td>ID Кролика</td><td>Кличка</td><td>Порода</td><td>Пол</td><td>Клеймо</td></tr>
             <tr><td><input type='text' name='rabbitid' value='$rabbit_id' disabled></td><td><input name='name' placeholder='Введите имя' value='".$rabbit_name."' type='text'></td><td>".fill_select($breeds, 'breed', $rabbit_breed)."</td><td>".fill_select($genders, 'gender', $rabbit_gender)."</td><td><input type='text' name='label' placeholder='Введите клеймо' value='$rabbit_label'></td></tr>
             <tr><td>ID Окрола</td><td>Крольчиха Мама</td><td>Кролик Отец</td><td>Дата рождения</td><td>Линия</td></tr>
@@ -148,23 +154,48 @@ EOD;
         }
     }
 }  elseif ( $_GET['str'] == 'bre' ) {
-    $string_middle = "<table class='ferma'>
-    <tr><th>ID Окрола</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Кол-во М</th><th>Кол-во Ж</th><th>ID Случки</th><th></th></tr>
-    <tr><td><a href=''>1</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
-    <tr><td><a href=''>2</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
-    <tr><td><a href=''>3</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
-    <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-    <tr><td><a href=''>Добавить новый окрол</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-    </table>";
+    if ( !isset($_GET['action']) ) {
+        $string_middle = "<table class='ferma'>
+        <tr><th>ID Окрола</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Кол-во М</th><th>Кол-во Ж</th><th>ID Случки</th><th></th></tr>
+        <tr><td><a href=''>1</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
+        <tr><td><a href=''>2</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
+        <tr><td><a href=''>3</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
+        <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        <tr><td><a href='index.php?str=bre&action=new'>Добавить новый окрол</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        </table>";
+    } elseif ( $_GET['action'] == 'new' ) {
+        $string_middle = "<table class='rabbit'>
+        <tr><th colspan='4'>Учетные данные окрола</th></tr>
+
+
+        <tr><td>Дата</td><td>Самки</td><td>Самцы</td><td>ID Случки</td></tr>
+        <tr><td><input name='datebreeding' type='date'></td><td><input name='numbermen' min='0' type='number'></td><td><input name='numberwomen' min='0' type='number'></td><td>".fill_select($places, 'place', $rabbit_place)."</td></tr>
+        <tr><td></td><td></td><td></td><td><input value='Записать' type='submit'></td></tr>
+        
+        
+        </table>";
+    }
 }  elseif ( $_GET['str'] == 'cop' ) {
-    $string_middle = "<table class='ferma'>
-    <tr><th>ID Случки</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Клетка</th><th></th></tr>
-    <tr><td><a href=''>1</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
-    <tr><td><a href=''>2</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
-    <tr><td><a href=''>3</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
-    <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-    <tr><td><a href=''>Добавить новый окрол</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-    </table>";
+    if ( !isset($_GET['action']) ) {
+        $string_middle = "<table class='ferma'>
+        <tr><th>ID Случки</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Клетка</th><th></th></tr>
+        <tr><td><a href=''>1</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
+        <tr><td><a href=''>2</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
+        <tr><td><a href=''>3</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
+
+        <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        <tr><td><a href='index.php?str=cop&action=new'>Добавить новую случку</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        </table>";
+    } elseif ( $_GET['action'] == 'new' ) {
+        $string_middle = "<table class='rabbit'>
+        <tr><th colspan='4'>Учетные данные случки</th></tr>
+        <tr><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td></tr>
+        <tr><td><input type='date'></td><td>".fill_select($mens, 'men', $rabbit_men)."</td><td>".fill_select($womens, 'women', $rabbit_women)."</td><td>".fill_select($places, 'place', $rabbit_place)."</td></tr>
+        <tr><td></td><td></td><td></td><td><input type='submit' value='Записать'></td></tr>
+
+        </table>";
+
+    }
 }
 
 $string_down = <<<EOD
