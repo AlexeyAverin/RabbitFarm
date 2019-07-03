@@ -7,9 +7,9 @@ use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 require 'secret.php';
 require 'setting.php';
-//ini_set('display_errors', 1);
-//ini_set('display_atartup_errors',1);
-//ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_atartup_errors',1);
+ini_set('error_reporting', E_ALL);
 mb_internal_encoding("UTF-8");
 
 
@@ -40,10 +40,10 @@ function sender_mail( $mail_account, $mail_msg ){ //echo 'Добрый день!
 
 // Дата следующей прививки
 function date_next_injection($date, $interval){
-    $date = new DateTime($date);
-    $interval = 'P'.trim($interval).'D';
-    $date->add(new DateInterval($interval));
-    return $date->format('d-m-Y');
+    //$date = new DateTime($date);
+    //$interval = 'P'.trim($interval).'D';
+    //$date->add(new DateInterval($interval));
+    //return $date->format('d-m-Y');
 }
 
 
