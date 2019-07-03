@@ -14,37 +14,36 @@ mb_internal_encoding("UTF-8");
 
 
 
-// Добавление данных зайца в MySQL
-if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-    string_to_mysql( $mysql );
-}
+if ( !isset($_GET['str']) ) { // Функции кроликов
+    // Добавление данных зайца в MySQL
+    if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
+        string_to_mysql( $mysql );
+    }
 
+    // Удаление кролика
+    if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {//echo "Добрый вечер!!!";
+        string_delete_mysql( $mysql, $_GET['rabbitid'] ); 
+    }
 
-// Удаление кролика
-if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {//echo "Добрый вечер!!!";
-    string_delete_mysql( $mysql, $_GET['rabbitid'] ); 
-}
+    // Изменений данных кролика
+    if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'upd' ) {
+        update_string_mysql( $mysql, $_GET['rabbitid'] ); ###
+    
+    }
 
-// Изменений данных кролика
-if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'upd' ) {
-    update_string_mysql( $mysql, $_GET['rabbitid'] ); ###
-}
-
-// Считывание данных MySQL
-if ( !isset($_GET['str']) ) {
-    $rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
-    $rabbits = $rabbits_mens_womens[0];
-    $mens = $rabbits_mens_womens[1];
-    $womens = $rabbits_mens_womens[2];
-}
-
-// Считывание данных MySQ по случке
-if ( $_GET['str'] == 'cop' ) {
+    // Считывание данных MySQL
+        $rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
+        $rabbits = $rabbits_mens_womens[0];
+        $mens = $rabbits_mens_womens[1];
+        $womens = $rabbits_mens_womens[2];
+    
+    
+    
+} elseif ( $_GET['str'] == 'cop' ) { // Функции случек
+    // Считывание данных MySQ по случке
     // $copulations = copulations_from_mysql( $mysql );
-}
-
-//Считывание данных MySQL по окролам
-if ( $_GET['str'] == 'bre' ) {
+} elseif ( $_GET['str'] == 'bre' ) { // Функции окролов
+    //Считывание данных MySQL по окролам
     // $copulations = copulations_from_mysql( $mysql );
 }
 
@@ -187,13 +186,15 @@ EOD;
         <tr><td><a href='index.php?str=cop&action=new'>Добавить новую случку</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         </table>";
     } elseif ( $_GET['action'] == 'new' ) {
-        $string_middle = "<table class='rabbit'>
-        <tr><th colspan='4'>Учетные данные случки</th></tr>
-        <tr><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td></tr>
-        <tr><td><input type='date'></td><td>".fill_select($mens, 'men', $rabbit_men)."</td><td>".fill_select($womens, 'women', $rabbit_women)."</td><td>".fill_select($places, 'place', $rabbit_place)."</td></tr>
-        <tr><td></td><td></td><td></td><td><input type='submit' value='Записать'></td></tr>
-
-        </table>";
+        $string_middle = "<form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'>
+            <table class='rabbit'>
+                <tr><th colspan='4'>Учетные данные случки</th></tr>
+                <tr><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td></tr>
+                <tr><td><input name='breedingdate' type='date'></td><td>".fill_select($mens, 'breedingmen', $rabbit_men)."</td><td>".fill_select($womens, 'breedingwomen', $rabbit_women)."</td><td>".fill_select($places, 'breedingplace', $rabbit_place)."</td></tr>
+                <tr><td></td><td><input action='action' value='ins' type='hidden'></td><td><input name='str' value='cop' type='hidden'></td><td><input type='submit' value='Записать'></td></tr>
+            </table>
+        
+        </form>";
 
     }
 }
