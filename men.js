@@ -11,7 +11,7 @@ function $(id){
 
 
 document.body.addEventListener("click", function(event){
-    if (event.target.className == "erase-rabbit" ) {//alert('Добрый день!!!' + rabbitid);
+    if (event.target.className == "erase" ) {//alert('Добрый день!!!' + rabbitid);
 
         
         // Полупрозрачный фон
@@ -46,8 +46,16 @@ document.body.addEventListener("click", function(event){
         divMenu.style.backgroundColor = 'white';
         //divMenu.style.visibility = 'hidden';
 
-        var rabbitid = event.target.getAttribute('rabbitid');
-        divMenu.innerHTML= 'Добрый день, Вы точно хотите удалить запись<p><a href="index.php?rabbitid=' + rabbitid + '&action=del">Да</a><a href="index.php">Нет</a></p>';
+        var id = event.target.getAttribute('id');
+        var str = event.target.getAttribute('str');
+        if ( str == "rab" || str == '' ) {
+            var stringsrt = '';
+        }
+        if ( str != "rab" ) {
+            var stringsrt = 'str=' + str + '&';
+        }
+
+        divMenu.innerHTML= 'Добрый день, Вы точно хотите удалить запись<p><a href="index.php?' + stringsrt + 'id=' + id + '&action=del">Да</a><a href="index.php">Нет</a></p>';
     }
 });
 
