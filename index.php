@@ -46,7 +46,7 @@ if ( !isset($_GET['str']) ) { // Функции кроликов
     } elseif ( $_GET['action'] == 'del' ) {
         copulation_delete_mysql( $mysql );
     } elseif ( $_GET['action'] == 'upd' ) {
-        copulation_delete_mysql( $mysql );
+        copulation_update_mysql( $mysql );
     }
 
     // Считывание данных MySQ по случке
@@ -178,17 +178,17 @@ EOD;
 
 
         <tr><td>Дата</td><td>Самки</td><td>Самцы</td><td>ID Случки</td></tr>
-        <tr><td><input name='datebreeding' type='date'></td><td><input name='numbermen' min='0' type='number'></td><td><input name='numberwomen' min='0' type='number'></td><td>".fill_select($places, 'place', $rabbit_place)."</td></tr>
+        <tr><td><input name='datebreeding' value='".date('Y-m-d', strtotime($copulations[$_GET['id']][1]))."' type='date'>".strtotime($copulations[$_GET['id']][1])."</td><td><input name='numbermen' value='".$copulations[$_GET['id']][2]."' min='0' type='number'></td><td><input name='numberwomen' value='".$copulations[$_GET['id']][3]."' min='0' type='number'></td><td>".fill_select($copulations[$_GET['id']][4], 'place', $rabbit_place)."</td></tr>
         <tr><td></td><td></td><td></td><td><input value='Записать' type='submit'></td></tr>
         
         
         </table>";
     }
 }  elseif ( $_GET['str'] == 'cop' ) {
-    if ( !isset($_GET['action']) || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
+    if ( !isset($_GET['action']) || $_GET['action'] == 'ins' || $_GET['action'] == 'upd' || $_GET['action'] == 'del' ) {
         $string_couplings = '';
         foreach ( $copulations as $coupling_id => $coupling ){
-            $string_coupling = '<tr><td>'.$coupling[0].'</td><td>'.$coupling[1].'</td><td>'.$coupling[2].'</td><td>'.$coupling[3].'</td><td>'.$coupling[4].'</td><td><div class="erase" str="cop" id="'.$coupling_id.'" href="">x</div></td></tr>';
+            $string_coupling = '<tr><td><a href="index.php?str=cop&action=mod&id='.$coupling_id.'">'.$coupling[0].'</a></td><td>'.$coupling[1].'</td><td>'.$coupling[2].'</td><td>'.$coupling[3].'</td><td>'.$coupling[4].'</td><td><div class="erase" str="cop" id="'.$coupling_id.'" href="">x</div></td></tr>';
             $string_couplings .= $string_coupling;
         }
         
@@ -201,13 +201,20 @@ EOD;
         <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         <tr><td><a href='index.php?str=cop&action=new'>Добавить новую случку</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         </table>";
-    } elseif ( $_GET['action'] == 'new' ) {
+    } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
+        if ( $_GET['action'] == 'mod' ) {
+            $action_type = 'upd';
+        } elseif ( $_GET['action'] == 'new' ) {
+            $action_type = 'ins';
+        }
+
+
         $string_middle = "<form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'>
             <table class='rabbit'>
                 <tr><th colspan='4'>Учетные данные случки</th></tr>
-                <tr><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td></tr>
-                <tr><td><input name='couplingdate' type='date'></td><td>".fill_select($mens, 'couplingmen', $rabbit_men)."</td><td>".fill_select($womens, 'couplingwomen', $rabbit_women)."</td><td>".fill_select($places, 'couplingplace', $rabbit_place)."</td></tr>
-                <tr><td></td><td><input name='action' value='ins' type='hidden'></td><td><input name='str' value='cop' type='hidden'></td><td><input type='submit' value='Записать'></td></tr>
+                <tr><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td><td></td></tr>
+                <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input name='couplingdate' value='".date('Y-m-d', strtotime($copulations[$_GET['id']][1]))."' type='date'></td><td>".fill_select($mens, 'couplingmen', $rabbit_men)."</td><td>".fill_select($womens, 'couplingwomen', $rabbit_women)."</td><td>".fill_select($places, 'couplingplace', $rabbit_place)."</td><td><input name='str' value='cop' type='hidden'><input name='id' value='".$_GET['id']."' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input type='submit' value='Записать'></td></form></tr>
+                <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td> </td><td></td><td></td><td></td><td><input id='crtbre' couplingid='".$_GET['id']."' type='button' value='Создать окрол'></td></form></tr>
             </table>
         
         </form>";
