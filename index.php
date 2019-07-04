@@ -21,8 +21,8 @@ if ( !isset($_GET['str']) ) { // Функции кроликов
     }
 
     // Удаление кролика
-    if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'del' ) {//echo "Добрый вечер!!!";
-        string_delete_mysql( $mysql, $_GET['rabbitid'] ); 
+    if ( (isset($_GET['id'])) && $_GET['action'] == 'del' ) {//echo "Добрый вечер!!!";
+        string_delete_mysql( $mysql, $_GET['id'] ); 
     }
 
     // Изменений данных кролика
@@ -39,8 +39,14 @@ if ( !isset($_GET['str']) ) { // Функции кроликов
     
     
 } elseif ( $_GET['str'] == 'cop' ) { // Функции случек
+    
+    // Добавление случки
     if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
         copulations_to_mysql( $mysql );
+    } elseif ( $_GET['action'] == 'del' ) {
+        copulation_delete_mysql( $mysql );
+    } elseif ( $_GET['action'] == 'upd' ) {
+        copulation_delete_mysql( $mysql );
     }
 
     // Считывание данных MySQ по случке
@@ -81,7 +87,7 @@ if ( !isset($_GET['str']) ) {
         foreach ( $rabbits as $rabbit_id => $rabbit ){
 
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
-            $string_rabbit = "<tr><td>$rabbit_id</td><td><a href='index.php?action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections[trim($rabbit[11])], $injections_limit_day)."</td><td><div class='erase-rabbit' rabbitid='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
+            $string_rabbit = "<tr><td>$rabbit_id</td><td><a href='index.php?action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections[trim($rabbit[11])], $injections_limit_day)."</td><td><div class='erase' str='rab' id='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
 
             $string_rabbits .= $string_rabbit;
             //$rabbit_new_id = ++$rabbit_id;
@@ -179,10 +185,10 @@ EOD;
         </table>";
     }
 }  elseif ( $_GET['str'] == 'cop' ) {
-    if ( !isset($_GET['action']) || $_GET['action'] == 'ins' ) {
+    if ( !isset($_GET['action']) || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
         $string_couplings = '';
         foreach ( $copulations as $coupling_id => $coupling ){
-            $string_coupling = '<tr><td>'.$coupling[0].'</td><td>'.$coupling[1].'</td><td>'.$coupling[2].'</td><td>'.$coupling[3].'</td><td>'.$coupling[4].'</td></tr>';
+            $string_coupling = '<tr><td>'.$coupling[0].'</td><td>'.$coupling[1].'</td><td>'.$coupling[2].'</td><td>'.$coupling[3].'</td><td>'.$coupling[4].'</td><td><div class="erase" str="cop" id="'.$coupling_id.'" href="">x</div></td></tr>';
             $string_couplings .= $string_coupling;
         }
         
