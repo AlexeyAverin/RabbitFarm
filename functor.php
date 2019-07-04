@@ -7,9 +7,9 @@ use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 require 'secret.php';
 require 'setting.php';
-ini_set('display_errors', 1);
-ini_set('display_atartup_errors',1);
-ini_set('error_reporting', E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_atartup_errors',1);
+//ini_set('error_reporting', E_ALL);
 mb_internal_encoding("UTF-8");
 
 
@@ -206,7 +206,7 @@ function fill_select( $array, $name, $value ){
 // Считывание данных случек из mysql
 function copulations_from_mysql( $mysql ){
     $connect_mysql = connect_mysql( $mysql );
-    $query_mysql = 'SELECT * FROM copulatios;';
+    $query_mysql = 'SELECT * FROM copulations;';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
 
     $rows_mysql = $results_mysql->num_rows;
@@ -214,12 +214,12 @@ function copulations_from_mysql( $mysql ){
         $results_mysql->data_seek($i);
         $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
         $couplingid = $string_mysql['couplingid'];
-        $date = $string_mysql['date'];
-        $men = $string_mysql['men'];
+        $date = $string_mysql['couplingdate'];
+        $men = $string_mysql['couplingmen'];
 
 
-        $women = $string_mysql['women'];
-        $place = $string_mysql['place'];
+        $women = $string_mysql['couplingwomen'];
+        $place = $string_mysql['couplingplace'];
         $arr = array( $couplingid, $date, $men, $women, $place );
         $copulations[$couplingid] = $arr;
     }
@@ -227,7 +227,18 @@ function copulations_from_mysql( $mysql ){
     $connect_mysql->close();
 
     return $copulations;
-
 }
+
+function copulations_to_mysql( $mysql ){
+    $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
+    if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
+    $query_mysql = 'INSERT INTO copulations (couplingdate, couplingmen, couplingwomen, couplingplace) VALUES ("'.$_GET['couplingdate'].'", "'.$_GET['couplingmen'].'", "'.$_GET['couplingwomen'].'", "'.$_GET['couplingplace'].'");';
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
+    //$results_mysql->close();
+    $connect_mysql->close();
+}
+
+
 
 ?>

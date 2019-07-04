@@ -38,10 +38,13 @@ if ( !isset($_GET['str']) ) { // Функции кроликов
         $womens = $rabbits_mens_womens[2];
     
     
-    
 } elseif ( $_GET['str'] == 'cop' ) { // Функции случек
+    if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
+        copulations_to_mysql( $mysql );
+    }
+
     // Считывание данных MySQ по случке
-    // $copulations = copulations_from_mysql( $mysql );
+    $copulations = copulations_from_mysql( $mysql );
 } elseif ( $_GET['str'] == 'bre' ) { // Функции окролов
     //Считывание данных MySQL по окролам
     // $copulations = copulations_from_mysql( $mysql );
@@ -74,27 +77,28 @@ if ( !isset($_GET['str']) ) {
   // Отображается список кроликов в при простом отображении и при удалении кролика
   if ( !isset($_GET['action']) || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
     $string_rabbits = '';
-
-    $rabbit_new_id = 0;
+    //$rabbit_new_id = 0;
         foreach ( $rabbits as $rabbit_id => $rabbit ){
+
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
             $string_rabbit = "<tr><td>$rabbit_id</td><td><a href='index.php?action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections[trim($rabbit[11])], $injections_limit_day)."</td><td><div class='erase-rabbit' rabbitid='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
 
             $string_rabbits .= $string_rabbit;
-            $rabbit_new_id = ++$rabbit_id;
+            //$rabbit_new_id = ++$rabbit_id;
         }
         $string_middle = <<<EOD
             <table class="ferma">
+
                 <tr><th>ID Кролика</th><th>Кличка</th><th>Клемо</th><th>Дата рождения</th><th>Пол</th><th>Порода</th><th>Клетка</th><th>Прививка</th><th></th></tr>
                 $string_rabbits
                 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-
                 <tr><td>...</td><td><a href="index.php?action=new">Добавить нового кроллика</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
             </table>
 EOD;
 
 // Отображение общей информации по кролику, отображается при 'Вывод информации кролика' 'Добавление нового кролика' 
- } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
+
+} elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
     $rabbit_id = $_GET['rabbitid'];
 
     if ( $_GET['action'] == 'mod' ) {
@@ -175,13 +179,19 @@ EOD;
         </table>";
     }
 }  elseif ( $_GET['str'] == 'cop' ) {
-    if ( !isset($_GET['action']) ) {
+    if ( !isset($_GET['action']) || $_GET['action'] == 'ins' ) {
+        $string_couplings = '';
+        foreach ( $copulations as $coupling_id => $coupling ){
+            $string_coupling = '<tr><td>'.$coupling[0].'</td><td>'.$coupling[1].'</td><td>'.$coupling[2].'</td><td>'.$coupling[3].'</td><td>'.$coupling[4].'</td></tr>';
+            $string_couplings .= $string_coupling;
+        }
+        
+        
+        
+        
         $string_middle = "<table class='ferma'>
         <tr><th>ID Случки</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Клетка</th><th></th></tr>
-        <tr><td><a href=''>1</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
-        <tr><td><a href=''>2</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
-        <tr><td><a href=''>3</a></td><td>2</td><td>3</td><td></td><td>5</td><td><a href=''>X</a></td></tr>
-
+        $string_couplings
         <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         <tr><td><a href='index.php?str=cop&action=new'>Добавить новую случку</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         </table>";
@@ -190,8 +200,8 @@ EOD;
             <table class='rabbit'>
                 <tr><th colspan='4'>Учетные данные случки</th></tr>
                 <tr><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td></tr>
-                <tr><td><input name='breedingdate' type='date'></td><td>".fill_select($mens, 'breedingmen', $rabbit_men)."</td><td>".fill_select($womens, 'breedingwomen', $rabbit_women)."</td><td>".fill_select($places, 'breedingplace', $rabbit_place)."</td></tr>
-                <tr><td></td><td><input action='action' value='ins' type='hidden'></td><td><input name='str' value='cop' type='hidden'></td><td><input type='submit' value='Записать'></td></tr>
+                <tr><td><input name='couplingdate' type='date'></td><td>".fill_select($mens, 'couplingmen', $rabbit_men)."</td><td>".fill_select($womens, 'couplingwomen', $rabbit_women)."</td><td>".fill_select($places, 'couplingplace', $rabbit_place)."</td></tr>
+                <tr><td></td><td><input name='action' value='ins' type='hidden'></td><td><input name='str' value='cop' type='hidden'></td><td><input type='submit' value='Записать'></td></tr>
             </table>
         
         </form>";
