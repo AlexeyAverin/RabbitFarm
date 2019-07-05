@@ -37,6 +37,7 @@ document.body.addEventListener("click", function(event){
         divMenu.innerHTML= '<div>Добрый день, Вы точно хотите удалить запись<p><a href="index.php?' + stringsrt + 'id=' + id + '&action=del">Да</a><a href="index.php">Нет</a></p></div>';
     }
 
+
     if (event.target.id == "cmbcrtbre" ) {
         var couplingid = event.target.getAttribute('couplingid');
         var action = event.target.getAttribute('id');
@@ -44,15 +45,19 @@ document.body.addEventListener("click", function(event){
         var parentDiv = $("parcrtbre"); //event.target.parentNode;
         var divWindow = document.createElement("div");
         parentDiv.appendChild(divWindow);
+
         divWindow.classList.add("window");
 
         var divMenu = document.createElement('div');
         parentDiv.appendChild(divMenu);
         divMenu.classList.add("menu");
+        divMenu.innerHTML = '<form method="GET" action="index.php" enctype="application/x-www-form-urlncoded"><div>Добрый день, <br>если Вы хотите из данной случки создать окрол, тогда заполните поля и нажмите "Создать", если нет нажмите "Отменить"</div><div><input name="couplingId" value="' + couplingid + '" type="hidden"><input name="str" value="bre" type="hidden"><input type="hidden" value="crtbre" name="action"><label>Дата окрола: </label><input name="breedingdate" value="' + breedingDate + '" type="date"><br><label>Общее кол-во: </label><input min="0" name="breedingnumberall" value="0" type="number"><br><label>Кол-во живых: </label><input min="0" name="breedingnumberlive" value="0" type="number"></div><div><input type="submit" value="Создать"><input id="cancrtbre" type="button" value="Отменить"></form></div>'
 
+    }
 
-        divMenu.innerHTML = '<form method="GET" action="index.php" enctype="application/x-www-form-urlncoded"><div>Добрый день, <br>если Вы хотите из данной случки создать окрол, тогда заполните поля и нажмите "Создать", если нет нажмите "Отменить"</div><div><input name="couplingId" value="' + couplingid + '" type="hidden"><input name="str" value="bre" type="hidden"><input type="hidden" value="crtbre" name="action"><label>Дата окрола: </label><input name="couplingdate" value="' + breedingDate + '" type="date"><br><label>Общее кол-во: </label><input min="0" name="numberall" value="0" type="number"><br><label>Кол-во живых: </label><input min="0" name="numberlive" value="0" type="number"></div><div><input type="submit" value="Создать"><input id="" type="button" value="Отменить"></form></div>'
-
+    // Удаляем форму создания из случки окрола вслучае нажатия кнопки "отмена"
+    if (event.target.id == "cancrtbre" ) {
+        $('parcrtbre').innerHTML = '';
     }
 
 });
