@@ -37,11 +37,11 @@ document.body.addEventListener("click", function(event){
         divMenu.innerHTML= '<div>Добрый день, Вы точно хотите удалить запись<p><a href="index.php?' + stringsrt + 'id=' + id + '&action=del">Да</a><a href="index.php">Нет</a></p></div>';
     }
 
-    if (event.target.id == "crtbre" ) {
+    if (event.target.id == "cmbcrtbre" ) {
         var couplingid = event.target.getAttribute('couplingid');
         var action = event.target.getAttribute('id');
         var date = new Date;  breedingDate = date.toISOString().split('T')[0]; // alert("Добрый день!!!" + ' ' + couplingid + ' ' + action);
-        var parentDiv = event.target.parentNode;
+        var parentDiv = $("parcrtbre"); //event.target.parentNode;
         var divWindow = document.createElement("div");
         parentDiv.appendChild(divWindow);
         divWindow.classList.add("window");
@@ -51,7 +51,7 @@ document.body.addEventListener("click", function(event){
         divMenu.classList.add("menu");
 
 
-        divMenu.innerHTML = '<div>Добрый день, <br>если Вы хотите из данной случки создать окрол, тогда заполните поля и нажмите "Создать", если нет нажмите "Отменить"</div><div><form method="GET" action="index.php" enctype="application/x-www-form-urlncoded"><input name="couplingId" value="' + couplingid + '" type="hidden"><input value="' + breedingDate + '" type="date"><input min="0" name="numberall" value="0" type="number"><input min="0" name="numberlive" value="0" type="number"></div><div><input type="submit" value="Создать"><input type="button" value="Отменить"></form></div>'
+        divMenu.innerHTML = '<form method="GET" action="index.php" enctype="application/x-www-form-urlncoded"><div>Добрый день, <br>если Вы хотите из данной случки создать окрол, тогда заполните поля и нажмите "Создать", если нет нажмите "Отменить"</div><div><input name="couplingId" value="' + couplingid + '" type="hidden"><input name="str" value="bre" type="hidden"><input type="hidden" value="crtbre" name="action"><label>Дата окрола: </label><input name="couplingdate" value="' + breedingDate + '" type="date"><br><label>Общее кол-во: </label><input min="0" name="numberall" value="0" type="number"><br><label>Кол-во живых: </label><input min="0" name="numberlive" value="0" type="number"></div><div><input type="submit" value="Создать"><input id="" type="button" value="Отменить"></form></div>'
 
     }
 

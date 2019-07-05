@@ -163,7 +163,7 @@ EOD;
         }
     }
 }  elseif ( $_GET['str'] == 'bre' ) {
-    if ( !isset($_GET['action']) ) {
+    if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' ) {
         $string_middle = "<table class='ferma'>
         <tr><th>ID Окрола</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Кол-во М</th><th>Кол-во Ж</th><th>ID Случки</th><th></th></tr>
         <tr><td><a href=''>1</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
@@ -209,15 +209,15 @@ EOD;
         }
 
 
-        $string_middle = "<form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'>
+        $string_middle = "
             <table class='rabbit'>
                 <tr><th colspan='4'>Учетные данные случки</th></tr>
                 <tr><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td><td></td></tr>
                 <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input name='couplingdate' value='".date('Y-m-d', strtotime($copulations[$_GET['id']][1]))."' type='date'></td><td>".fill_select($mens, 'couplingmen', $rabbit_men)."</td><td>".fill_select($womens, 'couplingwomen', $rabbit_women)."</td><td>".fill_select($places, 'couplingplace', $rabbit_place)."</td><td><input name='str' value='cop' type='hidden'><input name='id' value='".$_GET['id']."' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input type='submit' value='Записать'></td></form></tr>
-                <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td> </td><td></td><td></td><td></td><td><input id='crtbre' couplingid='".$_GET['id']."' type='button' value='Создать окрол'></td></form></tr>
-            </table>
-        
-        </form>";
+                <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td> </td><td></td><td></td><td></td><td><input id='cmbcrtbre' couplingid='".$_GET['id']."' type='button' value='Создать окрол'></td></form></tr>
+                <tr><td id='parcrtbre' colspan='5'></td></tr>
+            </table>";
+
 
     }
 }
