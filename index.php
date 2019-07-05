@@ -14,6 +14,12 @@ mb_internal_encoding("UTF-8");
 
 
 
+// Считывание данных MySQL
+$rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
+$rabbits = $rabbits_mens_womens[0];
+$mens = $rabbits_mens_womens[1];
+$womens = $rabbits_mens_womens[2];
+
 if ( !isset($_GET['str']) ) { // Функции кроликов
     // Добавление данных зайца в MySQL
     if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
@@ -31,13 +37,7 @@ if ( !isset($_GET['str']) ) { // Функции кроликов
     
     }
 
-    // Считывание данных MySQL
-        $rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
-        $rabbits = $rabbits_mens_womens[0];
-        $mens = $rabbits_mens_womens[1];
-        $womens = $rabbits_mens_womens[2];
-    
-    
+
 } elseif ( $_GET['str'] == 'cop' ) { // Функции случек
     
     // Добавление случки
