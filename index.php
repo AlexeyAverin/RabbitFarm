@@ -14,7 +14,7 @@ mb_internal_encoding("UTF-8");
 
 
 
-// Считывание данных MySQL
+// Считывание данных MySQL с целью того что массивы $mens и $women нужны в Кроликах и случках
 $rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
 $rabbits = $rabbits_mens_womens[0];
 $mens = $rabbits_mens_womens[1];
@@ -52,8 +52,17 @@ if ( !isset($_GET['str']) ) { // Функции кроликов
     // Считывание данных MySQ по случке
     $copulations = copulations_from_mysql( $mysql );
 } elseif ( $_GET['str'] == 'bre' ) { // Функции окролов
+    // Добавление нового окрола из случки
+    if ( $_GET['action'] == 'crtbre' ) {
+
+        breeding_from_copulation_to_mysql( $mysql );
+    } elseif ( $_GET['action'] == 'del' ) {
+        breeding_delete_mysql( $mysql );
+    }
+
+    
     //Считывание данных MySQL по окролам
-    // $copulations = copulations_from_mysql( $mysql );
+    $breedings = breedings_from_mysql( $mysql );
 }
 
 // Отображение страницы
@@ -135,7 +144,7 @@ EOD;
         <table class='rabbit'>
             <tr><th colspan='5'>Персональный данные кролика</th></tr>
             <tr><td>ID Кролика</td><td>Кличка</td><td>Порода</td><td>Пол</td><td>Клеймо</td></tr>
-            <tr><td><input type='text' name='rabbitid' value='$rabbit_id' disabled></td><td><input name='name' maxlength='15' minlength='3' required pattern='[а-яА-Яa-zA-Z0-9 ]{3,15}' value='".$rabbit_name."' type='text'></td><td>".fill_select($breeds, 'breed', $rabbit_breed)."</td><td>".fill_select($genders, 'gender', $rabbit_gender)."</td><td><input type='text' maxlength='15' name='label' pattern='[а-яА-Яa-zA-Z0-9 ]{0,15}' placeholder='Введите клеймо' value='$rabbit_label'></td></tr>
+            <tr><td><input type='text' name='rabbitid' value='$rabbit_id' disabled></td><td><input name='name' maxlength='34' minlength='3' required pattern='[а-яА-Яa-zA-Z0-9_]{3,34}' value='".$rabbit_name."' type='text'></td><td>".fill_select($breeds, 'breed', $rabbit_breed)."</td><td>".fill_select($genders, 'gender', $rabbit_gender)."</td><td><input type='text' maxlength='34' name='label' pattern='[а-яА-Яa-zA-Z0-9_]{0,34}' placeholder='Введите клеймо' value='$rabbit_label'></td></tr>
             <tr><td>ID Окрола</td><td>Крольчиха Мама</td><td>Кролик Отец</td><td>Дата рождения</td><td>Линия</td></tr>
             <tr><td>".fill_select($breedingid, 'breedingid', $rabbit_breedingid)."</td><td>".fill_select($womens, 'women', $rabbit_women)."<td>".fill_select($mens, 'men', $rabbit_men)."</td><td><input name='birth' type='date' value=$rabbit_birth_date></td><td><select name='pedigree'><option>Мать - Отец</option><option>Матушка - Батюшка</option></select></td></tr>
             <tr><td>Клетка</td><td>Дата прививки</td><td>Прививка</td><td></td><td> </td></tr>
@@ -163,12 +172,19 @@ EOD;
         }
     }
 }  elseif ( $_GET['str'] == 'bre' ) {
-    if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' ) {
+
+    if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'del' ) {
+        $string_breedings = '';
+        foreach ( $breedings as $breeding_id => $breeding ){
+            $string_breeding = '<tr><td><a href="index.php?str=bre&action=mob&id='.$breeding_id.'">'.$breeding_id.'</a></td><td>'.$breeding[1].'</td><td>'.$breeding[2].'</td><td>'.$breeding[3].'</td><td>'.$breeding[4].'</td><td>'.$breeding[5].'</td><td>'.$breeding[6].'</td><td><div class="erase" str="bre" id="'.$breeding_id.'">x</div></td></tr>';
+            $string_breedings .= $string_breeding;
+        }
+        
+        
+        
         $string_middle = "<table class='ferma'>
-        <tr><th>ID Окрола</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Кол-во М</th><th>Кол-во Ж</th><th>ID Случки</th><th></th></tr>
-        <tr><td><a href=''>1</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
-        <tr><td><a href=''>2</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
-        <tr><td><a href=''>3</a></td><td></td><td></td><td></td><td></td><td></td><td></td><td><a href=''>X</a></td></tr>
+        <tr><th>ID Окрола</th><th>Дата окрола</th><th>Кол-во общее</th><th>Кол-во живых</th><th>Самец</th><th>Самка</th><th>ID Случки</th><th></th></tr>
+        $string_breedings
         <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         <tr><td><a href='index.php?str=bre&action=new'>Добавить новый окрол</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         </table>";
@@ -178,10 +194,8 @@ EOD;
 
 
         <tr><td>Дата</td><td>Самки</td><td>Самцы</td><td>ID Случки</td></tr>
-        <tr><td><input name='datebreeding' value='".date('Y-m-d', strtotime($copulations[$_GET['id']][1]))."' type='date'>".strtotime($copulations[$_GET['id']][1])."</td><td><input name='numbermen' value='".$copulations[$_GET['id']][2]."' min='0' type='number'></td><td><input name='numberwomen' value='".$copulations[$_GET['id']][3]."' min='0' type='number'></td><td>".fill_select($copulations[$_GET['id']][4], 'place', $rabbit_place)."</td></tr>
+        <tr><td><input name='datebreeding' value='".date('Y-m-d', strtotime($copulations[$_GET['id']][1]))."' type='date'>".strtotime($copulations[$_GET['id']][1])."</td><td><input name='numbermen' value='".$copulations[$_GET['id']][2]."' min='0' max='99' type='number'></td><td><input name='numberwomen' value='".$copulations[$_GET['id']][3]."' min='0' max='99' type='number'></td><td>".fill_select($copulations[$_GET['id']][4], 'place', $rabbit_place)."</td></tr>
         <tr><td></td><td></td><td></td><td><input value='Записать' type='submit'></td></tr>
-        
-        
         </table>";
     }
 }  elseif ( $_GET['str'] == 'cop' ) {
@@ -213,7 +227,7 @@ EOD;
             <table class='rabbit'>
                 <tr><th colspan='4'>Учетные данные случки</th></tr>
                 <tr><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td><td></td></tr>
-                <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input name='couplingdate' value='".date('Y-m-d', strtotime($copulations[$_GET['id']][1]))."' type='date'></td><td>".fill_select($mens, 'couplingmen', $rabbit_men)."</td><td>".fill_select($womens, 'couplingwomen', $rabbit_women)."</td><td>".fill_select($places, 'couplingplace', $rabbit_place)."</td><td><input name='str' value='cop' type='hidden'><input name='id' value='".$_GET['id']."' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input type='submit' value='Записать'></td></form></tr>
+                <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input name='couplingdate' value='".date('Y-m-d', strtotime($copulations[$_GET['id']][1]))."' type='date'></td><td>".fill_select($mens, 'couplingmen', $copulations[$_GET['id']][2])."</td><td>".fill_select($womens, 'couplingwomen', $copulations[$_GET['id']][3])."</td><td>".fill_select($places, 'couplingplace', $copulations[$_GET['id']][4])."</td><td><input name='str' value='cop' type='hidden'><input name='id' value='".$_GET['id']."' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input type='submit' value='Записать'></td></form></tr>
                 <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td> </td><td></td><td></td><td></td><td><input id='cmbcrtbre' couplingid='".$_GET['id']."' type='button' value='Создать окрол'></td></form></tr>
                 <tr><td id='parcrtbre' colspan='5'></td></tr>
             </table>";

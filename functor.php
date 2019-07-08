@@ -259,4 +259,54 @@ function copulation_update_mysql( $mysql ){
 
 }
 
+function breedings_from_mysql( $mysql ){
+    $connect_mysql = connect_mysql( $mysql );
+    $query_mysql = 'SELECT * FROM copulations NATURAL JOIN breedings;';
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+    $rows_mysql = $results_mysql->num_rows;
+    for ( $i = 0; $i < $rows_mysql; ++$i ) {
+
+        $results_mysql->data_seek($i);
+        $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
+        $breedingid = $string_mysql['breedingid'];
+        $breedingdate = $string_mysql['breedingdate'];
+        
+        $breedingnumberall = $string_mysql['breedingnumberall'];
+        $breedingnumberlive = $string_mysql['breedingnumberlive'];
+        $couplingmen = $string_mysql['couplingmen'];
+
+        $couplingwomen = $string_mysql['couplingwomen'];
+        $couplingid = $string_mysql['couplingid'];
+
+        $arr = array( $breedingid, $breedingdate, $breedingnumberall, $breedingnumberlive, $couplingmen, $couplingwomen, $couplingid );
+        $breedings[$breedingid] = $arr;
+    }
+
+
+    $results_mysql->close();
+    $connect_mysql->close();
+    return $breedings;
+
+}
+
+function breeding_from_copulation_to_mysql( $mysql ){
+    $connect_mysql = connect_mysql( $mysql );
+    $query_mysql = 'INSERT INTO breedings (breedingdate, breedingnumberall, breedingnumberlive, couplingid) VALUES ("'.$_GET['breedingdate'].'", "'.$_GET['breedingnumberall'].'", "'.$_GET['breedingnumberlive'].'", "'.$_GET['couplingid'].'");';
+
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
+    //$results_mysql->close();
+    $connect_mysql->close();
+}
+
+function breeding_delete_mysql( $mysql ){
+    $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
+    if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
+    $query_mysql = 'DELETE FROM breedings WHERE breedingid="'.$_GET["id"].'";';
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
+    //$results_mysql->close();
+    $connect_mysql->close();
+    
+}
 ?>
