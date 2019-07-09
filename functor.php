@@ -40,10 +40,10 @@ function sender_mail( $mail_account, $mail_msg ){ //echo 'Добрый день!
 
 // Дата следующей прививки
 function date_next_injection($date, $interval){
-    //$date = new DateTime($date);
-    //$interval = 'P'.trim($interval).'D';
-    //$date->add(new DateInterval($interval));
-    //return $date->format('d-m-Y');
+    $date = new DateTime($date);
+    $interval = 'P'.trim($interval).'D';
+    $date->add(new DateInterval($interval));
+    return $date->format('d-m-Y');
 }
 
 
@@ -259,6 +259,33 @@ function copulation_update_mysql( $mysql ){
 
 }
 
+function copulations_rabbit_mysql( $mysql, $rabbit_name ){
+    $connect_mysql = connect_mysql( $mysql );
+
+    $query_mysql = 'SELECT * FROM copulations WHERE couplingmen="'.$rabbit_name.'" OR couplingwomen="'.$rabbit_name.'";';
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+    $rows_mysql = $results_mysql->num_rows;
+
+    for ( $i = 0; $i < $rows_mysql; ++$i ) {
+        $results_mysql->data_seek($i);
+        $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
+        $couplingid = $string_mysql['couplingid'];
+        $date = $string_mysql['couplingdate'];
+        $men = $string_mysql['couplingmen'];
+        $women = $string_mysql['couplingwomen'];
+        $place = $string_mysql['couplingplace'];
+
+        $arr = array( $couplingid, $date, $men, $women, $place );
+        $copulations_rabbit[$couplingid] = $arr;
+    }
+    $results_mysql->close();
+
+    $connect_mysql->close();
+
+    return $copulations_rabbit;
+
+}
+
 function breedings_from_mysql( $mysql ){
     $connect_mysql = connect_mysql( $mysql );
     $query_mysql = 'SELECT * FROM copulations NATURAL JOIN breedings;';
@@ -270,14 +297,12 @@ function breedings_from_mysql( $mysql ){
         $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
         $breedingid = $string_mysql['breedingid'];
         $breedingdate = $string_mysql['breedingdate'];
-        
         $breedingnumberall = $string_mysql['breedingnumberall'];
+
         $breedingnumberlive = $string_mysql['breedingnumberlive'];
         $couplingmen = $string_mysql['couplingmen'];
-
         $couplingwomen = $string_mysql['couplingwomen'];
         $couplingid = $string_mysql['couplingid'];
-
         $arr = array( $breedingid, $breedingdate, $breedingnumberall, $breedingnumberlive, $couplingmen, $couplingwomen, $couplingid );
         $breedings[$breedingid] = $arr;
     }
@@ -286,7 +311,27 @@ function breedings_from_mysql( $mysql ){
     $results_mysql->close();
     $connect_mysql->close();
     return $breedings;
+}
 
+
+function breedings_rabbit( $mysql, $rabbit_name ){
+    $connect_mysql = connect_mysql( $mysql );
+    $query_mysql = 'SELECT * FROM copulations NATURAL JOIN breedings WHERE couplingmen="'.$rabbit_name.'" OR couplingwomen="'.$rabbit_name.'";';
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+    $rows_mysql = $results_mysql->num_rows;
+    for ( $i = 0; $i < $rows_mysql; ++$i ) {
+        $results_mysql->data_seek($i);
+        $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
+        $breedingid = $string_mysql['breedingid'];
+        $breedingdate = $string_mysql['breedingdate'];
+
+        $breedingnumberall = $string_mysql['breedingnumberall'];
+        $breedingnumberlive = $string_mysql['breedingnumberlive'];
+        $couplingid = $string_mysql['couplingid'];
+        $arr = array( $breedingid, $breedingdate, $breedingnumberall, $breedingnumberlive, $couplingid );
+        $breedings_rabbit[$breedingid] = $arr;
+    }
+    return $breedings_rabbit;
 }
 
 function breeding_from_copulation_to_mysql( $mysql ){

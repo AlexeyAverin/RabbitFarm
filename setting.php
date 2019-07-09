@@ -18,6 +18,6 @@ $injections_limit_day = 10*500;
 // Массив пород
 $breeds = array('Беспородная', 'Калифорнийская');
 // Массив окролов
-$breedingid = array('1', '2', '3');
+//$breedingid = array('1', '2', '3');
 
 ?>

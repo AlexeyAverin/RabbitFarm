@@ -26,15 +26,15 @@ if ( !isset($_GET['str']) ) { // Функции кроликов
         string_to_mysql( $mysql );
     }
 
-    // Удаление кролика
+    // Удаление данных кролика из MySQL
     if ( (isset($_GET['id'])) && $_GET['action'] == 'del' ) {//echo "Добрый вечер!!!";
+
         string_delete_mysql( $mysql, $_GET['id'] ); 
     }
 
-    // Изменений данных кролика
+    // Изменений данных кролика в MySQL
     if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'upd' ) {
         update_string_mysql( $mysql, $_GET['rabbitid'] ); ###
-    
     }
 
 
@@ -50,11 +50,13 @@ if ( !isset($_GET['str']) ) { // Функции кроликов
     }
 
     // Считывание данных MySQ по случке
+
     $copulations = copulations_from_mysql( $mysql );
 } elseif ( $_GET['str'] == 'bre' ) { // Функции окролов
     // Добавление нового окрола из случки
-    if ( $_GET['action'] == 'crtbre' ) {
+    if ( $_GET['action'] == 'ins' || $_GET['action'] == 'crtbre' ) {
 
+        // Создание нового окрола в том числе из окрола
         breeding_from_copulation_to_mysql( $mysql );
     } elseif ( $_GET['action'] == 'del' ) {
         breeding_delete_mysql( $mysql );
@@ -92,9 +94,8 @@ if ( !isset($_GET['str']) ) {
   // Отображается список кроликов в при простом отображении и при удалении кролика
   if ( !isset($_GET['action']) || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
     $string_rabbits = '';
-    //$rabbit_new_id = 0;
-        foreach ( $rabbits as $rabbit_id => $rabbit ){
 
+        foreach ( $rabbits as $rabbit_id => $rabbit ){
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
             $string_rabbit = "<tr><td>$rabbit_id</td><td><a href='index.php?action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections[trim($rabbit[11])], $injections_limit_day)."</td><td><div class='erase' str='rab' id='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
 
@@ -154,29 +155,44 @@ EOD;
     
     // Отображается дополнительная информация по кроликам 'Вывод информации кролика'
     if ( (array_key_exists($_GET['rabbitid'], $rabbits)) ) {
-            $string_middle .= "<table class='ferma'>
+        $copulations_rabbit = copulations_rabbit_mysql( $mysql, $rabbit_name );
+        $string_middle .= "<table class='ferma'>
+                <tr><td colspan='3'>Данные по случке</td></tr>
+                <tr><th>ID Случки</th><th>Дата Случки</th><th>Самец</th><th>Самка</th><th>Ожидаемая дата окрола</th></tr>";
+        foreach ( $copulations_rabbit as $copulation_id => $copulation ){
+            $string_middle .= "<tr><td>".$copulation_id."</td><td>".date('d-m-Y', strtotime($copulation[1]))."</td><td>".$copulation[2]."</td><td>".$copulation[3]."</td><td>".date_next_injection($copulation[1], '30')."</td></tr>";
+        }
+
+        $string_middle .= "</table>";
+
+
+        
+        
+        $breedings_rabbit = breedings_rabbit( $mysql, $rabbit_name );
+        $string_middle .= "<table class='ferma'>
+        <tr><td colspan='3'>Данные по окролу</td></tr>
+
+        <tr><th>ID Окрола</th><th>Дата окрола</th><th>Общее кол-во</th><th>Кол-во живых</th><th>ID Случки</th></tr>";
+        foreach ( $breedings_rabbit as $breeding_id => $breeding ){
+            $string_middle .= "<tr><td>".$breeding_id."</td><td>".date('d-m-Y', strtotime($breeding[1]))."</td><td>".$breeding[2]."</td><td>".$breeding[3]."</td><td>".$breeding[4]."</td></tr>";
+
+        }
+        $string_middle .= "</table>";
+
+        $string_middle .= "<table class='ferma'>
                 <tr><td colspan='3'>Данные по вакцинации</td></tr>
                 <tr><th>Наименование</th><th>Дата проведения</th><th>Следующая дата</th></tr>
                 <tr><td>Ассоциированная</td><td>01.01.2001</td><td>01.07.2001</td></tr>
-            </table>
-            <table class='ferma'>
-                <tr><td colspan='3'>Данные по случке</td></tr>
-                <tr><th>Партнер</th><th>Дата проведения</th><th>Дата ожидаемая</th></tr>
-                <tr><td>Тарзан</td><td>01.01.2001</td><td>01.07.2001</td></tr>
-            </table>
-            <table class='ferma'>
-                <tr><td colspan='3'>Данные по окролу</td></tr>
-                <tr><th>Наименование</th><th>Дата проведения</th><th>Следующая дата</th></tr>
-                <tr><td>Ассоциированная</td><td>01.01.2001</td><td>01.07.2001</td></tr>
             </table>";
-        }
+
+}
     }
 }  elseif ( $_GET['str'] == 'bre' ) {
 
-    if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'del' ) {
+    if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
         $string_breedings = '';
         foreach ( $breedings as $breeding_id => $breeding ){
-            $string_breeding = '<tr><td><a href="index.php?str=bre&action=mob&id='.$breeding_id.'">'.$breeding_id.'</a></td><td>'.$breeding[1].'</td><td>'.$breeding[2].'</td><td>'.$breeding[3].'</td><td>'.$breeding[4].'</td><td>'.$breeding[5].'</td><td>'.$breeding[6].'</td><td><div class="erase" str="bre" id="'.$breeding_id.'">x</div></td></tr>';
+            $string_breeding = '<tr><td><a href="index.php?str=bre&action=mod&id='.$breeding_id.'">'.$breeding_id.'</a></td><td>'.date('d-m-Y', strtotime($breeding[1])).'</td><td>'.$breeding[2].'</td><td>'.$breeding[3].'</td><td>'.$breeding[4].'</td><td>'.$breeding[5].'</td><td>'.$breeding[6].'</td><td><div class="erase" str="bre" id="'.$breeding_id.'">x</div></td></tr>';
             $string_breedings .= $string_breeding;
         }
         
@@ -188,21 +204,32 @@ EOD;
         <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         <tr><td><a href='index.php?str=bre&action=new'>Добавить новый окрол</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         </table>";
-    } elseif ( $_GET['action'] == 'new' ) {
+    } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
+        if ( $_GET['action'] == 'mod' ) {
+            $action_type = 'upd';
+            $breedingdate = date('Y-m-d', strtotime($breedings[$_GET['id']][1]));
+            
+        } elseif ( $_GET['action'] == 'new' ) {
+            $action_type = 'ins';
+            $breedingdate = date('Y-m-d', time());
+
+        }
+
         $string_middle = "<table class='rabbit'>
         <tr><th colspan='4'>Учетные данные окрола</th></tr>
-
-
-        <tr><td>Дата</td><td>Самки</td><td>Самцы</td><td>ID Случки</td></tr>
-        <tr><td><input name='datebreeding' value='".date('Y-m-d', strtotime($copulations[$_GET['id']][1]))."' type='date'>".strtotime($copulations[$_GET['id']][1])."</td><td><input name='numbermen' value='".$copulations[$_GET['id']][2]."' min='0' max='99' type='number'></td><td><input name='numberwomen' value='".$copulations[$_GET['id']][3]."' min='0' max='99' type='number'></td><td>".fill_select($copulations[$_GET['id']][4], 'place', $rabbit_place)."</td></tr>
-        <tr><td></td><td></td><td></td><td><input value='Записать' type='submit'></td></tr>
+        <tr><td>Дата</td><td>Кол-во всего</td><td>Кол-во живых</td><td>ID Случки</td></tr>
+        <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input name='breedingdate' value='".$breedingdate."' type='date'></td><td><input name='breedingnumberall' value='".$breedings[$_GET['id']][2]."' min='0' max='99' type='number'></td><td><input name='breedingnumberlive' value='".$breedings[$_GET['id']][3]."' min='0' max='99' type='number'></td><td><input name='couplingid' type='number' value='".$breedings[$_GET['id']][6]."' min='0'></td></tr>
+        <tr><td></td><td></td><td></td><td><input name='str' value='bre' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input value='Записать' type='submit'></td></form></tr>
         </table>";
     }
+    
+
 }  elseif ( $_GET['str'] == 'cop' ) {
+
     if ( !isset($_GET['action']) || $_GET['action'] == 'ins' || $_GET['action'] == 'upd' || $_GET['action'] == 'del' ) {
         $string_couplings = '';
         foreach ( $copulations as $coupling_id => $coupling ){
-            $string_coupling = '<tr><td><a href="index.php?str=cop&action=mod&id='.$coupling_id.'">'.$coupling[0].'</a></td><td>'.$coupling[1].'</td><td>'.$coupling[2].'</td><td>'.$coupling[3].'</td><td>'.$coupling[4].'</td><td><div class="erase" str="cop" id="'.$coupling_id.'" href="">x</div></td></tr>';
+            $string_coupling = '<tr><td><a href="index.php?str=cop&action=mod&id='.$coupling_id.'">'.$coupling[0].'</a></td><td>'.date('d-m-Y', strtotime($coupling[1])).'</td><td>'.$coupling[2].'</td><td>'.$coupling[3].'</td><td>'.$coupling[4].'</td><td><div class="erase" str="cop" id="'.$coupling_id.'" href="">x</div></td></tr>';
             $string_couplings .= $string_coupling;
         }
         
@@ -216,10 +243,13 @@ EOD;
         <tr><td><a href='index.php?str=cop&action=new'>Добавить новую случку</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         </table>";
     } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
+
         if ( $_GET['action'] == 'mod' ) {
             $action_type = 'upd';
+            $couplingdate = date('Y-m-d', strtotime($copulations[$_GET['id']][1]));
         } elseif ( $_GET['action'] == 'new' ) {
             $action_type = 'ins';
+            $couplingdate = date('Y-m-d', time());
         }
 
 
@@ -227,7 +257,7 @@ EOD;
             <table class='rabbit'>
                 <tr><th colspan='4'>Учетные данные случки</th></tr>
                 <tr><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td><td></td></tr>
-                <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input name='couplingdate' value='".date('Y-m-d', strtotime($copulations[$_GET['id']][1]))."' type='date'></td><td>".fill_select($mens, 'couplingmen', $copulations[$_GET['id']][2])."</td><td>".fill_select($womens, 'couplingwomen', $copulations[$_GET['id']][3])."</td><td>".fill_select($places, 'couplingplace', $copulations[$_GET['id']][4])."</td><td><input name='str' value='cop' type='hidden'><input name='id' value='".$_GET['id']."' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input type='submit' value='Записать'></td></form></tr>
+                <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input name='couplingdate' value='".$couplingdate."' type='date'></td><td>".fill_select($mens, 'couplingmen', $copulations[$_GET['id']][2])."</td><td>".fill_select($womens, 'couplingwomen', $copulations[$_GET['id']][3])."</td><td>".fill_select($places, 'couplingplace', $copulations[$_GET['id']][4])."</td><td><input name='str' value='cop' type='hidden'><input name='id' value='".$_GET['id']."' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input type='submit' value='Записать'></td></form></tr>
                 <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td> </td><td></td><td></td><td></td><td><input id='cmbcrtbre' couplingid='".$_GET['id']."' type='button' value='Создать окрол'></td></form></tr>
                 <tr><td id='parcrtbre' colspan='5'></td></tr>
             </table>";
