@@ -2,7 +2,9 @@
 
             
 
-html, body            { margin: 0; padding: 0; font-family: monospace; --color-grey-soft: rgb(230, 230, 230); --color-grey-middle: rgb(170, 170, 170); --color-grey-dark: rgb(110, 110, 110); }
+html, body            { margin: 0; padding: 0; box-sizing: border-box; font-family: monospace; --color-grey-soft: rgb(230, 230, 230); --color-grey-middle: rgb(170, 170, 170); --color-grey-dark: rgb(110, 110, 110); }
+div.secret            { width: 300px; height: 150px; border: 1px solid var(--color-grey-middle); border-radius: 25px; margin: 0 auto; background: var(--color-grey-soft); }
+div.secret input      { width: 150px; margin: 10px 75px; box-sizing: content-box; padding: 0; }
 div.contact           { height: 50px; padding: 0 10px; display: flex; justify-content: space-between; color: rgb(170, 170, 170); }
 div.contact div       { line-height: 50px; }
 .menu                 { position: absolute; width: 630px; height: 420px; top: calc((100vh - 420px)/2); left: calc((100vw - 630px)/2); box-sizing: border-box; color: orange; background-color: white; box-shadow: 10px 10px 10px rgb(230, 230, 230); border-radius: 30px; border: 1px solid orange; text-align: center; }
@@ -17,7 +19,7 @@ header nav:last-child { margin-right: 10px; }
 header nav a { color: var(--color-grey-middle); padding: 0 10px; line-height: 70px; text-decoration: none; font-size:; }
 header nav a:hover { background-color: var(--color-grey-dark); }
 section { width: 100%; height: calc(100vh - 120px); font-size: 15px; background-color: white; }
-table.ferma                     { width: 100%; margin: 0 0 50px 0; border-style: hidden; color: blue; }
+table.ferma                     { width: 100%; margin: 0 0 50px 0; border-style: hidden; color: var(--color-grey-dark); }
 table.ferma td                  {  }
 
 table.ferma td a                { color: orange; text-decoration: none; }
@@ -29,7 +31,7 @@ table.ferma tr:hover            { background-color: var(--color-grey-soft); }
 table.ferma tr:nth-child(odd)   { color: var(--color-grey-middle); }
 table.ferma tr:nth-child(even)  { color: var(--color-grey-dark); }
 
-table.rabbit                    { width: 100%; margin: 0 0 50px 0; color: blue; border-style: hidden; }
+table.rabbit                    { width: 100%; margin: 0 0 50px 0; color: var(--color-grey-dark); border-style: hidden; }
 table.rabbit th                 { text-align: left; color: var(--color-grey-dark); }
 table.rabbit tr                 { text-align: center;  }
 table.rabbit tr:nth-child(odd)  { background-color: ; }

@@ -101,7 +101,7 @@ function send_query_mysql( $connect_mysql, $query_mysql ){
 function array_from_mysql( $mysql, $mens, $womens ){ //"Добрый день!!!"
     $connect_mysql = connect_mysql( $mysql );
 
-    $query_mysql = 'SELECT * FROM rabbits;';
+    $query_mysql = 'SELECT * FROM rabbits ORDER BY birthdate;';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     $rows_mysql = $results_mysql->num_rows;
     for ( $i = 0; $i < $rows_mysql; ++$i ) {
@@ -155,7 +155,7 @@ function string_to_mysql( $mysql ){
 function update_string_mysql( $mysql, $rabbit_id ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);    
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'UPDATE rabbits SET name="'.$_GET['name'].'", type="", breedingid="'.$_GET['breedingid'].'", breed="'.$_GET['breed'].'", birthdate="'.$_GET['birth'].'", gender="'.$_GET['gender'].'", label="'.$_GET['label'].'", women="'.$_GET['women'].'", men="'.$_GET['men'].'", place="'.$_GET['place'].'", injectiondate="'.$_GET['injectiondate'].'", injectiontype="'.$_GET['injectiontype'].'" WHERE id="'.$rabbit_id.'";';
+    $query_mysql = 'UPDATE rabbits SET name="'.$_GET['name'].'", type="", breedingid="'.$_GET['breedingid'].'", breed="'.$_GET['breed'].'", birthdate="'.$_GET['birth'].'", gender="'.$_GET['gender'].'", label="'.$_GET['label'].'", women="'.$_GET['women'].'", men="'.$_GET['men'].'", place="'.$_GET['place'].'", injectiondate="'.$_GET['injectiondate'].'", injectiontype="'.$_GET['injectiontype'].'" WHERE id="'.$rabbit_id.'";'; echo $query_mysql;
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     //$results_mysql->close();
@@ -206,7 +206,7 @@ function fill_select( $array, $name, $value ){
 // Считывание данных случек из mysql
 function copulations_from_mysql( $mysql ){
     $connect_mysql = connect_mysql( $mysql );
-    $query_mysql = 'SELECT * FROM copulations;';
+    $query_mysql = 'SELECT * FROM copulations ORDER BY couplingdate;';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
 
     $rows_mysql = $results_mysql->num_rows;
@@ -262,7 +262,7 @@ function copulation_update_mysql( $mysql ){
 function copulations_rabbit_mysql( $mysql, $rabbit_name ){
     $connect_mysql = connect_mysql( $mysql );
 
-    $query_mysql = 'SELECT * FROM copulations WHERE couplingmen="'.$rabbit_name.'" OR couplingwomen="'.$rabbit_name.'";';
+    $query_mysql = 'SELECT * FROM copulations WHERE couplingmen="'.$rabbit_name.'" OR couplingwomen="'.$rabbit_name.'" ORDER BY couplingdate;';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     $rows_mysql = $results_mysql->num_rows;
 
@@ -288,7 +288,7 @@ function copulations_rabbit_mysql( $mysql, $rabbit_name ){
 
 function breedings_from_mysql( $mysql ){
     $connect_mysql = connect_mysql( $mysql );
-    $query_mysql = 'SELECT * FROM copulations NATURAL JOIN breedings;';
+    $query_mysql = 'SELECT * FROM copulations NATURAL JOIN breedings ORDER BY breedingdate;';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     $rows_mysql = $results_mysql->num_rows;
     for ( $i = 0; $i < $rows_mysql; ++$i ) {
@@ -313,10 +313,19 @@ function breedings_from_mysql( $mysql ){
     return $breedings;
 }
 
+function breeding_update_mysql( $mysql ){
+    $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
+    if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
+    $query_mysql = 'UPDATE breedings SET breedingid="'.$_GET['breedingid'].'", breedingdate="'.$_GET['breedingdate'].'", breedingnumberall="'.$_GET['breedingnumberall'].'", breedingnumberlive="'.$_GET['breedingnumberlive'].'", couplingid="'.$_GET['couplingid'].'" WHERE breedingid="'.$_GET['breedingid'].'";';
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
+    //$results_mysql->close();
+    $connect_mysql->close();
+}
 
 function breedings_rabbit( $mysql, $rabbit_name ){
     $connect_mysql = connect_mysql( $mysql );
-    $query_mysql = 'SELECT * FROM copulations NATURAL JOIN breedings WHERE couplingmen="'.$rabbit_name.'" OR couplingwomen="'.$rabbit_name.'";';
+    $query_mysql = 'SELECT * FROM copulations NATURAL JOIN breedings WHERE couplingmen="'.$rabbit_name.'" OR couplingwomen="'.$rabbit_name.'" ORDER BY breedingdate;';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     $rows_mysql = $results_mysql->num_rows;
     for ( $i = 0; $i < $rows_mysql; ++$i ) {
