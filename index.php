@@ -25,6 +25,7 @@ $womens = $rabbits_mens_womens[2];
 if ( !isset($_GET['str']) ) {
     $string_nav = '';
     $string_middle = "<div class='secret'><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><input placeholder='login' type='text'><br><input placeholder='password' type='password'><br><input type='hidden' value='rab' name='str'><input type='submit' value='Войти'></form></div>";
+} elseif ( $_GET['str'] == 'aut' ) { // Аунтификация
 
 } elseif ( $_GET['str'] == 'rab' ) { // Функции кроликов
     $string_nav = '<nav><a class="selected" href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a></nav>';
