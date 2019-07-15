@@ -242,7 +242,7 @@ function copulations_to_mysql( $mysql ){
 function copulation_delete_mysql( $mysql ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'DELETE FROM copulations WHERE couplingid="'.$_GET["id"].'";';
+    $query_mysql = 'DELETE FROM copulations WHERE couplingid="'.$_GET["couplingid"].'";';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     //$results_mysql->close();
@@ -251,7 +251,7 @@ function copulation_delete_mysql( $mysql ){
 function copulation_update_mysql( $mysql ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'UPDATE copulations SET couplingdate="'.$_GET['couplingdate'].'", couplingmen="'.$_GET['couplingmen'].'", couplingwomen="'.$_GET['couplingwomen'].'", couplingplace="'.$_GET['couplingplace'].'" WHERE couplingid="'.$_GET['id'].'";';
+    $query_mysql = 'UPDATE copulations SET couplingdate="'.$_GET['couplingdate'].'", couplingmen="'.$_GET['couplingmen'].'", couplingwomen="'.$_GET['couplingwomen'].'", couplingplace="'.$_GET['couplingplace'].'" WHERE couplingid="'.$_GET['couplingid'].'";';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     //$results_mysql->close();
@@ -316,7 +316,7 @@ function breedings_from_mysql( $mysql ){
 function breeding_update_mysql( $mysql ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'UPDATE breedings SET breedingid="'.$_GET['breedingid'].'", breedingdate="'.$_GET['breedingdate'].'", breedingnumberall="'.$_GET['breedingnumberall'].'", breedingnumberlive="'.$_GET['breedingnumberlive'].'", couplingid="'.$_GET['couplingid'].'" WHERE breedingid="'.$_GET['breedingid'].'";';
+    $query_mysql = 'UPDATE breedings SET breedingdate="'.$_GET['breedingdate'].'", breedingnumberall="'.$_GET['breedingnumberall'].'", breedingnumberlive="'.$_GET['breedingnumberlive'].'", couplingid="'.$_GET['couplingid'].'" WHERE breedingid="'.$_GET['breedingid'].'";';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     //$results_mysql->close();
