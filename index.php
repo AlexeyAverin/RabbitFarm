@@ -24,19 +24,22 @@ $womens = $rabbits_mens_womens[2];
 
 if ( !isset($_GET['str']) ) {
     $string_nav = '';
-    $string_middle = "<div class='secret'><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><input placeholder='login' type='text'><br><input placeholder='password' type='password'><br><input type='hidden' value='rab' name='str'><input type='submit' value='Войти'></form></div>";
-} elseif ( $_GET['str'] == 'aut' ) { // Аунтификация
+    $string_middle = "<div class='secret'><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><input name='login' placeholder='login' type='text'><br><input name='password' placeholder='password' type='password'><br><input type='submit' value='Войти'></form></div>";
+    if ( $_GET['login'] == 'Farmer' && $_GET['password'] == '777' ) {
+        $_GET['str'] = 'rab';
+    }
 
-} elseif ( $_GET['str'] == 'rab' ) { // Функции кроликов
+}
+if ( $_GET['str'] == 'rab' ) { // Функции кроликов
     $string_nav = '<nav><a class="selected" href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a></nav>';
     // Добавление данных зайца в MySQL
     if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
         string_to_mysql( $mysql );
     }
 
+
     // Удаление данных кролика из MySQL
     if ( (isset($_GET['id'])) && $_GET['action'] == 'del' ) {//echo "Добрый вечер!!!";
-
         string_delete_mysql( $mysql, $_GET['id'] ); 
     }
 
@@ -44,9 +47,8 @@ if ( !isset($_GET['str']) ) {
     if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'upd' ) {
         update_string_mysql( $mysql, $_GET['rabbitid'] ); ###
     }
-
-
-} elseif ( $_GET['str'] == 'cop' ) { // Функции случек
+}
+if ( $_GET['str'] == 'cop' ) { // Функции случек
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a class="selected" href="index.php?str=cop">Случки</a></nav>';
     // Добавление случки
     if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
@@ -58,13 +60,12 @@ if ( !isset($_GET['str']) ) {
     }
 
     // Считывание данных MySQ по случке
-
     $copulations = copulations_from_mysql( $mysql );
-} elseif ( $_GET['str'] == 'bre' ) { // Функции окролов
+}
+if ( $_GET['str'] == 'bre' ) { // Функции окролов
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a class="selected" href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a></nav>';
     // Добавление нового окрола из случки
     if ( $_GET['action'] == 'ins' || $_GET['action'] == 'crtbre' ) {
-
         // Создание нового окрола в том числе из окрола
         breeding_from_copulation_to_mysql( $mysql );
     } elseif ( $_GET['action'] == 'del' ) {
@@ -72,8 +73,6 @@ if ( !isset($_GET['str']) ) {
     } elseif ( $_GET['action'] == 'upd' ) {
         breeding_update_mysql( $mysql );
     }
-
-    
     //Считывание данных MySQL по окролам
     $breedings = breedings_from_mysql( $mysql );
 }
