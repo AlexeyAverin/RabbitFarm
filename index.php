@@ -171,12 +171,19 @@ EOD;
         $copulations_rabbit = copulations_rabbit_mysql( $mysql, $rabbit_name );
         $string_middle .= "<table class='ferma'>
                 <tr><td colspan='3'>Данные по случке</td></tr>
+
                 <tr><th>ID Случки</th><th>Дата Случки</th><th>Самец</th><th>Самка</th><th>Ожидаемая дата окрола</th></tr>";
+        $count_copulations = 0;
         foreach ( $copulations_rabbit as $copulation_id => $copulation ){
             $string_middle .= "<tr><td>".$copulation_id."</td><td>".date('d-m-Y', strtotime($copulation[1]))."</td><td>".$copulation[2]."</td><td>".$copulation[3]."</td><td>".date_next_injection($copulation[1], '30')."</td></tr>";
-        }
 
-        $string_middle .= "</table>";
+            $count_copulations += 1;
+        }
+        $string_middle .= "
+        
+            <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+            <tr><td>Суммарно случек: ".$count_copulations."</td><td></td><td></td><td></td><td></td></tr>
+        </table>";
 
 
         
@@ -186,11 +193,21 @@ EOD;
         <tr><td colspan='3'>Данные по окролу</td></tr>
 
         <tr><th>ID Окрола</th><th>Дата окрола</th><th>Общее кол-во</th><th>Кол-во живых</th><th>ID Случки</th></tr>";
+        $sum_number_all = 0;
+        $sum_number_live = 0;
+        $count_breedings = 0;
+
         foreach ( $breedings_rabbit as $breeding_id => $breeding ){
             $string_middle .= "<tr><td>".$breeding_id."</td><td>".date('d-m-Y', strtotime($breeding[1]))."</td><td>".$breeding[2]."</td><td>".$breeding[3]."</td><td>".$breeding[4]."</td></tr>";
+            $sum_number_all += $breeding[2];
 
+            $sum_number_live += $breeding[3];
+            $count_breedings += 1;
         }
-        $string_middle .= "</table>";
+        $string_middle .= "<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+                           <tr><td>Суммарно окролов: ".$count_breedings."</td><td></td><td>".$sum_number_all."</td><td>".$sum_number_live."</td><td></td></tr>
+
+                        </table>";
 
         $string_middle .= "<table class='ferma'>
                 <tr><td colspan='3'>Данные по вакцинации</td></tr>
