@@ -101,7 +101,7 @@ function send_query_mysql( $connect_mysql, $query_mysql ){
 function array_from_mysql( $mysql, $mens, $womens ){ //"Добрый день!!!"
     $connect_mysql = connect_mysql( $mysql );
 
-    $query_mysql = 'SELECT * FROM rabbits ORDER BY birthdate;';
+    $query_mysql = 'SELECT * FROM rabbits ORDER BY status DESC, birthdate ASC;';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     $rows_mysql = $results_mysql->num_rows;
     for ( $i = 0; $i < $rows_mysql; ++$i ) {
@@ -110,7 +110,7 @@ function array_from_mysql( $mysql, $mens, $womens ){ //"Добрый день!!!
         $id = $string_mysql['id'];
         $name = $string_mysql['name']; //echo mb_detect_encoding($name)."<br />";
 
-        $type = $string_mysql['type'];
+        $status = $string_mysql['status'];
         $breedingid = $string_mysql['breedingid'];
         $breed = $string_mysql['breed'];
         $birthdate = $string_mysql['birthdate'];
@@ -122,7 +122,7 @@ function array_from_mysql( $mysql, $mens, $womens ){ //"Добрый день!!!
         $place = $string_mysql['place'];
         $injectiondate = $string_mysql['injectiondate'];
         $injectiontype = $string_mysql['injectiontype'];
-        $arr =  array( $name, $type, $breedingid, $breed, $birthdate, $gender, $label, $women, $men, $place, $injectiondate, $injectiontype );
+        $arr =  array( $name, $status, $breedingid, $breed, $birthdate, $gender, $label, $women, $men, $place, $injectiondate, $injectiontype );
         $rabbits[$id] = $arr;
 
         if ( $gender == 'M' ) {
@@ -144,7 +144,7 @@ function array_from_mysql( $mysql, $mens, $womens ){ //"Добрый день!!!
 function string_to_mysql( $mysql ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'INSERT INTO rabbits (name, type, breedingid, breed, birthdate, gender, label, women, men, place, injectiondate, injectiontype) VALUES ("'.$_GET['name'].'", "", "'.$_GET['breedingid'].'", "'.$_GET['breed'].'", "'.$_GET['birth'].'", "'.$_GET['gender'].'", "'.$_GET['label'].'", "'.$_GET['women'].'", "'.$_GET['men'].'", "'.$_GET['place'].'", "'.$_GET['injectiondate'].'", "'.$_GET['injectiontype'].'");';
+    $query_mysql = 'INSERT INTO rabbits (name, status, breedingid, breed, birthdate, gender, label, women, men, place, injectiondate, injectiontype) VALUES ("'.$_GET['name'].'", "'.$_GET['status'].'", "'.$_GET['breedingid'].'", "'.$_GET['breed'].'", "'.$_GET['birth'].'", "'.$_GET['gender'].'", "'.$_GET['label'].'", "'.$_GET['women'].'", "'.$_GET['men'].'", "'.$_GET['place'].'", "'.$_GET['injectiondate'].'", "'.$_GET['injectiontype'].'");';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     //$results_mysql->close();
@@ -155,7 +155,7 @@ function string_to_mysql( $mysql ){
 function update_string_mysql( $mysql, $rabbit_id ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);    
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'UPDATE rabbits SET name="'.$_GET['name'].'", type="", breedingid="'.$_GET['breedingid'].'", breed="'.$_GET['breed'].'", birthdate="'.$_GET['birth'].'", gender="'.$_GET['gender'].'", label="'.$_GET['label'].'", women="'.$_GET['women'].'", men="'.$_GET['men'].'", place="'.$_GET['place'].'", injectiondate="'.$_GET['injectiondate'].'", injectiontype="'.$_GET['injectiontype'].'" WHERE id="'.$rabbit_id.'";'; echo $query_mysql;
+    $query_mysql = 'UPDATE rabbits SET name="'.$_GET['name'].'", status="'.$_GET['status'].'", breedingid="'.$_GET['breedingid'].'", breed="'.$_GET['breed'].'", birthdate="'.$_GET['birth'].'", gender="'.$_GET['gender'].'", label="'.$_GET['label'].'", women="'.$_GET['women'].'", men="'.$_GET['men'].'", place="'.$_GET['place'].'", injectiondate="'.$_GET['injectiondate'].'", injectiontype="'.$_GET['injectiontype'].'" WHERE id="'.$rabbit_id.'";'; //echo $query_mysql;
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     //$results_mysql->close();

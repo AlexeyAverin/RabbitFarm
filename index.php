@@ -16,11 +16,6 @@ mb_internal_encoding("UTF-8");
 
 
 
-// Считывание данных MySQL с целью того что массивы $mens и $women нужны в Кроликах и случках
-$rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
-$rabbits = $rabbits_mens_womens[0];
-$mens = $rabbits_mens_womens[1];
-$womens = $rabbits_mens_womens[2];
 
 if ( !isset($_GET['str']) ) {
     $string_nav = '';
@@ -47,7 +42,12 @@ if ( $_GET['str'] == 'rab' ) { // Функции кроликов
     if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'upd' ) {
         update_string_mysql( $mysql, $_GET['rabbitid'] ); ###
     }
-}
+ }
+ // Считывание данных MySQL с целью того что массивы $mens и $women нужны в Кроликах и случках
+ $rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
+ $rabbits = $rabbits_mens_womens[0];
+ $mens = $rabbits_mens_womens[1];
+ $womens = $rabbits_mens_womens[2];
 if ( $_GET['str'] == 'cop' ) { // Функции случек
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a class="selected" href="index.php?str=cop">Случки</a></nav>';
     // Добавление случки
@@ -109,8 +109,10 @@ if ( $_GET['str'] == 'rab' ) {
     $string_rabbits = '';
    
         foreach ( $rabbits as $rabbit_id => $rabbit ){
+
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
-            $string_rabbit = "<tr><td>$rabbit_id</td><td><a href='index.php?str=rab&action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections[trim($rabbit[11])], $injections_limit_day)."</td><td><div class='erase' str='rab' id='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
+            $rabbit_sign            = $rabbit[1] == 'on' ? '&#10004;' : '';
+            $string_rabbit = "<tr><td>$rabbit_id</td><td>".$rabbit_sign."</td><td><a href='index.php?str=rab&action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections[trim($rabbit[11])], $injections_limit_day)."</td><td><div class='erase' str='rab' id='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
 
             $string_rabbits .= $string_rabbit;
             //$rabbit_new_id = ++$rabbit_id;
@@ -118,10 +120,10 @@ if ( $_GET['str'] == 'rab' ) {
         $string_middle = <<<EOD
             <table class="ferma">
 
-                <tr><th>ID Кролика</th><th>Кличка</th><th>Клемо</th><th>Дата рождения</th><th>Пол</th><th>Порода</th><th>Клетка</th><th>Прививка</th><th></th></tr>
+                <tr><th>ID Кролика</th><th>С</th><th>Кличка</th><th>Клемо</th><th>Дата рождения</th><th>Пол</th><th>Порода</th><th>Клетка</th><th>Прививка</th><th></th></tr>
                 $string_rabbits
-                <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-                <tr><td>...</td><td><a href="index.php?str=rab&action=new">Добавить нового кроллика</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+                <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+                <tr><td>...</td><td>...</td><td><a href="index.php?str=rab&action=new">Добавить нового кроллика</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
             </table>
 EOD;
 
@@ -133,8 +135,9 @@ EOD;
     if ( $_GET['action'] == 'mod' ) {
         $action_type = 'upd';
         $rabbit_name            = $rabbits[$rabbit_id][0];
+        $rabbit_status          = $rabbits[$rabbit_id][1] == 'on' ? 'checked' : '';
+        $rabbit_sign            = $rabbit_status == 'checked' ? '&#10004;' : '';
         $rabbit_breedingid      = $rabbits[$rabbit_id][2];
-
         $rabbit_breed           = $rabbits[$rabbit_id][3];
         $rabbit_birth_date      = date('Y-m-d', strtotime($rabbits[$rabbit_id][4]));    
         $rabbit_gender          = $rabbits[$rabbit_id][5];
@@ -161,8 +164,8 @@ EOD;
             <tr><td><input type='text' name='rabbitid' value='$rabbit_id' disabled></td><td><input name='name' maxlength='34' minlength='3' required pattern='[а-яА-Яa-zA-Z0-9_]{3,34}' value='".$rabbit_name."' type='text'></td><td>".fill_select($breeds, 'breed', $rabbit_breed)."</td><td>".fill_select($genders, 'gender', $rabbit_gender)."</td><td><input type='text' maxlength='34' name='label' pattern='[а-яА-Яa-zA-Z0-9_]{0,34}' placeholder='Введите клеймо' value='$rabbit_label'></td></tr>
             <tr><td>ID Окрола</td><td>Крольчиха Мама</td><td>Кролик Отец</td><td>Дата рождения</td><td>Линия</td></tr>
             <tr><td><input type='number' name='breedingid' value='".$rabbit_breedingid."' min='0'></td><td>".fill_select($womens, 'women', $rabbit_women)."<td>".fill_select($mens, 'men', $rabbit_men)."</td><td><input name='birth' type='date' value=$rabbit_birth_date></td><td><select name='pedigree'><option>Мать - Отец</option><option>Матушка - Батюшка</option></select></td></tr>
-            <tr><td>Клетка</td><td>Дата прививки</td><td>Прививка</td><td></td><td> </td></tr>
-            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><input type='date' name='injectiondate' id='id' value='$rabbit_injection_date'></td><td>".fill_select(array_keys($injections), 'injectiontype', $rabbit_injection_type)."</td><td> </td><td><input name='str' value='rab' type='hidden'><input type='hidden' value='".$action_type."' name='action'><input type='hidden' name='rabbitid' value=".$rabbit_id."><input type='submit' value='Записать'>  </td></tr>
+            <tr><td>Клетка</td><td>Дата прививки</td><td>Прививка</td><td>Тип состояния</td><td> </td></tr>
+            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><input type='date' name='injectiondate' id='id' value='$rabbit_injection_date'></td><td>".fill_select(array_keys($injections), 'injectiontype', $rabbit_injection_type)."</td><td><input ".$rabbit_status." id='status' name='status' type='checkbox'><label for='status'>Активен</label></td><td><input name='str' value='rab' type='hidden'><input type='hidden' value='".$action_type."' name='action'><input type='hidden' name='rabbitid' value=".$rabbit_id."><input type='submit' value='Записать'>  </td></tr>
         </table>
     </form>";
     

@@ -28,7 +28,7 @@ document.body.addEventListener("click", function(event){
         var id = event.target.getAttribute('id');
         var str = event.target.getAttribute('str');
         if ( str == "rab" || str == '' ) {
-            var stringsrt = '';
+            var stringsrt = 'str=rab&';
         }
         if ( str != "rab" ) {
             var stringsrt = 'str=' + str + '&';
