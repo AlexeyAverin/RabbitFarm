@@ -175,7 +175,7 @@ EOD;
                 <tr><th>ID Случки</th><th>Дата Случки</th><th>Самец</th><th>Самка</th><th>Ожидаемая дата окрола</th></tr>";
         $count_copulations = 0;
         foreach ( $copulations_rabbit as $copulation_id => $copulation ){
-            $string_middle .= "<tr><td>".$copulation_id."</td><td>".date('d-m-Y', strtotime($copulation[1]))."</td><td>".$copulation[2]."</td><td>".$copulation[3]."</td><td>".date_next_injection($copulation[1], '30')."</td></tr>";
+            $string_middle .= "<tr><td><a href='index.php?str=cop&action=mod&id=".$copulation_id."'>".$copulation_id."</a></td><td>".date('d-m-Y', strtotime($copulation[1]))."</td><td>".$copulation[2]."</td><td>".$copulation[3]."</td><td>".date_next_injection($copulation[1], '30')."</td></tr>";
 
             $count_copulations += 1;
         }
@@ -198,7 +198,7 @@ EOD;
         $count_breedings = 0;
 
         foreach ( $breedings_rabbit as $breeding_id => $breeding ){
-            $string_middle .= "<tr><td>".$breeding_id."</td><td>".date('d-m-Y', strtotime($breeding[1]))."</td><td>".$breeding[2]."</td><td>".$breeding[3]."</td><td>".$breeding[4]."</td></tr>";
+            $string_middle .= "<tr><td><a href='index.php?str=bre&action=mod&id=".$breeding_id."'>".$breeding_id."</a></td><td>".date('d-m-Y', strtotime($breeding[1]))."</td><td>".$breeding[2]."</td><td>".$breeding[3]."</td><td>".$breeding[4]."</td></tr>";
             $sum_number_all += $breeding[2];
 
             $sum_number_live += $breeding[3];
