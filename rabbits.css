@@ -43,5 +43,5 @@ table.rabbit select               { width: 150px; margin-bottom: 19px; color: va
 table.rabbit input                { width: 135px; margin-bottom: 19px; color: var(--color-grey-dark); }
 
 table.rabbit input[type=checkbox] { width: 30px; padding: 5px; margin: 0 0 19px 0; }
-table.rabbit label                {  }
+table.rabbit label                { width: 90px; display: inline-block; }
 table.rabbit input[type=submit]   { width: 150px; }

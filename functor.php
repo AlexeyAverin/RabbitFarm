@@ -187,16 +187,19 @@ function fill_ass_select($array, $name, $id, $value){
     return $tag;
 }
 
-
 // Формирование простое Select
 function fill_select( $array, $name, $value ){
+
     $tag = '';
     foreach ( $array as $item ) {
         if ( $item == $value ) {
+
             $tag .= "<option key='$item' val='$value' selected>$item</option>";
         }
         else {
+
             $tag .= "<option key='$item' val='$value'>$item</option>";
+
         }
      }
      $tag = "<select id='$name' name='$name'>$tag</select>";

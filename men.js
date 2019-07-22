@@ -60,6 +60,76 @@ document.body.addEventListener("click", function(event){
         $('parcrtbre').innerHTML = '';
     }
 
+    if (event.target.id == "cmdcrtrab" ) {
+        function fill_select( object, name ){
+            var string = String( object );
+
+            console.log('Добрый день!!!' + string)
+            var array = string.split(',');
+            var tag = '';
+            for ( item in  array ) {
+                tag += '<option>' + array[item] + '</option>';
+            }
+            tag = '<select name="' + name + '" id="' + name + '">' + tag + '</select>';
+            return tag;
+        }
+      
+    
+
+
+        var breedingid = event.target.getAttribute('breedingid');
+        var birth = event.target.getAttribute('birth');
+
+        var parentDiv = $("parcrtrab");
+        var divWindow = document.createElement("div");
+        parentDiv.appendChild(divWindow);
+        divWindow.classList.add("window");
+        divMenu = document.createElement('div');
+        parentDiv.appendChild(divMenu);
+        divMenu.classList.add("menu");
+        params = 'url=www.rabbit.loc';
+  
+        request = new XMLHttpRequest();
+        request.responseType = 'json';
+        request.open('GET', 'selects_php_js.php', true)
+
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        request.addEventListener('readystatechange', () => {
+            if (request.readyState === 4 && request.status === 200 ) {
+                let obj = request.response;
+
+                console.log('Добрый день!!!' + 'Какие то параметры!!!' + obj.genders); //request.responseText
+                divMenu.innerHTML = '<div>Добрый день, <br> если Вы хотите из данного окрола создать, учетную запись кролика, тогда заполните поля и нажмите "Создать", если нет нажмите "Отменить"!!!</div><div><label for="name">Кличка: </label><input pattern="[а-ЯА-Я0-9_]{3,34}" required id="name" name="name" type="text"><label for="breed">Порода: </label>' + fill_select(obj.breeds, 'breed') + '<br><label for="gender">Пол: </label>' + fill_select(obj.genders, 'gender') + '<label for="label">Метка: </label><input id="label" name="label" type="text"><br><label for="women">Крольчиха: </label>' + fill_select(obj.womens, 'women') + '<label for="men">Крол: </label>' + fill_select(obj.mens, 'men') + '<br><label for="injectiontype">Вакцина: </label>' + fill_select(obj.injections, 'injectiontype') + '<label for="injectiondate">Дата прививки: </label><input id="injectiondate" name="injectiondate" type="date"><br><input id="insrabsql" value="Создать" type="button"><input id="cancrtrab" value="Отмена" type="button"></div>';
+            }
+        });
+        request.send(params);
+
+        //divMenu.innerHTML = '<div>Добрый день!!!</div>';
+
+    }
+
+    if (event.target.id == "insrabsql" ) {
+        $('parcrtrab').innerHTML = '';
+        params = "url=www.rabbit.loc";
+        request = new XMLHttpRequest();
+
+
+        request.open('GET', 'index.php?str=rab&action=mod&rab=11', true);
+        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        request.addEventListener('readystatechange', () => {
+            if (request.readyState === 4 && request.status === 200 ) {
+                console.log('Добрый день!!!' + 'Какие то параметры!!!' + request.responseText);
+            }
+        });
+
+        request.send(params);
+
+    }
+    
+    if (event.target.id == "cancrtrab" ) {
+        $('parcrtrab').innerHTML = '';
+    }
+
 });
 
 // Две функции связанны для при изменении даты автоматически выбирался тип прививки
