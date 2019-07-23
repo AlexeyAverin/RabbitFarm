@@ -3,7 +3,7 @@
             
 
 html, body                        { margin: 0; padding: 0; box-sizing: border-box; font-family: monospace; --color-grey-soft: rgb(230, 230, 230); --color-grey-middle: rgb(170, 170, 170); --color-grey-dark: rgb(110, 110, 110); }
-div.secret                        { width: 300px; height: 179px; box-shadow: 0px 0px 20px var(--color-grey-middle); border: 1px solid var(--color-grey-middle); border-radius: 25px; margin: 89px auto 0px auto; background: var(--color-grey-soft); }
+div.secret                        { width: 300px; height: 179px; position: relative; box-shadow: 0px 0px 20px var(--color-grey-middle); top: calc((100vh - 299px)/2); border: 1px solid var(--color-grey-middle); border-radius: 25px; margin: 0 auto; background: var(--color-grey-soft); }
 div.secret input                  { width: 150px; margin: 25px 0px 0px 70px; box-sizing: content-box; padding: 0; }
 div.secret input[type='submit']   { width: 50px; margin: 25px 0px 0px 170px; }
 div.contact                       { height: 50px; padding: 0 10px; display: flex; justify-content: space-between; color: rgb(170, 170, 170); }
@@ -11,7 +11,7 @@ div.contact div                   { line-height: 50px; }
 .menu                             { position: absolute; width: 630px; height: 420px; top: calc((100vh - 420px)/2); left: calc((100vw - 630px)/2); box-sizing: border-box; color: orange; background-color: white; box-shadow: 10px 10px 10px rgb(230, 230, 230); border-radius: 30px; border: 1px solid orange; text-align: center; }
 .window                           { position: absolute; background-color: rgba(254, 254, 254, 0.7); width: 100vw; height: 100vh; top: 0px; left: 0px; }
 .menu div:first-child             { padding: 30px; }
-header                            { width: 100%; display: flex; flex-direction: col; height: 70px; font-size: 20px; }
+header                            { width: 100%; display: flex; flex-direction: row; height: 70px; font-size: 20px; }
 header div.logotip                { width: 70px; height: 100%; }
 
 header div.brand                  { width: 210px; height: 100%; color: var(--color-grey-middle); line-height: 70px; }
