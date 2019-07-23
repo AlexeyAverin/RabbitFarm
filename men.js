@@ -87,13 +87,14 @@ document.body.addEventListener("click", function(event){
         divMenu = document.createElement('div');
         parentDiv.appendChild(divMenu);
         divMenu.classList.add("menu");
-        params = 'url=www.rabbit.loc';
+        url = '/functor.php';
+        params = 'metod=arrays_php_js';
   
         request = new XMLHttpRequest();
         request.responseType = 'json';
-        request.open('POST', 'selects_php_js.php', true)
-
+        request.open('POST', url, true);
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
         request.addEventListener('readystatechange', () => {
             if (request.readyState === 4 && request.status === 200 ) {
                 let obj = request.response;

@@ -14,6 +14,21 @@ mb_internal_encoding("UTF-8");
 
 
 
+//Передаем массивы дынных для построения форм по ajax php -> js
+if ( $_POST['metod'] === 'arrays_php_js' ) {
+    $arrays_from_settings = array(
+        'womens' => $womens,
+        'mens' => $mens,
+        'genders' => $genders,
+    
+        'places' => $places,
+        'injections' => $injections,
+        'breeds' => $breeds);
+    echo json_encode($arrays_from_settings, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES |JSON_NUMERIC_CHECK );
+
+}
+
+
 // Отправляет письмо
 function sender_mail( $mail_account, $mail_msg ){ //echo 'Добрый день!!!';
     $mail = new PHPMailer(true);
