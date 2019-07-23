@@ -91,7 +91,7 @@ document.body.addEventListener("click", function(event){
   
         request = new XMLHttpRequest();
         request.responseType = 'json';
-        request.open('GET', 'selects_php_js.php', true)
+        request.open('POST', 'selects_php_js.php', true)
 
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         request.addEventListener('readystatechange', () => {
