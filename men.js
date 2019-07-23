@@ -62,9 +62,8 @@ document.body.addEventListener("click", function(event){
 
     if (event.target.id == "cmdcrtrab" ) {
         function fill_select( object, name ){
-            var string = String( object );
+            var string = String( object ); //console.log('Добрый день!!!' + string)
 
-            console.log('Добрый день!!!' + string)
             var array = string.split(',');
             var tag = '';
             for ( item in  array ) {
@@ -72,23 +71,23 @@ document.body.addEventListener("click", function(event){
             }
             tag = '<select name="' + name + '" id="' + name + '">' + tag + '</select>';
             return tag;
-        }
-      
-    
-
+        } //console.log( 'Добрый вечер!!!' + Object.keys(object) );
 
         var breedingid = event.target.getAttribute('breedingid');
         var birth = event.target.getAttribute('birth');
+        var couplingid = event.target.getAttribute('couplingid');
 
         var parentDiv = $("parcrtrab");
+
         var divWindow = document.createElement("div");
         parentDiv.appendChild(divWindow);
         divWindow.classList.add("window");
         divMenu = document.createElement('div');
         parentDiv.appendChild(divMenu);
         divMenu.classList.add("menu");
+
         url = '/functor.php';
-        params = 'metod=arrays_php_js';
+        params = 'metod=arrays_php_js&couplingid=' + couplingid;
   
         request = new XMLHttpRequest();
         request.responseType = 'json';
@@ -99,8 +98,8 @@ document.body.addEventListener("click", function(event){
             if (request.readyState === 4 && request.status === 200 ) {
                 let obj = request.response;
 
-                console.log('Добрый день!!!' + 'Какие то параметры!!!' + obj.genders); //request.responseText
-                divMenu.innerHTML = '<div>Добрый день, <br> если Вы хотите из данного окрола создать, учетную запись кролика, тогда заполните поля и нажмите "Создать", если нет нажмите "Отменить"!!!</div><div><label for="name">Кличка: </label><input pattern="[а-ЯА-Я0-9_]{3,34}" required id="name" name="name" type="text"><label for="breed">Порода: </label>' + fill_select(obj.breeds, 'breed') + '<br><label for="gender">Пол: </label>' + fill_select(obj.genders, 'gender') + '<label for="label">Метка: </label><input id="label" name="label" type="text"><br><label for="women">Крольчиха: </label>' + fill_select(obj.womens, 'women') + '<label for="men">Крол: </label>' + fill_select(obj.mens, 'men') + '<br><label for="injectiontype">Вакцина: </label>' + fill_select(obj.injections, 'injectiontype') + '<label for="injectiondate">Дата прививки: </label><input id="injectiondate" name="injectiondate" type="date"><br><input id="insrabsql" value="Создать" type="button"><input id="cancrtrab" value="Отмена" type="button"></div>';
+                //console.log('Добрый день!!!' + 'Какие то параметры!!!' + obj.genders); //request.responseText
+                divMenu.innerHTML = '<div>Добрый день, <br> если Вы хотите из данного окрола создать, учетную запись кролика, тогда заполните поля и нажмите "Создать", если нет нажмите "Отменить"!!!</div><div><label for="name">Кличка: </label><input pattern="[а-ЯА-Я0-9_]{3,34}" required id="name" name="name" type="text"><label for="breed">Порода: </label>' + fill_select(obj.breeds, 'breed') + '<br><label for="gender">Пол: </label>' + fill_select(obj.genders, 'gender') + '<label for="label">Метка: </label><input id="label" name="label" type="text"><br><label for="women">Крольчиха: </label><input type="text" readonly value="' + obj.women + '"><label for="men">Крол: </label><input type="text" readonly value="' + obj.men + '"><br><label for="injectiontype">Вакцина: </label>' + fill_select(Object.keys(obj.injections), 'injectiontype') + '<label for="injectiondate">Дата прививки: </label><input id="injectiondate" name="injectiondate" type="date"><br><input id="insrabsql" value="Создать" type="button"><input id="cancrtrab" value="Отмена" type="button"></div>';
             }
         });
         request.send(params);

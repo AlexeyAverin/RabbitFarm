@@ -16,9 +16,13 @@ mb_internal_encoding("UTF-8");
 
 //Передаем массивы дынных для построения форм по ajax php -> js
 if ( $_POST['metod'] === 'arrays_php_js' ) {
+    $array = copulation_id_mysql( $mysql, $_POST['couplingid'] );
+    $men = $array[0];
+    $women = $array[1];
+
     $arrays_from_settings = array(
-        'womens' => $womens,
-        'mens' => $mens,
+        'women' => $women,
+        'men' => $men,
         'genders' => $genders,
     
         'places' => $places,
@@ -277,6 +281,8 @@ function copulation_update_mysql( $mysql ){
 
 }
 
+
+// Считывание базы случек по имени зайца
 function copulations_rabbit_mysql( $mysql, $rabbit_name ){
     $connect_mysql = connect_mysql( $mysql );
 
@@ -288,20 +294,36 @@ function copulations_rabbit_mysql( $mysql, $rabbit_name ){
         $results_mysql->data_seek($i);
         $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
         $couplingid = $string_mysql['couplingid'];
+
         $date = $string_mysql['couplingdate'];
         $men = $string_mysql['couplingmen'];
         $women = $string_mysql['couplingwomen'];
         $place = $string_mysql['couplingplace'];
-
         $arr = array( $couplingid, $date, $men, $women, $place );
+
         $copulations_rabbit[$couplingid] = $arr;
     }
     $results_mysql->close();
-
     $connect_mysql->close();
 
     return $copulations_rabbit;
+}
 
+
+// Считывание базы случек по ID случки
+function copulation_id_mysql( $mysql, $couplingid ){
+    $connect_mysql = connect_mysql( $mysql );
+    $query_mysql = 'SELECT * FROM copulations WHERE couplingid="'.$couplingid.'";';
+    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+
+    $results_mysql->data_seek(0);
+    $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
+    $men = $string_mysql['couplingmen'];
+    $women = $string_mysql['couplingwomen'];
+    $arr = array($men, $women);
+    $results_mysql->close();
+    $connect_mysql->close();// $arr = array('Крол', 'Крольчиха');
+    return $arr;
 }
 
 function breedings_from_mysql( $mysql ){

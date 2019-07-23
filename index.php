@@ -161,7 +161,7 @@ EOD;
         <table class='rabbit'>
             <tr><th colspan='5'>Персональный данные кролика</th></tr>
             <tr><td>ID Кролика</td><td>Кличка</td><td>Порода</td><td>Пол</td><td>Клеймо</td></tr>
-            <tr><td><input type='text' name='rabbitid' value='$rabbit_id' disabled></td><td><input name='name' maxlength='34' minlength='3' required pattern='[а-яА-Я0-9_]{3,34}' value='".$rabbit_name."' type='text'></td><td>".fill_select($breeds, 'breed', $rabbit_breed)."</td><td>".fill_select($genders, 'gender', $rabbit_gender)."</td><td><input type='text' maxlength='34' name='label' pattern='[а-яА-Яa-zA-Z0-9_]{0,34}' placeholder='Введите клеймо' value='$rabbit_label'></td></tr>
+            <tr><td><input type='text' name='rabbitid' value='$rabbit_id' readonly></td><td><input name='name' maxlength='34' minlength='3' required pattern='[а-яА-Я0-9_]{3,34}' value='".$rabbit_name."' type='text'></td><td>".fill_select($breeds, 'breed', $rabbit_breed)."</td><td>".fill_select($genders, 'gender', $rabbit_gender)."</td><td><input type='text' maxlength='34' name='label' pattern='[а-яА-Яa-zA-Z0-9_]{0,34}' placeholder='Введите клеймо' value='$rabbit_label'></td></tr>
             <tr><td>ID Окрола</td><td>Крольчиха Мама</td><td>Кролик Отец</td><td>Дата рождения</td><td>Линия</td></tr>
             <tr><td><input type='number' name='breedingid' value='".$rabbit_breedingid."' min='0'></td><td>".fill_select($womens, 'women', $rabbit_women)."<td>".fill_select($mens, 'men', $rabbit_men)."</td><td><input name='birth' type='date' value=$rabbit_birth_date></td><td><select name='pedigree'><option>Мать - Отец</option><option>Матушка - Батюшка</option></select></td></tr>
             <tr><td>Клетка</td><td>Дата прививки</td><td>Прививка</td><td>Тип состояния</td><td> </td></tr>
@@ -253,7 +253,7 @@ EOD;
         <tr><th colspan='5'>Учетные данные окрола</th></tr>
         <tr><td>ID Окрола</td><td>Дата</td><td>Кол-во всего</td><td>Кол-во живых</td><td>ID Случки</td></tr>
         <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='breedingid' value='".$_GET['id']."' readonly ></td><td><input name='breedingdate' value='".$breedingdate."' type='date'></td><td><input name='breedingnumberall' value='".$breedings[$_GET['id']][2]."' min='0' max='99' type='number'></td><td><input name='breedingnumberlive' value='".$breedings[$_GET['id']][3]."' min='0' max='99' type='number'></td><td><input name='couplingid' type='number' value='".$breedings[$_GET['id']][6]."' min='0'></td></tr>
-        <tr><td></td><td></td><td></td><td><input name='str' value='bre' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input value='Записать' type='submit'></td></form><td><input id='cmdcrtrab' breedingid='".$_GET['id']."' birth='".$breedingdate."' type='button' value='Создать Кролика'></td></tr>
+        <tr><td></td><td></td><td></td><td><input name='str' value='bre' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input value='Записать' type='submit'></td></form><td><input id='cmdcrtrab' couplingid='".$breedings[$_GET['id']][6]."' breedingid='".$_GET['id']."' birth='".$breedingdate."' type='button' value='Создать Кролика'></td></tr>
         <tr id='parcrtrab' colspan='5'></tr>
         </table>";
     }
