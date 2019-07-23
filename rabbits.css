@@ -11,15 +11,16 @@ div.contact div                   { line-height: 50px; }
 .menu                             { position: absolute; width: 630px; height: 420px; top: calc((100vh - 420px)/2); left: calc((100vw - 630px)/2); box-sizing: border-box; color: orange; background-color: white; box-shadow: 10px 10px 10px rgb(230, 230, 230); border-radius: 30px; border: 1px solid orange; text-align: center; }
 .window                           { position: absolute; background-color: rgba(254, 254, 254, 0.7); width: 100vw; height: 100vh; top: 0px; left: 0px; }
 .menu div:first-child             { padding: 30px; }
+#cancrtrab                        { position: relative; left: calc(595px); top: calc(-125px); width: 19px; height: 19px; color: var(--color-grey-middle ); cursor: pointer; line-height: 23px; border-radius: 50%; border: 2px solid var( --color-grey-middle ); }
 header                            { width: 100%; display: flex; flex-direction: row; height: 70px; font-size: 20px; }
-header div.logotip                { width: 70px; height: 100%; }
 
+header div.logotip                { width: 70px; height: 100%; }
 header div.brand                  { width: 210px; height: 100%; color: var(--color-grey-middle); line-height: 70px; }
 header nav                        { height: 100%; flex-direction: row; justify-content: flex-end; display: flex; flex-grow: 1; }
 header nav:last-child             { margin-right: 10px; }
 header nav a                      { color: var(--color-grey-middle); padding: 0 10px; line-height: 70px; text-decoration: none; font-size:; }
-header nav a:hover                { background-color: var(--color-grey-dark); }
 
+header nav a:hover                { background-color: var(--color-grey-dark); }
 section                           { width: 100%; height: calc(100vh - 120px); font-size: 15px; background-color: white; }
 table.ferma                       { width: 100%; margin: 0 0 50px 0; border-style: hidden; color: var(--color-grey-dark); }
 table.ferma td                    {  }
@@ -27,21 +28,20 @@ table.ferma td a                  { color: orange; text-decoration: none; }
 table.ferma td em                 { color: var(--color-grey-dark); margin-left: 7px; padding: 3px; font-size: 10px; border-radius: 35%; border: 1px solid red; }
                 .erase            { cursor: pointer; color: orange; }
                 .erase a          { margin: 0 30px; }
+
 .selected                         { color: var(--color-grey-soft); background-color: var(--color-grey-dark); }
 table.ferma th                    { text-align: left; color: white; background-color: var(--color-grey-dark); }
-
 table.ferma tr:hover              { background-color: var(--color-grey-soft); }
 table.ferma tr:nth-child(odd)     { color: var(--color-grey-middle); }
 table.ferma tr:nth-child(even)    { color: var(--color-grey-dark); }
-
 table.rabbit                      { width: 100%; margin: 0 0 50px 0; color: var(--color-grey-dark); border-style: hidden; }
 table.rabbit th                   { text-align: left; color: var(--color-grey-dark); }
+
 table.rabbit tr                   { text-align: center;  }
 table.rabbit tr:nth-child(odd)    { background-color: ; }
 table.rabbit tr:nth-child(even)   { background-color: ; color: var(--color-grey-middle); }
 table.rabbit select               { width: 150px; margin-bottom: 19px; color: var(--color-grey-dark); }
 table.rabbit input                { width: 135px; margin-bottom: 19px; color: var(--color-grey-dark); }
-
 table.rabbit input[type=checkbox] { width: 30px; padding: 5px; margin: 0 0 19px 0; }
 table.rabbit label                { width: 90px; display: inline-block; }
 table.rabbit input[type=submit]   { width: 150px; }
