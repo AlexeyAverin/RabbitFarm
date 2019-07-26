@@ -32,6 +32,9 @@ if ( $_POST['metod'] === 'arrays_php_js' ) {
 
 }
 
+if ( $_GET['metod'] === 'string_to_mysql' ) {
+    string_to_mysql( $mysql );
+}
 
 // Отправляет письмо
 function sender_mail( $mail_account, $mail_msg ){ //echo 'Добрый день!!!';
