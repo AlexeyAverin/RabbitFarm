@@ -6,6 +6,10 @@ namespace Composer\Autoload;
 
 class ComposerStaticInita1e5ac411d822992d192f1ae43015102
 {
+    public static $files = array (
+        '17fd9fef37c97cfdc0c7794299a8423d' => __DIR__ . '/..' . '/vrana/notorm/NotORM.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'P' => 
         array (

@@ -28,50 +28,56 @@ if ( !isset($_GET['str']) ) {
 if ( $_GET['str'] == 'rab' ) { // Функции кроликов
     $string_nav = '<nav><a class="selected" href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a></nav>';
     // Добавление данных зайца в MySQL
-    if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-        string_to_mysql( $mysql );
+    if ( isset($_GET['action']) && $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
+        rabbit_insert_dbase( $mysql );
     }
 
 
     // Удаление данных кролика из MySQL
     if ( (isset($_GET['id'])) && $_GET['action'] == 'del' ) {//echo "Добрый вечер!!!";
-        string_delete_mysql( $mysql, $_GET['id'] ); 
+        rabbit_delete_dbase( $mysql, $_GET['id'] ); 
     }
 
     // Изменений данных кролика в MySQL
     if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'upd' ) {
-        update_string_mysql( $mysql, $_GET['rabbitid'] ); ###
+        rabbit_update_dbase( $mysql, $_GET['rabbitid'] ); ###
     }
  }
  // Считывание данных MySQL с целью того что массивы $mens и $women нужны в Кроликах и случках
- $rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
+ //$rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
+
+ $rabbits_mens_womens = rabbits_from_dbase( $mysql, $mens, $womens );
  $rabbits = $rabbits_mens_womens[0];
  $mens = $rabbits_mens_womens[1];
  $womens = $rabbits_mens_womens[2];
 if ( $_GET['str'] == 'cop' ) { // Функции случек
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a class="selected" href="index.php?str=cop">Случки</a></nav>';
     // Добавление случки
-    if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-        copulations_to_mysql( $mysql );
-    } elseif ( $_GET['action'] == 'del' ) {
-        copulation_delete_mysql( $mysql );
-    } elseif ( $_GET['action'] == 'upd' ) {
-        copulation_update_mysql( $mysql );
+    if ( isset($_GET['action']) ) {
+        if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
+            copulations_to_mysql( $mysql );
+        } elseif ( $_GET['action'] == 'del' ) {
+            copulation_delete_mysql( $mysql );
+        } elseif ( $_GET['action'] == 'upd' ) {
+            copulation_update_mysql( $mysql );
+        }
     }
-
     // Считывание данных MySQ по случке
     $copulations = copulations_from_mysql( $mysql );
 }
 if ( $_GET['str'] == 'bre' ) { // Функции окролов
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a class="selected" href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a></nav>';
     // Добавление нового окрола из случки
-    if ( $_GET['action'] == 'ins' || $_GET['action'] == 'crtbre' ) {
-        // Создание нового окрола в том числе из окрола
-        breeding_from_copulation_to_mysql( $mysql );
-    } elseif ( $_GET['action'] == 'del' ) {
-        breeding_delete_mysql( $mysql );
-    } elseif ( $_GET['action'] == 'upd' ) {
-        breeding_update_mysql( $mysql );
+    if ( isset($_GET['action']) ) {
+        if ( $_GET['action'] == 'ins' || $_GET['action'] == 'crtbre' ) {
+            // Создание нового окрола в том числе из окрола
+            breeding_from_copulation_to_mysql( $mysql );
+        } elseif ( $_GET['action'] == 'del' ) {
+            breeding_delete_mysql( $mysql );
+        } elseif ( $_GET['action'] == 'upd' ) {
+            breeding_update_mysql( $mysql );
+        }
+
     }
     //Считывание данных MySQL по окролам
     $breedings = breedings_from_mysql( $mysql );
@@ -130,7 +136,8 @@ EOD;
 // Отображение общей информации по кролику, отображается при 'Вывод информации кролика' 'Добавление нового кролика' 
 
 } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
-    $rabbit_id = $_GET['rabbitid'];
+    $rabbit_id = isset($_GET['rabbitid']) ? $_GET['rabbitid'] : '';
+    $rabbit_name = $rabbit_status = $rabbit_sign = $rabbit_breedingid = $rabbit_breed = $rabbit_birth_date = $rabbit_gender = $rabbit_label = $rabbit_women = $rabbit_men = $rabbit_place = $rabbit_injection_date = $rabbit_injection_type = '';
 
     if ( $_GET['action'] == 'mod' ) {
         $action_type = 'upd';
@@ -171,7 +178,7 @@ EOD;
     </form>";
     
     // Отображается дополнительная информация по кроликам 'Вывод информации кролика'
-    if ( (array_key_exists($_GET['rabbitid'], $rabbits)) ) {
+    if ( isset($_GET['rabbitid']) && (array_key_exists($_GET['rabbitid'], $rabbits)) ) {
         $copulations_rabbit = copulations_rabbit_mysql( $mysql, $rabbit_name );
         $string_middle .= "<table class='ferma'>
                 <tr><td colspan='3'>Данные по случке</td></tr>

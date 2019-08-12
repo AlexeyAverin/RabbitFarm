@@ -7,15 +7,15 @@ use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 require 'secret.php';
 require 'setting.php';
-//ini_set('display_errors', 1);
-//ini_set('display_atartup_errors',1);
-//ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_atartup_errors',1);
+ini_set('error_reporting', E_ALL);
 mb_internal_encoding("UTF-8");
 
 
 
 //Передаем массивы дынных для построения форм по ajax php -> js
-if ( $_POST['metod'] === 'arrays_php_js' ) {
+if ( isset($_POST['metod']) && $_POST['metod'] === 'arrays_php_js' ) {
     $array = copulation_id_mysql( $mysql, $_POST['couplingid'] );
     $men = $array[0];
     $women = $array[1];
@@ -32,7 +32,7 @@ if ( $_POST['metod'] === 'arrays_php_js' ) {
 
 }
 
-if ( $_GET['metod'] === 'string_to_mysql' ) {
+if ( isset($_GET['metod']) && $_GET['metod'] === 'string_to_mysql' ) {
     string_to_mysql( $mysql );
 }
 
@@ -119,78 +119,99 @@ function send_query_mysql( $connect_mysql, $query_mysql ){
 
 }
 
-// Считывание данных зайцев из mysql
-function array_from_mysql( $mysql, $mens, $womens ){ //"Добрый день!!!"
-    $connect_mysql = connect_mysql( $mysql );
+// Считывание данных зайцев
+function rabbits_from_dbase( $mysql, $mens, $womens ){//"Добрый день!!!"
+    try {
+        $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+        foreach($connect_dbase->query('SELECT * FROM rabbits ORDER BY status DESC, birthdate ASC') as $row){
+            $id = $row['id'];
+            $name = $row['name'];
 
-    $query_mysql = 'SELECT * FROM rabbits ORDER BY status DESC, birthdate ASC;';
-    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
-    $rows_mysql = $results_mysql->num_rows;
-    for ( $i = 0; $i < $rows_mysql; ++$i ) {
-        $results_mysql->data_seek($i);
-        $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
-        $id = $string_mysql['id'];
-        $name = $string_mysql['name']; //echo mb_detect_encoding($name)."<br />";
+            $status = $row['status'];
+            $breedingid = $row['breedingid'];
+            $breed = $row['breed'];
+            $birthdate = $row['birthdate'];
+            $gender = $row['gender'];
+            $label = $row['label'];
+            $women = $row['women'];
+            $men = $row['men'];
 
-        $status = $string_mysql['status'];
-        $breedingid = $string_mysql['breedingid'];
-        $breed = $string_mysql['breed'];
-        $birthdate = $string_mysql['birthdate'];
-        $gender = $string_mysql['gender'];
-        $label = $string_mysql['label'];
-        $women = $string_mysql['women'];
-        $men = $string_mysql['men'];
+            $place = $row['place'];
+            $injectiondate = $row['injectiondate'];
+            $injectiontype = $row['injectiontype'];
+            $arr =  array( $name, $status, $breedingid, $breed, $birthdate, $gender, $label, $women, $men, $place, $injectiondate, $injectiontype );
+            $rabbits[$id] = $arr;
 
-        $place = $string_mysql['place'];
-        $injectiondate = $string_mysql['injectiondate'];
-        $injectiontype = $string_mysql['injectiontype'];
-        $arr =  array( $name, $status, $breedingid, $breed, $birthdate, $gender, $label, $women, $men, $place, $injectiondate, $injectiontype );
-        $rabbits[$id] = $arr;
-
-        if ( $gender == 'M' ) {
-            $mens[] = $name;
-
-        }
-        if ( $gender == 'W' ) {
-            $womens[] = $name;
-        }
+            if ( $gender == 'M' ) {
+                $mens[] = $name;
+            }
+            if ( $gender == 'W' ) {
+                $womens[] = $name;
+            }
+        }        
+    } catch (PDOException $e) {
+        echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
+        die();
     }
-
-    $results_mysql->close();
-    $connect_mysql->close();
+    $connect_dbase = null;
     $rabbits_mens_womens = array($rabbits, $mens, $womens);
     return $rabbits_mens_womens;
 }
 
 // Добавляем нового зайца в MySQL
-function string_to_mysql( $mysql ){
-    $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
-    if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'INSERT INTO rabbits (name, status, breedingid, breed, birthdate, gender, label, women, men, place, injectiondate, injectiontype) VALUES ("'.$_GET['name'].'", "'.$_GET['status'].'", "'.$_GET['breedingid'].'", "'.$_GET['breed'].'", "'.$_GET['birth'].'", "'.$_GET['gender'].'", "'.$_GET['label'].'", "'.$_GET['women'].'", "'.$_GET['men'].'", "'.$_GET['place'].'", "'.$_GET['injectiondate'].'", "'.$_GET['injectiontype'].'");';
-    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
-    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
-    //$results_mysql->close();
-    $connect_mysql->close();
+function rabbit_insert_dbase( $mysql ){
+    $_GET['status'] = isset($_GET['status']) ? $_GET['status'] : '';
+    try{
+        $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+
+        $query_dbase = 'INSERT INTO rabbits (name, status, breedingid, breed, birthdate, gender, label, women, men, place, injectiondate, injectiontype) VALUES ("'.$_GET['name'].'", "'.$_GET['status'].'", "'.$_GET['breedingid'].'", "'.$_GET['breed'].'", "'.$_GET['birth'].'", "'.$_GET['gender'].'", "'.$_GET['label'].'", "'.$_GET['women'].'", "'.$_GET['men'].'", "'.$_GET['place'].'", "'.$_GET['injectiondate'].'", "'.$_GET['injectiontype'].'");';
+        $results_dbase = $connect_dbase->exec($query_dbase);
+        if ( $results_dbase === false ){
+
+            echo "Добрый день!!! В rabbit_insert_dbase ошибка!!!";
+        }
+    } catch (PDOException $e) {
+        echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
+        die();
+    }
+    $results_dbase = null;
+    $connect_dbase = null;
+
 }
 
 // Изменение данных зайца в MySQL
-function update_string_mysql( $mysql, $rabbit_id ){
-    $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);    
-    if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'UPDATE rabbits SET name="'.$_GET['name'].'", status="'.$_GET['status'].'", breedingid="'.$_GET['breedingid'].'", breed="'.$_GET['breed'].'", birthdate="'.$_GET['birth'].'", gender="'.$_GET['gender'].'", label="'.$_GET['label'].'", women="'.$_GET['women'].'", men="'.$_GET['men'].'", place="'.$_GET['place'].'", injectiondate="'.$_GET['injectiondate'].'", injectiontype="'.$_GET['injectiontype'].'" WHERE id="'.$rabbit_id.'";'; //echo $query_mysql;
-    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
-    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
-    //$results_mysql->close();
-    $connect_mysql->close();
+function rabbit_update_dbase( $mysql, $rabbit_id ){
+    try{
+        $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+        $query_dbase = 'UPDATE rabbits SET name="'.$_GET['name'].'", status="'.$_GET['status'].'", breedingid="'.$_GET['breedingid'].'", breed="'.$_GET['breed'].'", birthdate="'.$_GET['birth'].'", gender="'.$_GET['gender'].'", label="'.$_GET['label'].'", women="'.$_GET['women'].'", men="'.$_GET['men'].'", place="'.$_GET['place'].'", injectiondate="'.$_GET['injectiondate'].'", injectiontype="'.$_GET['injectiontype'].'" WHERE id="'.$rabbit_id.'";'; //echo $query_mysql;
+        $results_dbase = $connect_dbase->exec($query_dbase);
+
+        if ( $results_dbase === false )
+            echo "Добрый день!!! В rabbit_update_dbase ошибка!!!";
+    } catch (PDOException $e) {
+        echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
+        die();
+    }
+    $results_dbase = null;
+    $connect_dbase = null;
+
 }
 
 // Удаление данных зайца из MySQL
-function string_delete_mysql( $mysql, $rabbit_id ){
-    $connect_mysql = connect_mysql( $mysql );
-    $query_mysql = 'DELETE FROM rabbits WHERE id="'.$rabbit_id.'";';
-    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
-    //$results_mysql->close();
-    $connect_mysql->close();
+function rabbit_delete_dbase( $mysql, $rabbit_id ){
+    try{
+    
+        $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+        $query_dbase = 'DELETE FROM rabbits WHERE id="'.$rabbit_id.'";';
+        $results_dbase = $connect_dbase->exec($query_dbase);
+        if ( $results_dbase === false )
+            echo "Добрый день!!! В rabbit_delete_dbase ошибка!!!";
+    } catch(PDOException $e) {
+        echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
+        die();
+    }
+    $results_dbase = null;
+    $connect_dbase = null;
     
 }
 
@@ -293,6 +314,7 @@ function copulations_rabbit_mysql( $mysql, $rabbit_name ){
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     $rows_mysql = $results_mysql->num_rows;
 
+    $copulations_rabbit = array();
     for ( $i = 0; $i < $rows_mysql; ++$i ) {
         $results_mysql->data_seek($i);
         $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
@@ -367,6 +389,7 @@ function breeding_update_mysql( $mysql ){
 }
 
 function breedings_rabbit( $mysql, $rabbit_name ){
+    $breedings_rabbit = array();
     $connect_mysql = connect_mysql( $mysql );
     $query_mysql = 'SELECT * FROM copulations NATURAL JOIN breedings WHERE couplingmen="'.$rabbit_name.'" OR couplingwomen="'.$rabbit_name.'" ORDER BY breedingdate;';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
