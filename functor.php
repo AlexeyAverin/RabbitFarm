@@ -7,6 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 require 'secret.php';
 require 'setting.php';
+include 'vendor/vrana/notorm/NotORM.php';
 ini_set('display_errors', 1);
 ini_set('display_atartup_errors',1);
 ini_set('error_reporting', E_ALL);
