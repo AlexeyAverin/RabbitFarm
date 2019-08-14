@@ -16,16 +16,18 @@ mb_internal_encoding("UTF-8");
 
 
 
-
-if ( !isset($_GET['str']) ) {
+$str = isset($_GET['str']) ? $_GET['str'] : null;
+if ( !isset($str) ) {
     $string_nav = '';
     $string_middle = "<div class='secret'><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><input name='login' placeholder='login' type='text'><br><input name='password' placeholder='password' type='password'><br><input type='submit' value='Войти'></form></div>";
-    if ( $_GET['login'] == 'Farmer' && $_GET['password'] == '777' ) {
-        $_GET['str'] = 'rab';
+    $login = isset($_GET['login']) ? $_GET['login'] : '';
+    $password = isset($_GET['password']) ? $_GET['password'] : '';
+    if ( $login == 'Farmer' && $password == '777' ) {
+        $str = 'rab';
     }
 
 }
-if ( $_GET['str'] == 'rab' ) { // Функции кроликов
+if ( $str == 'rab' ) { // Функции кроликов
     $string_nav = '<nav><a class="selected" href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a></nav>';
     // Добавление данных зайца в MySQL
     if ( isset($_GET['action']) && $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
@@ -50,7 +52,7 @@ if ( $_GET['str'] == 'rab' ) { // Функции кроликов
  $rabbits = $rabbits_mens_womens[0];
  $mens = $rabbits_mens_womens[1];
  $womens = $rabbits_mens_womens[2];
-if ( $_GET['str'] == 'cop' ) { // Функции случек
+if ( $str == 'cop' ) { // Функции случек
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a class="selected" href="index.php?str=cop">Случки</a></nav>';
     // Добавление случки
     if ( isset($_GET['action']) ) {
@@ -65,7 +67,7 @@ if ( $_GET['str'] == 'cop' ) { // Функции случек
     // Считывание данных MySQ по случке
     $copulations = copulations_from_mysql( $mysql );
 }
-if ( $_GET['str'] == 'bre' ) { // Функции окролов
+if ( $str == 'bre' ) { // Функции окролов
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a class="selected" href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a></nav>';
     // Добавление нового окрола из случки
     if ( isset($_GET['action']) ) {
@@ -109,7 +111,7 @@ $string_up = "
 
         <section>";
 
-if ( $_GET['str'] == 'rab' ) {
+if ( $str == 'rab' ) {
   // Отображается список кроликов в при простом отображении и при удалении кролика
   if ( !isset($_GET['action']) || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
     $string_rabbits = '';
@@ -228,7 +230,7 @@ EOD;
 
 }
     }
-}  elseif ( $_GET['str'] == 'bre' ) {
+}  elseif ( $str == 'bre' ) {
 
     if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
         $string_breedings = '';
@@ -266,7 +268,7 @@ EOD;
     }
     
 
-}  elseif ( $_GET['str'] == 'cop' ) {
+}  elseif ( $str == 'cop' ) {
 
     if ( !isset($_GET['action']) || $_GET['action'] == 'ins' || $_GET['action'] == 'upd' || $_GET['action'] == 'del' ) {
         $string_couplings = '';
