@@ -7,7 +7,7 @@ use PHPMailer\PHPMailer\Exception;
 require 'vendor/autoload.php';
 require 'secret.php';
 require 'setting.php';
-include 'vendor/vrana/notorm/NotORM.php';
+include 'NotORM.php';
 ini_set('display_errors', 1);
 ini_set('display_atartup_errors',1);
 ini_set('error_reporting', E_ALL);
@@ -251,30 +251,20 @@ function fill_select( $array, $name, $value ){
 }
 
 // Считывание данных случек из mysql
-function copulations_from_mysql( $mysql ){
-    $connect_mysql = connect_mysql( $mysql );
-    $query_mysql = 'SELECT * FROM copulations ORDER BY couplingdate;';
-    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
+function copulations_from_dbase( $mysql ){
+    $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+    $notorm = new NotORM($connect_dbase);
+    $rows_copulations = $notorm->copulations()
+        ->select("*")
 
-    $rows_mysql = $results_mysql->num_rows;
-    for ( $i = 0; $i < $rows_mysql; ++$i ) {
-        $results_mysql->data_seek($i);
-        $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
-        $couplingid = $string_mysql['couplingid'];
-        $date = $string_mysql['couplingdate'];
-        $men = $string_mysql['couplingmen'];
-
-
-        $women = $string_mysql['couplingwomen'];
-        $place = $string_mysql['couplingplace'];
-        $arr = array( $couplingid, $date, $men, $women, $place );
-        $copulations[$couplingid] = $arr;
+        ->order("couplingdate");
+    foreach ( $rows_copulations as $copulation ) {
+        $copulations[$copulation['couplingid']] = array( $copulation['couplingid'], $copulation['couplingdate'], $copulation['couplingmen'], $copulation['couplingwomen'], $copulation['couplingplace'] );
     }
-    $results_mysql->close();
-    $connect_mysql->close();
 
     return $copulations;
 }
+
 
 function copulations_to_mysql( $mysql ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
