@@ -104,7 +104,7 @@ $string_up = "
     <body>
         <form action='index.php'  method='GET' enctype='application/x-www-form-urlncoded'>
         <header>
-            <div class='logotip'><a href='index.php'></a></div>
+            <div class='logotip'><a href='index.php' data-descr='Добрый день!!! Выход из сеанса!!!'></a></div>
             <div class='brand'>Добрый день!!!</div>
             
             $string_nav
