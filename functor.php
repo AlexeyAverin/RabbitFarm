@@ -266,20 +266,18 @@ function copulations_from_dbase( $mysql ){
 }
 
 
-function copulations_to_mysql( $mysql ){
-    $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
-    if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'INSERT INTO copulations (couplingdate, couplingmen, couplingwomen, couplingplace) VALUES ("'.$_GET['couplingdate'].'", "'.$_GET['couplingmen'].'", "'.$_GET['couplingwomen'].'", "'.$_GET['couplingplace'].'");';
-    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
-    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
-    //$results_mysql->close();
-    $connect_mysql->close();
+function copulations_isert_dbase( $mysql ){
+    $connect_dbase =  new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+    $notorm = new NotORM($connect_dbase);
+    $insert_array = array('couplingdate' => $_GET['couplingdate'], 'couplingmen' => $_GET['couplingmen'], 'couplingwomen' => $_GET['couplingwomen'], 'couplingplace' => $_GET['couplingplace']);
+
+    $results_dbase = $notorm->copulations()->insert($insert_array);
 }
 
 function copulation_delete_mysql( $mysql ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'DELETE FROM copulations WHERE couplingid="'.$_GET["couplingid"].'";';
+    $query_mysql = 'DELETE FROM copulations WHERE couplingid="'.$_GET["id"].'";';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     //$results_mysql->close();
