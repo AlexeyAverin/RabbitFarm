@@ -234,7 +234,8 @@ EOD;
 
 }
     }
-}  elseif ( $str == 'bre' ) {
+
+} elseif ( $str == 'bre' ) {
 
     if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
         $string_breedings = '';
@@ -314,6 +315,9 @@ EOD;
 
 
     }
+
+} elseif ( $str == 'inj' ) {
+
 }
 
 $string_down = <<<EOD
