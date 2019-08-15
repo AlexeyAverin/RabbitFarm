@@ -14,12 +14,10 @@ mb_internal_encoding("UTF-8");
 
 
 
-
-
 $str = isset($_GET['str']) ? $_GET['str'] : null;
 if ( !isset($str) ) {
     $string_nav = '';
-    $string_middle = "<div class='secret'><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><input name='login' placeholder='login' type='text'><br><input name='password' placeholder='password' type='password'><br><input type='submit' value='Войти'></form></div>";
+    $string_middle = "<div class='secretContainer'><div class='secret'><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><input name='login' placeholder='login' type='text'><br><input name='password' placeholder='password' type='password'><br><input type='submit' value='Войти'></form></div></div>";
     $login = isset($_GET['login']) ? $_GET['login'] : '';
     $password = isset($_GET['password']) ? $_GET['password'] : '';
     if ( $login == 'Farmer' && $password == '777' ) {
