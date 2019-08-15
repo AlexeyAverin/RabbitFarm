@@ -61,7 +61,7 @@ if ( $str == 'cop' ) { // Функции случек
         } elseif ( $_GET['action'] == 'del' ) {
             copulation_delete_dbase( $mysql );
         } elseif ( $_GET['action'] == 'upd' ) {
-            copulation_update_mysql( $mysql );
+            copulation_update_dbase( $mysql );
         }
     }
     // Считывание данных MySQ по случке

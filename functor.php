@@ -280,21 +280,23 @@ function copulation_delete_dbase( $mysql ){
     $notorm = new NotORM($connect_dbase);
     $coupling = $notorm->copulations->where('couplingid', [$_GET['id']]);
 
-    $coupling->delete();
-}
-
-
-function copulation_update_mysql( $mysql ){
-    $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
-    if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'UPDATE copulations SET couplingdate="'.$_GET['couplingdate'].'", couplingmen="'.$_GET['couplingmen'].'", couplingwomen="'.$_GET['couplingwomen'].'", couplingplace="'.$_GET['couplingplace'].'" WHERE couplingid="'.$_GET['couplingid'].'";';
-    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
-    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
-    //$results_mysql->close();
-    $connect_mysql->close();
+    if ( $coupling ) { // Исключение ошибок
+        $coupling->delete();
+    }
 
 }
 
+
+function copulation_update_dbase( $mysql ){
+    $connect_dbase =  new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+    $notorm = new NotORM($connect_dbase);
+    $coupling = $notorm->copulations->where('couplingid', [$_GET['couplingid']]);
+    $update_array = array('couplingdate' => $_GET['couplingdate'], 'couplingmen' => $_GET['couplingmen'], 'couplingwomen' => $_GET['couplingwomen'], 'couplingplace' => $_GET['couplingplace']);
+
+    if ( $coupling ) { // Исключение ошибок
+        $coupling->update($update_array);
+    }
+}
 
 // Считывание базы случек по имени зайца
 function copulations_rabbit_mysql( $mysql, $rabbit_name ){
