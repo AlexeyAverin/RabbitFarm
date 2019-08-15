@@ -274,15 +274,16 @@ function copulations_insert_dbase( $mysql ){
     $results_dbase = $notorm->copulations()->insert($insert_array);
 }
 
-function copulation_delete_mysql( $mysql ){
-    $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
-    if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
-    $query_mysql = 'DELETE FROM copulations WHERE couplingid="'.$_GET["id"].'";';
-    $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
-    if ( !$results_mysql ) die ( $connect_mysql->connect_error );
-    //$results_mysql->close();
-    $connect_mysql->close();
+
+function copulation_delete_dbase( $mysql ){
+    $connect_dbase =  new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+    $notorm = new NotORM($connect_dbase);
+    $coupling = $notorm->copulations->where('couplingid', [$_GET['id']]);
+
+    $coupling->delete();
 }
+
+
 function copulation_update_mysql( $mysql ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
