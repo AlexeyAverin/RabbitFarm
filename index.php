@@ -57,7 +57,7 @@ if ( $str == 'cop' ) { // Функции случек
     // Добавление случки
     if ( isset($_GET['action']) ) {
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-            copulations_to_mysql( $mysql );
+            copulations_insert_dbase( $mysql );
         } elseif ( $_GET['action'] == 'del' ) {
             copulation_delete_mysql( $mysql );
         } elseif ( $_GET['action'] == 'upd' ) {
@@ -87,7 +87,7 @@ if ( $str == 'bre' ) { // Функции окролов
 
 
 if ( $str == 'inj' ) { // Функции вакцин
-    
+
     if ( isset($_GET['action']) ) {
 
     }

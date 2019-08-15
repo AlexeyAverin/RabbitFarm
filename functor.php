@@ -266,7 +266,7 @@ function copulations_from_dbase( $mysql ){
 }
 
 
-function copulations_isert_dbase( $mysql ){
+function copulations_insert_dbase( $mysql ){
     $connect_dbase =  new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
     $notorm = new NotORM($connect_dbase);
     $insert_array = array('couplingdate' => $_GET['couplingdate'], 'couplingmen' => $_GET['couplingmen'], 'couplingwomen' => $_GET['couplingwomen'], 'couplingplace' => $_GET['couplingplace']);
