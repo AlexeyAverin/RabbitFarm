@@ -26,7 +26,7 @@ if ( !isset($str) ) {
 
 }
 if ( $str == 'rab' ) { // Функции кроликов
-    $string_nav = '<nav><a class="selected" href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a href="index.php&str=inj">Вакцины</a></nav>';
+    $string_nav = '<nav><a class="selected" href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a href="index.php?str=inj">Вакцины</a></nav>';
     // Добавление данных зайца в MySQL
     if ( isset($_GET['action']) && $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
         rabbit_insert_dbase( $mysql );
@@ -51,7 +51,7 @@ if ( $str == 'rab' ) { // Функции кроликов
  $mens = $rabbits_mens_womens[1];
  $womens = $rabbits_mens_womens[2];
 if ( $str == 'cop' ) { // Функции случек
-    $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a class="selected" href="index.php?str=cop">Случки</a><a href="index.php&str=inj">Вакцины</a></nav>';
+    $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a class="selected" href="index.php?str=cop">Случки</a><a href="index.php?str=inj">Вакцины</a></nav>';
     // Добавление случки
     if ( isset($_GET['action']) ) {
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
@@ -66,7 +66,7 @@ if ( $str == 'cop' ) { // Функции случек
     $copulations = copulations_from_dbase( $mysql );
 }
 if ( $str == 'bre' ) { // Функции окролов
-    $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a class="selected" href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a href="index.php&str=inj">Вакцины</a></nav>';
+    $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a class="selected" href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a href="index.php?str=inj">Вакцины</a></nav>';
     // Добавление нового окрола из случки
     if ( isset($_GET['action']) ) {
         if ( $_GET['action'] == 'ins' || $_GET['action'] == 'crtbre' ) {
@@ -86,6 +86,7 @@ if ( $str == 'bre' ) { // Функции окролов
 
 if ( $str == 'inj' ) { // Функции вакцин
 
+    $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a class="selected" href="index.php?str=inj">Вакцины</a></nav>';
     if ( isset($_GET['action']) ) {
 
     }
@@ -317,7 +318,12 @@ EOD;
     }
 
 } elseif ( $str == 'inj' ) {
-
+    $string_middle = "<table class='ferma'>
+        <tr><th>ID Вакцины</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Клетка</th><th></th></tr>
+        $string_injection
+        <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        <tr><td><a href='index.php?str=cop&action=new'>Добавить новую вакцинацию</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        </table>";
 }
 
 $string_down = <<<EOD
