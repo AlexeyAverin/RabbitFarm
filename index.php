@@ -59,7 +59,7 @@ if ( $str == 'cop' ) { // Функции случек
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
             copulations_insert_dbase( $mysql );
         } elseif ( $_GET['action'] == 'del' ) {
-            copulation_delete_mysql( $mysql );
+            copulation_delete_dbase( $mysql );
         } elseif ( $_GET['action'] == 'upd' ) {
             copulation_update_mysql( $mysql );
         }
