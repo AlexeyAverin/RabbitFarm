@@ -97,8 +97,10 @@ if ( $str == 'inj' ) { // Функции вакцин
 
         }
     }
-    //$injections;
+    // Считывание данных базв по вакцинам
+    $injections = injections_from_dbase( $mysql );
 }
+
 // Отображение страницы
 $string_up = "
 <!DOCTYPE html>
