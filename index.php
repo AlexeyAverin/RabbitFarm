@@ -88,7 +88,14 @@ if ( $str == 'inj' ) { // Функции вакцин
 
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a class="selected" href="index.php?str=inj">Вакцины</a></nav>';
     if ( isset($_GET['action']) ) {
+        if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
+            injection_insert_dbase( $mysql );
+        } elseif ( $_GET['action'] == 'del' ) {
+            injection_delete_dbase( $mysql );
+        } elseif ( $_GET['action'] == 'upd' ) {
+            injection_update_dbase( $mysql );
 
+        }
     }
     //$injections;
 }
