@@ -318,11 +318,12 @@ EOD;
     }
 
 } elseif ( $str == 'inj' ) {
+    $string_injection = '';
     $string_middle = "<table class='ferma'>
-        <tr><th>ID Вакцины</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Клетка</th><th></th></tr>
+        <tr><th>ID Вакцины</th><th>Тип вакцины</th><th>Дата вакцинации</th><th>Дата окончания действия</th><th>ID Кролика</th><th>ID Окрола</th><th></th></tr>
         $string_injection
-        <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-        <tr><td><a href='index.php?str=cop&action=new'>Добавить новую вакцинацию</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        <tr><td><a href='index.php?str=cop&action=new'>Добавить новую вакцинацию</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         </table>";
 }
 
