@@ -27,7 +27,7 @@ if ( isset($_POST['metod']) && $_POST['metod'] === 'arrays_php_js' ) {
         'genders' => $genders,
     
         'places' => $places,
-        'injections' => $injections,
+        'injections' => $injections_arr,
         'breeds' => $breeds);
     echo json_encode($arrays_from_settings, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES |JSON_NUMERIC_CHECK );
 
@@ -90,16 +90,18 @@ function wrapper_days_prior_to_injection( $date, $interval, $injections_limit_da
     }   
 }
 
-function get_msg_mail( $mail_account, $mens, $womens, $mail_msg, $injections_limit_day, $injections, $mysql ){
-    $rabbits = array_from_mysql( $mysql, $mens, $womens )[0];
-    foreach ( $rabbits as $rabbit_id => $rabbit ){
-        $days = days_priorto_injection($rabbit[10], $injections[trim($rabbit[11])] );
 
+// Функцию дергает sendmail.php которого дергает cron
+function get_msg_mail( $mail_account, $mens, $womens, $mail_msg, $injections_limit_day, $injections_arr, $mysql ){
+    $rabbits = array_from_mysql( $mysql, $mens, $womens )[0];
+
+    foreach ( $rabbits as $rabbit_id => $rabbit ){
+        $days = days_priorto_injection($rabbit[10], $injections_arr[trim($rabbit[11])] );
         if ( $days <= $injections_limit_day ) {
             $name = $rabbit[0];
             $mail_msg = '<p> Добрый день!!!'.$name.' '.$days.' </p>';
-            sender_mail( $mail_account, $mail_msg );
 
+            sender_mail( $mail_account, $mail_msg );
         }
     }
 }
@@ -107,6 +109,7 @@ function get_msg_mail( $mail_account, $mens, $womens, $mail_msg, $injections_lim
 // Соединение с MySQL
 function connect_mysql( $mysql ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
+
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
 
     return $connect_mysql;
@@ -117,7 +120,6 @@ function send_query_mysql( $connect_mysql, $query_mysql ){
     $results_mysql = $connect_mysql->query($query_mysql);
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     return $results_mysql;
-
 }
 
 // Считывание данных зайцев
@@ -298,6 +300,22 @@ function copulation_update_dbase( $mysql ){
     }
 }
 
+function injections_from_dbase( $mysql ){
+
+    try {
+        $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+        foreach($connect_dbase->query('SELECT * FROM injections;') as $row){
+            $injections[$row['injectionid']] = array($row['injectiontype'], $row['injectiondate'], $row['injectionfinish'], $row['id'], $row['breedingid'], $row['injectionstatus']);
+        }
+    } catch (PDOException $e) {
+        echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
+        die();
+
+    }
+    $connect_dbase = null;
+    return $injections;
+}
+
 // Считывание базы случек по имени зайца
 function copulations_rabbit_mysql( $mysql, $rabbit_name ){
     $connect_mysql = connect_mysql( $mysql );
@@ -419,6 +437,5 @@ function breeding_delete_mysql( $mysql ){
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     //$results_mysql->close();
     $connect_mysql->close();
-    
-}
+    }
 ?>
