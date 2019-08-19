@@ -134,7 +134,7 @@ if ( $str == 'rab' ) {
 
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
             $rabbit_sign            = $rabbit[1] == 'on' ? '&#10004;' : '';
-            $string_rabbit = "<tr><td>$rabbit_id</td><td>".$rabbit_sign."</td><td><a href='index.php?str=rab&action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date_next_injection($rabbit[10], $injections_arr[trim($rabbit[11])])."".wrapper_days_prior_to_injection($rabbit[10], $injections_arr[trim($rabbit[11])], $injections_limit_day)."</td><td><div class='erase' str='rab' id='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
+            $string_rabbit = "<tr><td>$rabbit_id</td><td>".$rabbit_sign."</td><td><a href='index.php?str=rab&action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".$rabbit[11]/*date_next_injection($rabbit[10], $injections_arr[trim($rabbit[11])])*/."".""/*wrapper_days_prior_to_injection($rabbit[10], $injections_arr[trim($rabbit[11])], $injections_limit_day)*/."</td><td><div class='erase' str='rab' id='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
 
             $string_rabbits .= $string_rabbit;
             //$rabbit_new_id = ++$rabbit_id;
