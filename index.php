@@ -203,7 +203,6 @@ EOD;
         $count_copulations = 0;
         foreach ( $copulations_rabbit as $copulation_id => $copulation ){
             $string_middle .= "<tr><td><a href='index.php?str=cop&action=mod&id=".$copulation_id."'>".$copulation_id."</a></td><td>".date('d-m-Y', strtotime($copulation[1]))."</td><td>".$copulation[2]."</td><td>".$copulation[3]."</td><td>".date_next_injection($copulation[1], '30')."</td></tr>";
-
             $count_copulations += 1;
         }
         $string_middle .= "
@@ -328,6 +327,10 @@ EOD;
 
 } elseif ( $str == 'inj' ) {
     $string_injection = '';
+    foreach ( $injections as $injection_id => $injection ){
+        $string_injection .= "<tr><td><a href='index.php?str=inj&action=mod&id=".$injection_id."'>".$injection_id."</a></td><td>".$injection[0]."</td><td>".date('d-m-Y', strtotime($injection[1]))."</td><td>".date('d-m-Y', strtotime($injection[2]))."</td><td>".$injection[3]."</td><td>".$injection[4]."</td><td>".$injection[5]."</td></tr>";
+    }
+
     $string_middle = "<table class='ferma'>
         <tr><th>ID Вакцины</th><th>Тип вакцины</th><th>Дата вакцинации</th><th>Дата окончания действия</th><th>ID Кролика</th><th>ID Окрола</th><th></th></tr>
         $string_injection
