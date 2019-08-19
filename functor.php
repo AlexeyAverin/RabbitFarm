@@ -167,17 +167,23 @@ function rabbit_insert_dbase( $mysql ){
     try{
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
 
-        $query_dbase = 'INSERT INTO rabbits (name, status, breedingid, breed, birthdate, gender, label, women, men, place, injectiondate, injectiontype) VALUES ("'.$_GET['name'].'", "'.$_GET['status'].'", "'.$_GET['breedingid'].'", "'.$_GET['breed'].'", "'.$_GET['birth'].'", "'.$_GET['gender'].'", "'.$_GET['label'].'", "'.$_GET['women'].'", "'.$_GET['men'].'", "'.$_GET['place'].'", "'.$_GET['injectiondate'].'", "'.$_GET['injectiontype'].'");';
-        $results_dbase = $connect_dbase->exec($query_dbase);
-        if ( $results_dbase === false ){
+        //$connect_dbase->beginTransaction();
+        $insert_injection_data_to_dbase = $connect_dbase->exec('INSERT INTO injections (injectiontype, injectiondate, injectionfinish, id, breedingid, injectionstatus) VALUES ("'.$_GET['injectiontype'].'", "'.$_GET['injectiondate'].'", "2029-08-18", "14", "14", "1");');
+        $select_injection_id_from_dbase = $connect_dbase->query('SELECT LAST_INSERT_ID();');
+        $select_injection_id_from_dbase = $select_injection_id_from_dbase->fetch()[0]; echo $select_injection_id_from_dbase;
+        $select_rabbit_data_from_dbase = $connect_dbase->exec('INSERT INTO rabbits (name, status, breedingid, breed, birthdate, gender, label, women, men, place, injectiondate, injectiontype) VALUES ("'.$_GET['name'].'", "'.$_GET['status'].'", "'.$_GET['breedingid'].'", "'.$_GET['breed'].'", "'.$_GET['birth'].'", "'.$_GET['gender'].'", "'.$_GET['label'].'", "'.$_GET['women'].'", "'.$_GET['men'].'", "'.$_GET['place'].'", "'.$_GET['injectiondate'].'", "'.$select_injection_id_from_dbase.'");');
+        //$connect_dbase->commit();
+        //$results_dbase = $connect_dbase->exec($query_dbase);
+        /*if ( $results_dbase === false ){
 
             echo "Добрый день!!! В rabbit_insert_dbase ошибка!!!";
-        }
+        }*/
     } catch (PDOException $e) {
+        //$connect_dbase->rollBack();
         echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
         die();
     }
-    $results_dbase = null;
+    //$results_dbase = null;
     $connect_dbase = null;
 
 }
