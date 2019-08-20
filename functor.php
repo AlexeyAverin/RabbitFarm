@@ -62,11 +62,19 @@ function sender_mail( $mail_account, $mail_msg ){ //echo 'Добрый день!
 }
 
 // Дата следующей прививки
-function date_next_injection($date, $interval){
+function date_next_injection($date, $interval, $formatdate = 0){
+    //$formatdate=0 => d-m-Y - сайт отображение, $formatdate=1 => Y-m-d - dbase
     $date = new DateTime($date);
     $interval = 'P'.trim($interval).'D';
     $date->add(new DateInterval($interval));
-    return $date->format('d-m-Y');
+    echo $formatdate;
+    if ( $formatdate == 0 ) {
+        return $date->format('d-m-Y');
+    }
+    if ( $formatdate == 1 ) {
+        return $date->format('Y-m-d');
+
+    }
 }
 
 
@@ -74,7 +82,6 @@ function date_next_injection($date, $interval){
 function days_priorto_injection($date, $interval){
     $date_next = new DateTime(date_next_injection($date, $interval));
     $date_now = new DateTime('now');
-
     $days = $date_now->diff($date_next);
     return $days->format('%a');
 }
@@ -83,8 +90,8 @@ function days_priorto_injection($date, $interval){
 // Оборачивает колличество дней в теги html и возращает если дней осталось меньше чем $injections_limit_day
 function wrapper_days_prior_to_injection( $date, $interval, $injections_limit_day ){
     $days = days_priorto_injection($date, $interval);
-
     if ( $days <= $injections_limit_day ) {
+
         $days = '<em>'.$days.'</em>';
         return $days;
     }   
@@ -162,24 +169,26 @@ function rabbits_from_dbase( $mysql, $mens, $womens ){//"Добрый день!!
 }
 
 // Добавляем нового зайца в MySQL
-function rabbit_insert_dbase( $mysql ){
+function rabbit_insert_dbase( $mysql, $injections_arr ){
     $_GET['status'] = isset($_GET['status']) ? $_GET['status'] : '';
     try{
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
 
-        //$connect_dbase->beginTransaction();
-        $insert_injection_data_to_dbase = $connect_dbase->exec('INSERT INTO injections (injectiontype, injectiondate, injectionfinish, id, breedingid, injectionstatus) VALUES ("'.$_GET['injectiontype'].'", "'.$_GET['injectiondate'].'", "2029-08-18", "14", "14", "1");');
+        $connect_dbase->beginTransaction();
+        $select_rabbit_data_from_dbase = $connect_dbase->exec('INSERT INTO rabbits (name, status, breedingid, breed, birthdate, gender, label, women, men, place, injectiondate, injectiontype) VALUES ("'.$_GET['name'].'", "'.$_GET['status'].'", "'.$_GET['breedingid'].'", "'.$_GET['breed'].'", "'.$_GET['birth'].'", "'.$_GET['gender'].'", "'.$_GET['label'].'", "'.$_GET['women'].'", "'.$_GET['men'].'", "'.$_GET['place'].'", "'.$_GET['injectiondate'].'", "'.$_GET['injectiontype'].'");');
         $select_injection_id_from_dbase = $connect_dbase->query('SELECT LAST_INSERT_ID();');
-        $select_injection_id_from_dbase = $select_injection_id_from_dbase->fetch()[0]; echo $select_injection_id_from_dbase;
-        $select_rabbit_data_from_dbase = $connect_dbase->exec('INSERT INTO rabbits (name, status, breedingid, breed, birthdate, gender, label, women, men, place, injectiondate, injectiontype) VALUES ("'.$_GET['name'].'", "'.$_GET['status'].'", "'.$_GET['breedingid'].'", "'.$_GET['breed'].'", "'.$_GET['birth'].'", "'.$_GET['gender'].'", "'.$_GET['label'].'", "'.$_GET['women'].'", "'.$_GET['men'].'", "'.$_GET['place'].'", "'.$_GET['injectiondate'].'", "'.$select_injection_id_from_dbase.'");');
-        //$connect_dbase->commit();
+        $select_injection_id_from_dbase = $select_injection_id_from_dbase->fetch()[0];
+        $date_finish_injection = date_next_injection($_GET['injectiondate'], $injections_arr[trim($_GET['injectiontype'])], 1);
+        $insert_injection_data_to_dbase = $connect_dbase->exec('INSERT INTO injections (injectiontype, injectiondate, injectionfinish, id, breedingid, injectionstatus) VALUES ("'.$_GET['injectiontype'].'", "'.$_GET['injectiondate'].'", "'.$date_finish_injection.'", "'.$select_injection_id_from_dbase.'", "", "1");');
+
+        $connect_dbase->commit();
         //$results_dbase = $connect_dbase->exec($query_dbase);
         /*if ( $results_dbase === false ){
 
             echo "Добрый день!!! В rabbit_insert_dbase ошибка!!!";
         }*/
     } catch (PDOException $e) {
-        //$connect_dbase->rollBack();
+        $connect_dbase->rollBack();
         echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
         die();
     }
