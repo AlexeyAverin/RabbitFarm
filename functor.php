@@ -64,6 +64,7 @@ function sender_mail( $mail_account, $mail_msg ){ //echo 'Добрый день!
 // Дата следующей прививки
 function date_next_injection($date, $interval, $formatdate = 0){
     //$formatdate=0 => d-m-Y - сайт отображение, $formatdate=1 => Y-m-d - dbase
+    echo $date, $interval;
     $date = new DateTime($date);
     $interval = 'P'.trim($interval).'D';
     $date->add(new DateInterval($interval));
@@ -86,15 +87,31 @@ function days_priorto_injection($date, $interval){
     return $days->format('%a');
 }
 
+function days_for_next_injection_sec($injectionfinish){
+    $date_now = new DateTime('now');
+    $injectionfinish = new DateTime($injectionfinish);
+
+    $days = $date_now->diff($injectionfinish);
+    return $days->format('%a');
+}
 
 // Оборачивает колличество дней в теги html и возращает если дней осталось меньше чем $injections_limit_day
 function wrapper_days_prior_to_injection( $date, $interval, $injections_limit_day ){
     $days = days_priorto_injection($date, $interval);
     if ( $days <= $injections_limit_day ) {
-
         $days = '<em>'.$days.'</em>';
+
         return $days;
     }   
+}
+
+function wrapper_days_for_next_injection_sec($injectionfinish, $injections_limit_day){
+    $days = days_for_next_injection_sec($injectionfinish);
+    if ( $days <= $injections_limit_day ) {
+        $days = '<em>'.$days.'</em>';
+
+        return $days;
+    }
 }
 
 
@@ -135,8 +152,11 @@ function rabbits_from_dbase( $mysql, $mens, $womens ){//"Добрый день!!
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
         foreach($connect_dbase->query('SELECT * FROM rabbits ORDER BY status DESC, birthdate ASC') as $row){
             $id = $row['id'];
-            $name = $row['name'];
 
+            // Запрос injections
+            $select_from_injections = $connect_dbase->query('SELECT * FROM injections WHERE id="'.$id.'" ORDER BY injectiondate DESC LIMIT 1;');
+            $object_from_injections = $select_from_injections->fetch(PDO::FETCH_ASSOC);
+            $name = $row['name'];
             $status = $row['status'];
             $breedingid = $row['breedingid'];
             $breed = $row['breed'];
@@ -145,11 +165,13 @@ function rabbits_from_dbase( $mysql, $mens, $womens ){//"Добрый день!!
             $label = $row['label'];
             $women = $row['women'];
             $men = $row['men'];
-
             $place = $row['place'];
-            $injectiondate = $row['injectiondate'];
-            $injectiontype = $row['injectiontype'];
-            $arr =  array( $name, $status, $breedingid, $breed, $birthdate, $gender, $label, $women, $men, $place, $injectiondate, $injectiontype );
+
+            $injectiondate = $object_from_injections['injectiondate'];
+            $injectiontype = $object_from_injections['injectiontype'];
+
+            $injectionfinish = $object_from_injections['injectionfinish'];
+            $arr =  array( $name, $status, $breedingid, $breed, $birthdate, $gender, $label, $women, $men, $place, $injectiondate, $injectiontype, $injectionfinish );
             $rabbits[$id] = $arr;
 
             if ( $gender == 'M' ) {
