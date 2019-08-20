@@ -29,7 +29,7 @@ if ( $str == 'rab' ) { // Функции кроликов
     $string_nav = '<nav><a class="selected" href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a href="index.php?str=inj">Вакцины</a></nav>';
     // Добавление данных зайца в MySQL
     if ( isset($_GET['action']) && $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-        rabbit_insert_dbase( $mysql );
+        rabbit_insert_dbase( $mysql, $injections_arr );
     }
 
 
