@@ -253,20 +253,20 @@ EOD;
             $string_breedings .= $string_breeding;
         }
         
-        
-        
         $string_middle = "<table class='ferma'>
         <tr><th>ID Окрола</th><th>Дата окрола</th><th>Кол-во общее</th><th>Кол-во живых</th><th>Самец</th><th>Самка</th><th>ID Случки</th><th></th></tr>
         $string_breedings
+
         <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         <tr><td><a href='index.php?str=bre&action=new'>Добавить новый окрол</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
         </table>";
     } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
+
         $id = isset($_GET['id']) ? $_GET['id'] : null;
         if ( $_GET['action'] == 'mod' ) {
             $action_type = 'upd';
+
             $breedingdate = date('Y-m-d', strtotime($breedings[$id][1]));
-            
         } elseif ( $_GET['action'] == 'new' ) {
             $action_type = 'ins';
             $breedingdate = date('Y-m-d', time());
