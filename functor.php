@@ -152,11 +152,11 @@ function rabbits_from_dbase( $mysql, $mens, $womens ){//"Добрый день!!
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
         foreach($connect_dbase->query('SELECT * FROM rabbits ORDER BY status DESC, birthdate ASC') as $row){
             $id = $row['id'];
+            $name = $row['name'];
 
             // Запрос injections
-            $select_from_injections = $connect_dbase->query('SELECT * FROM injections WHERE id="'.$id.'" ORDER BY injectiondate DESC LIMIT 1;');
+            $select_from_injections = $connect_dbase->query('SELECT * FROM injections WHERE name="'.$name.'" ORDER BY injectiondate DESC LIMIT 1;');
             $object_from_injections = $select_from_injections->fetch(PDO::FETCH_ASSOC);
-            $name = $row['name'];
             $status = $row['status'];
             $breedingid = $row['breedingid'];
             $breed = $row['breed'];
@@ -201,7 +201,7 @@ function rabbit_insert_dbase( $mysql, $injections_arr ){
         $select_injection_id_from_dbase = $connect_dbase->query('SELECT LAST_INSERT_ID();');
         $select_injection_id_from_dbase = $select_injection_id_from_dbase->fetch()[0];
         $date_finish_injection = date_next_injection($_GET['injectiondate'], $injections_arr[trim($_GET['injectiontype'])], 1);
-        $insert_injection_data_to_dbase = $connect_dbase->exec('INSERT INTO injections (injectiontype, injectiondate, injectionfinish, id, breedingid, injectionstatus) VALUES ("'.$_GET['injectiontype'].'", "'.$_GET['injectiondate'].'", "'.$date_finish_injection.'", "'.$select_injection_id_from_dbase.'", "", "on");');
+        $insert_injection_data_to_dbase = $connect_dbase->exec('INSERT INTO injections (injectiontype, injectiondate, injectionfinish, name, breedingid, injectionstatus) VALUES ("'.$_GET['injectiontype'].'", "'.$_GET['injectiondate'].'", "'.$date_finish_injection.'", "'.$_GET['name'].'", "", "on");');
 
         $connect_dbase->commit();
         //$results_dbase = $connect_dbase->exec($query_dbase);
@@ -341,7 +341,7 @@ function injections_from_dbase( $mysql ){
     try {
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
         foreach($connect_dbase->query('SELECT * FROM injections;') as $row){
-            $injections[$row['injectionid']] = array($row['injectiontype'], $row['injectiondate'], $row['injectionfinish'], $row['id'], $row['breedingid'], $row['injectionstatus']);
+            $injections[$row['injectionid']] = array($row['injectiontype'], $row['injectiondate'], $row['injectionfinish'], $row['name'], $row['breedingid'], $row['injectionstatus']);
         }
     } catch (PDOException $e) {
         echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
