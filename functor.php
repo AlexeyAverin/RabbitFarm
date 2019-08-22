@@ -201,7 +201,7 @@ function rabbit_insert_dbase( $mysql, $injections_arr ){
         $select_injection_id_from_dbase = $connect_dbase->query('SELECT LAST_INSERT_ID();');
         $select_injection_id_from_dbase = $select_injection_id_from_dbase->fetch()[0];
         $date_finish_injection = date_next_injection($_GET['injectiondate'], $injections_arr[trim($_GET['injectiontype'])], 1);
-        $insert_injection_data_to_dbase = $connect_dbase->exec('INSERT INTO injections (injectiontype, injectiondate, injectionfinish, id, breedingid, injectionstatus) VALUES ("'.$_GET['injectiontype'].'", "'.$_GET['injectiondate'].'", "'.$date_finish_injection.'", "'.$select_injection_id_from_dbase.'", "", "1");');
+        $insert_injection_data_to_dbase = $connect_dbase->exec('INSERT INTO injections (injectiontype, injectiondate, injectionfinish, id, breedingid, injectionstatus) VALUES ("'.$_GET['injectiontype'].'", "'.$_GET['injectiondate'].'", "'.$date_finish_injection.'", "'.$select_injection_id_from_dbase.'", "", "on");');
 
         $connect_dbase->commit();
         //$results_dbase = $connect_dbase->exec($query_dbase);
@@ -292,24 +292,23 @@ function fill_select( $array, $name, $value ){
 // Считывание данных случек из mysql
 function copulations_from_dbase( $mysql ){
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+
     $notorm = new NotORM($connect_dbase);
     $rows_copulations = $notorm->copulations()
         ->select("*")
-
         ->order("couplingdate");
     foreach ( $rows_copulations as $copulation ) {
+
         $copulations[$copulation['couplingid']] = array( $copulation['couplingid'], $copulation['couplingdate'], $copulation['couplingmen'], $copulation['couplingwomen'], $copulation['couplingplace'] );
     }
-
     return $copulations;
 }
-
 
 function copulations_insert_dbase( $mysql ){
     $connect_dbase =  new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
     $notorm = new NotORM($connect_dbase);
-    $insert_array = array('couplingdate' => $_GET['couplingdate'], 'couplingmen' => $_GET['couplingmen'], 'couplingwomen' => $_GET['couplingwomen'], 'couplingplace' => $_GET['couplingplace']);
 
+    $insert_array = array('couplingdate' => $_GET['couplingdate'], 'couplingmen' => $_GET['couplingmen'], 'couplingwomen' => $_GET['couplingwomen'], 'couplingplace' => $_GET['couplingplace']);
     $results_dbase = $notorm->copulations()->insert($insert_array);
 }
 
@@ -351,6 +350,9 @@ function injections_from_dbase( $mysql ){
     }
     $connect_dbase = null;
     return $injections;
+}
+function injection_update_dbase( $mysql ) {
+
 }
 
 // Считывание базы случек по имени зайца
