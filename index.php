@@ -89,7 +89,7 @@ if ( $str == 'inj' ) { // Функции вакцин
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a class="selected" href="index.php?str=inj">Вакцины</a></nav>';
     if ( isset($_GET['action']) ) {
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-            injection_insert_dbase( $mysql );
+            injection_insert_dbase( $mysql, $injections_arr );
         } elseif ( $_GET['action'] == 'del' ) {
             injection_delete_dbase( $mysql );
         } elseif ( $_GET['action'] == 'upd' ) {
@@ -134,7 +134,7 @@ if ( $str == 'rab' ) {
 
             $rabbit_gender_shot = mb_substr($rabbit[5], 0, 1);
             $rabbit_sign            = $rabbit[1] == 'on' ? '&#10004;' : '';
-            $string_rabbit = "<tr><td>$rabbit_id</td><td>".$rabbit_sign."</td><td><a href='index.php?str=rab&action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date('d-m-Y', strtotime($rabbit[12]))."".wrapper_days_for_next_injection_sec($rabbit[12], $injections_limit_day)."</td><td><div class='erase' str='rab' id='".$rabbit_id."'>x</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
+            $string_rabbit = "<tr><td>$rabbit_id</td><td>".$rabbit_sign."</td><td><a href='index.php?str=rab&action=mod&rabbitid=$rabbit_id'>$rabbit[0]</a></td><td>$rabbit[6]</td><td>".date('d-m-Y', strtotime($rabbit[4]))."</td><td>$rabbit_gender_shot</td><td>$rabbit[3]</td><td>$rabbit[9]</td><td>".date('d-m-Y', strtotime($rabbit[12]))."".wrapper_days_for_next_injection_sec($rabbit[12], $injections_limit_day)."</td><td><div class='erase' str='rab' id='".$rabbit_id."'>&Cross;</div></td</tr>"; //<a href='index.php?rabbitid=$rabbit_id&action=del'>x</a></td></tr>";//Добрый день!!!
 
             $string_rabbits .= $string_rabbit;
             //$rabbit_new_id = ++$rabbit_id;
@@ -169,29 +169,37 @@ EOD;
         $rabbit_men             = $rabbits[$rabbit_id][8];
         $rabbit_place           = $rabbits[$rabbit_id][9];
         $rabbit_injection_date  = date('Y-m-d', strtotime($rabbits[$rabbit_id][10]));
-
         $rabbit_injection_type  = $rabbits[$rabbit_id][11];
+        $string_injection = '<td>'.$rabbit_injection_date.'</td><td>'.$rabbit_injection_type.'</td>';
 
     } elseif ( $_GET['action'] == 'new' ) {
         $action_type = 'ins';
         $rabbit_birth_date      = date('Y-m-d', time());
         $rabbit_injection_date  = date('Y-m-d', time());
+        $string_injection = '<td><input type="date" name="injectiondate" id="id" value='.$rabbit_injection_date.'></td><td>'.fill_select(array_keys($injections_arr), 'injectiontype', $rabbit_injection_type).'</td>';
         $rabbit_injection_type = 'ABC';
     }
-
     $string_middle = "
-    <form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'>
-        <table class='rabbit'>
+
+    <table class='rabbit'>
+        <form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'>
             <tr><th colspan='5'>Персональный данные кролика</th></tr>
+
             <tr><td>ID Кролика</td><td>Кличка</td><td>Порода</td><td>Пол</td><td>Клеймо</td></tr>
             <tr><td><input type='text' name='rabbitid' value='$rabbit_id' readonly></td><td><input name='name' maxlength='34' minlength='3' required pattern='[а-яА-Я0-9_]{3,34}' value='".$rabbit_name."' type='text'></td><td>".fill_select($breeds, 'breed', $rabbit_breed)."</td><td>".fill_select($genders, 'gender', $rabbit_gender)."</td><td><input type='text' maxlength='34' name='label' pattern='[а-яА-Яa-zA-Z0-9_]{0,34}' placeholder='Введите клеймо' value='$rabbit_label'></td></tr>
             <tr><td>ID Окрола</td><td>Крольчиха Мама</td><td>Кролик Отец</td><td>Дата рождения</td><td>Линия</td></tr>
             <tr><td><input type='number' name='breedingid' value='".$rabbit_breedingid."' min='0'></td><td>".fill_select($womens, 'women', $rabbit_women)."<td>".fill_select($mens, 'men', $rabbit_men)."</td><td><input name='birth' type='date' value=$rabbit_birth_date></td><td><select name='pedigree'><option>Мать - Отец</option><option>Матушка - Батюшка</option></select></td></tr>
-            <tr><td>Клетка</td><td>Дата прививки</td><td>Прививка</td><td>Тип состояния</td><td> </td></tr>
-            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td><td><input type='date' name='injectiondate' id='id' value='$rabbit_injection_date'></td><td>".fill_select(array_keys($injections_arr), 'injectiontype', $rabbit_injection_type)."</td><td><input ".$rabbit_status." id='status' name='status' type='checkbox'><label for='status'>Активен</label></td><td><input name='str' value='rab' type='hidden'><input type='hidden' value='".$action_type."' name='action'><input type='hidden' name='rabbitid' value=".$rabbit_id."><input type='submit' value='Записать'>  </td></tr>
 
-        </table>
-    </form>";
+            <tr><td>Клетка</td><td>Дата прививки</td><td>Прививка</td><td>Тип состояния</td><td> </td></tr>
+            <tr><td>".fill_select($places, 'place', $rabbit_place)."</td>".$string_injection."<td><input ".$rabbit_status." id='status' name='status' type='checkbox'><label for='status'>Активен</label></td><td><input name='str' value='rab' type='hidden'><input type='hidden' value='".$action_type."' name='action'><input type='hidden' name='rabbitid' value=".$rabbit_id."><input type='submit' value='Записать'>  </td></tr>
+        </form>
+
+        <form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'>
+            <tr><td><input value='inj' name='str' type='hidden'><input value='".$rabbit_name."' name='name' type='hidden'><input value='new' name='action' type='hidden'></td><td colspan=2'><input class='large' value='Добавить новую вакцинацию' type='submit'></td><td></td><td></td></tr>
+        </form>
+    </table>
+
+       ";
     
     // Отображается дополнительная информация по кроликам 'Вывод информации кролика'
     if ( isset($_GET['rabbitid']) && (array_key_exists($_GET['rabbitid'], $rabbits)) ) {
@@ -225,8 +233,8 @@ EOD;
 
         foreach ( $breedings_rabbit as $breeding_id => $breeding ){
             $string_middle .= "<tr><td><a href='index.php?str=bre&action=mod&id=".$breeding_id."'>".$breeding_id."</a></td><td>".date('d-m-Y', strtotime($breeding[1]))."</td><td>".$breeding[2]."</td><td>".$breeding[3]."</td><td>".$breeding[4]."</td></tr>";
-            $sum_number_all += $breeding[2];
 
+            $sum_number_all += $breeding[2];
             $sum_number_live += $breeding[3];
             $count_breedings += 1;
         }
@@ -235,10 +243,18 @@ EOD;
 
                         </table>";
 
+        $injections_rabbit = injections_select_rabbit( $mysql, $rabbit_name );
         $string_middle .= "<table class='ferma'>
-                <tr><td colspan='3'>Данные по вакцинации</td></tr>
-                <tr><th>Наименование</th><th>Дата проведения</th><th>Следующая дата</th></tr>
-                <tr><td>Ассоциированная</td><td>01.01.2001</td><td>01.07.2001</td></tr>
+                <tr><td colspan='5'>Данные по вакцинации</td></tr>
+                <tr><th>ID вакцины</th><th>Тип вакцины</th><th>Дата вакцинации</th><th>Дата следующей</th><th>С</th></tr>";
+        foreach ( $injections_rabbit as $injection_id => $injection ){
+            $injection_sign     = $injection[5] == 'on' ? '&#10004;' : '';
+            $string_middle .= "<tr><td><a href='index.php?str=inj&action=mod&id=".$injection_id."'>".$injection_id."</a></td><td>".$injection[0]."</td><td>".date('d-m-Y', strtotime($injection[1]))."</td><td>".date('d-m-Y', strtotime($injection[2]))."</td><td>".$injection_sign."</td></tr>";
+        }
+        
+        $string_middle .= "<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+        
+            <tr><td>Суммарно вакцин</td><td></td><td></td><td></td><td></td></tr>
             </table>";
 
 }
@@ -248,7 +264,7 @@ EOD;
     if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
         $string_breedings = '';
         foreach ( $breedings as $breeding_id => $breeding ){
-            $string_breeding = '<tr><td><a href="index.php?str=bre&action=mod&id='.$breeding_id.'">'.$breeding_id.'</a></td><td>'.date('d-m-Y', strtotime($breeding[1])).'</td><td>'.$breeding[2].'</td><td>'.$breeding[3].'</td><td>'.$breeding[4].'</td><td>'.$breeding[5].'</td><td>'.$breeding[6].'</td><td><div class="erase" str="bre" id="'.$breeding_id.'">x</div></td></tr>';
+            $string_breeding = '<tr><td><a href="index.php?str=bre&action=mod&id='.$breeding_id.'">'.$breeding_id.'</a></td><td>'.date('d-m-Y', strtotime($breeding[1])).'</td><td>'.$breeding[2].'</td><td>'.$breeding[3].'</td><td>'.$breeding[4].'</td><td>'.$breeding[5].'</td><td>'.$breeding[6].'</td><td><div class="erase" str="bre" id="'.$breeding_id.'">&Cross;</div></td></tr>';
             $string_breedings .= $string_breeding;
         }
         $string_middle = "<table class='ferma'>
@@ -286,7 +302,7 @@ EOD;
 
         $string_couplings = '';
         foreach ( $copulations as $coupling_id => $coupling ){
-            $string_coupling = '<tr><td><a href="index.php?str=cop&action=mod&id='.$coupling_id.'">'.$coupling[0].'</a></td><td>'.date('d-m-Y', strtotime($coupling[1])).'</td><td>'.$coupling[2].'</td><td>'.$coupling[3].'</td><td>'.$coupling[4].'</td><td><div class="erase" str="cop" id="'.$coupling_id.'" href="">x</div></td></tr>';
+            $string_coupling = '<tr><td><a href="index.php?str=cop&action=mod&id='.$coupling_id.'">'.$coupling[0].'</a></td><td>'.date('d-m-Y', strtotime($coupling[1])).'</td><td>'.$coupling[2].'</td><td>'.$coupling[3].'</td><td>'.$coupling[4].'</td><td><div class="erase" str="cop" id="'.$coupling_id.'" href="">&Cross;</div></td></tr>';
             $string_couplings .= $string_coupling;
 
         }
@@ -325,31 +341,38 @@ EOD;
         foreach ( $injections as $injection_id => $injection ){
             $injection_sign     = $injection[5] == 'on' ? '&#10004;' : '';
             
-            $string_injection .= "<tr><td><a href='index.php?str=inj&action=mod&id=".$injection_id."'>".$injection_id."</a></td><td>".$injection[0]."</td><td>".date('d-m-Y', strtotime($injection[1]))."</td><td>".date('d-m-Y', strtotime($injection[2]))."</td><td>".$injection[3]."</td><td>".$injection[4]."</td><td>".$injection_sign."</td><td><div class='erase' str='inj' id='".$injection_id."'>x</div></td></tr>";
+            $string_injection .= "<tr><td><a href='index.php?str=inj&action=mod&id=".$injection_id."'>".$injection_id."</a></td><td>".$injection[0]."</td><td>".date('d-m-Y', strtotime($injection[1]))."</td><td>".date('d-m-Y', strtotime($injection[2]))."</td><td>".$injection[3]."</td><td>".$injection[4]."</td><td>".$injection_sign."</td><td><div class='erase' str='inj' id='".$injection_id."'>&Cross;</div></td></tr>";
         }
         $string_middle = "<table class='ferma'>
-            <tr><th>ID Вакцины</th><th>Тип вакцины</th><th>Дата вакцинации</th><th>Дата окончания действия</th><th>ID Кролика</th><th>ID Окрола</th><th>C</th><th></th></tr>
+            <tr><th>ID Вакцины</th><th>Тип вакцины</th><th>Дата вакцинации</th><th>Дата следующей</th><th>ID Кролика</th><th>ID Окрола</th><th>C</th><th></th></tr>
             $string_injection
             <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td><td>.</td></tr>
-            <tr><td><a href='index.php?str=cop&action=new'>Добавить новую вакцинацию</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td><td>.</td></tr>
+            <tr><td><a href='index.php?str=inj&action=new'>Добавить новую вакцинацию</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td><td>.</td></tr>
             </table>";
     } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
 
         $id = isset($_GET['id']) ? $_GET['id'] : null;
-        $mens_womens = array_merge($mens, $womens);
+        $injectiondate      = $injections[$id][1] ? date('Y-m-d', strtotime($injections[$id][1])) : date('Y-m-d', time());
+        $injectionfinish    = $injections[$id][2] ? date('Y-m-d', strtotime($injections[$id][2])) : date('Y-m-d', time());
+        $mens_womens = array_unique(array_merge($mens, $womens));
+        sort($mens_womens);
+        
         if ( $_GET['action'] == 'mod' ) {
+            $name = isset($injections[$id][3]) ? $injections[$id][3] : 'Нет данных';
             $action_type = 'upd';
             $injection_status   = $injections[$id][5] == 'on' ? 'checked' : '';
-            $injectiondate      = date('Y-m-d', strtotime($injections[$id][1]));
-            $injectionfinish    = date('Y-m-d', strtotime($injections[$id][2]));
+            
+           
         } elseif ( $_GET['action'] == 'new' ) {
             $action_type = 'ins';
+            $injection_status   = 'checked';
+            $name = isset($_GET['name']) ? $_GET['name'] : 'Нет данных';
         }
         $string_middle = "<table class='rabbit'>
         <tr><th colspan='5'>Учетные данные вакцины</th></tr>
         <tr><td>ID Вакцины</td><td>Дата вакцинации</td><td>Тип вакцины</td><td>Дата следующей</td><td>ID Кролика</td><td>ID Окрола</td><td>С</td><td></td></tr>
 
-        <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='injectionid' value='".$id."' readonly ></td><td><input name='injectiondate' value='".$injectiondate."' type='date'></td><td>".fill_select(array_keys($injections_arr), 'injectiontype', $injections[$id][1])."</td><td><input name='injectionfinish' value='".$injectionfinish."' type='date'></td><td>".fill_select($mens_womens, 'name', $injections[$id][3])."</td><td><input name='breedingid' type='number' value='".$injections[$id][4]."' min='0'></td><td><input ".$injection_status." type='checkbox'></td></tr>
+        <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='injectionid' value='".$id."' readonly ></td><td><input name='injectiondate' value='".$injectiondate."' type='date'></td><td>".fill_select(array_keys($injections_arr), 'injectiontype', $injections[$id][1])."</td><td><input name='injectionfinish' value='".$injectionfinish."' type='date'></td><td>".fill_select($mens_womens, 'name', $name)."</td><td><input name='breedingid' type='number' value='".$injections[$id][4]."' min='0'></td><td><input name='injectionstatus' ".$injection_status." type='checkbox'></td></tr>
         <tr><td></td><td></td><td></td><td><td></td><td><input name='str' value='inj' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input value='Записать' type='submit'></td></form></tr>
         <tr id='parcrtrab' colspan='5'></tr>
         </table>";

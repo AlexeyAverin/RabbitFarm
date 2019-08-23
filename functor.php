@@ -64,11 +64,9 @@ function sender_mail( $mail_account, $mail_msg ){ //echo 'Добрый день!
 // Дата следующей прививки
 function date_next_injection($date, $interval, $formatdate = 0){
     //$formatdate=0 => d-m-Y - сайт отображение, $formatdate=1 => Y-m-d - dbase
-    echo $date, $interval;
     $date = new DateTime($date);
     $interval = 'P'.trim($interval).'D';
     $date->add(new DateInterval($interval));
-    echo $formatdate;
     if ( $formatdate == 0 ) {
         return $date->format('d-m-Y');
     }
@@ -240,10 +238,10 @@ function rabbit_update_dbase( $mysql, $rabbit_id ){
 // Удаление данных зайца из MySQL
 function rabbit_delete_dbase( $mysql, $rabbit_id ){
     try{
-    
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
         $query_dbase = 'DELETE FROM rabbits WHERE id="'.$rabbit_id.'";';
         $results_dbase = $connect_dbase->exec($query_dbase);
+
         if ( $results_dbase === false )
             echo "Добрый день!!! В rabbit_delete_dbase ошибка!!!";
     } catch(PDOException $e) {
@@ -337,22 +335,66 @@ function copulation_update_dbase( $mysql ){
 }
 
 function injections_from_dbase( $mysql ){
-
+    $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
     try {
-        $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
         foreach($connect_dbase->query('SELECT * FROM injections;') as $row){
             $injections[$row['injectionid']] = array($row['injectiontype'], $row['injectiondate'], $row['injectionfinish'], $row['name'], $row['breedingid'], $row['injectionstatus']);
         }
     } catch (PDOException $e) {
         echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
         die();
-
     }
     $connect_dbase = null;
     return $injections;
-}
-function injection_update_dbase( $mysql ) {
 
+}
+
+function injection_update_dbase( $mysql ) {
+    $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+
+    $connect_dbase->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    try {
+        $results_dbase = $connect_dbase->exec('UPDATE injections SET injectiontype="'.$_GET['injectiontype'].'", injectiondate="'.$_GET['injectiondate'].'", injectionfinish="'.$_GET['injectionfinish'].'", name="'.$_GET['name'].'", breedingid="'.$_GET['breedingid'].'", injectionstatus="'.$_GET['injectionstatus'].'" WHERE injectionid="'.$_GET['injectionid'].'";');
+    } catch ( PDOException $e ) {
+        echo $e->getCode().':'.$e->getMessage();
+    }
+    $connect_dbase = null;
+}
+
+
+function injection_insert_dbase( $mysql, $injections_arr ){
+    $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+    $connect_dbase->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $injectionfinish = date_next_injection($_GET['injectiondate'], $injections_arr[trim($_GET['injectiontype'])], 1);
+    try {
+        $results_dbase = $connect_dbase->exec('INSERT INTO injections (injectiontype, injectiondate, injectionfinish, name, breedingid, injectionstatus) VALUES ("'.$_GET['injectiontype'].'", "'.$_GET['injectiondate'].'", "'.$injectionfinish.'", "'.$_GET['name'].'", "'.$_GET['breedingid'].'", "'.$_GET['injectionstatus'].'");');
+    } catch ( PDOException $e ) {
+
+        echo $e->getCode().':'.$e->getMessage();
+    }
+    $connect_dbase = null;
+}
+
+function injection_delete_dbase( $mysql) {
+    $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+    $results_dbase = $connect_dbase->exec('DELETE FROM injections WHERE injectionid="'.$_GET['id'].'";');
+    $connect_dbase = null;
+}
+
+
+
+function injections_select_rabbit( $mysql, $rabbit_name ){
+    $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+    $connect_dbase->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    try {
+        foreach($connect_dbase->query('SELECT * FROM injections WHERE name="'.$rabbit_name.'";') as $row){
+            $injections[$row['injectionid']] = array($row['injectiontype'], $row['injectiondate'], $row['injectionfinish'], $row['name'], $row['breedingid'], $row['injectionstatus']);
+        }
+    } catch (PDOException $e) {
+
+        echo $e->getCode().':'.$e->getMessage();
+    }
+    return $injections;
 }
 
 // Считывание базы случек по имени зайца
