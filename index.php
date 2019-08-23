@@ -323,14 +323,15 @@ EOD;
     if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
         $string_injection = '';
         foreach ( $injections as $injection_id => $injection ){
-            $string_injection .= "<tr><td><a href='index.php?str=inj&action=mod&id=".$injection_id."'>".$injection_id."</a></td><td>".$injection[0]."</td><td>".date('d-m-Y', strtotime($injection[1]))."</td><td>".date('d-m-Y', strtotime($injection[2]))."</td><td>".$injection[3]."</td><td>".$injection[4]."</td><td>".$injection[5]."</td></tr>";
-
+            $injection_sign     = $injection[5] == 'on' ? '&#10004;' : '';
+            
+            $string_injection .= "<tr><td><a href='index.php?str=inj&action=mod&id=".$injection_id."'>".$injection_id."</a></td><td>".$injection[0]."</td><td>".date('d-m-Y', strtotime($injection[1]))."</td><td>".date('d-m-Y', strtotime($injection[2]))."</td><td>".$injection[3]."</td><td>".$injection[4]."</td><td>".$injection_sign."</td><td><div class='erase' str='inj' id='".$injection_id."'>x</div></td></tr>";
         }
         $string_middle = "<table class='ferma'>
-            <tr><th>ID Вакцины</th><th>Тип вакцины</th><th>Дата вакцинации</th><th>Дата окончания действия</th><th>ID Кролика</th><th>ID Окрола</th><th></th></tr>
+            <tr><th>ID Вакцины</th><th>Тип вакцины</th><th>Дата вакцинации</th><th>Дата окончания действия</th><th>ID Кролика</th><th>ID Окрола</th><th>C</th><th></th></tr>
             $string_injection
-            <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-            <tr><td><a href='index.php?str=cop&action=new'>Добавить новую вакцинацию</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+            <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td><td>.</td></tr>
+            <tr><td><a href='index.php?str=cop&action=new'>Добавить новую вакцинацию</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td><td>.</td></tr>
             </table>";
     } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
 
@@ -338,9 +339,9 @@ EOD;
         $mens_womens = array_merge($mens, $womens);
         if ( $_GET['action'] == 'mod' ) {
             $action_type = 'upd';
-            $injection_status          = $injections[$id][5] == 'on' ? 'checked' : '';
-            $injectiondate = date('Y-m-d', strtotime($injections[$id][1]));
-            $injectionfinish = date('Y-m-d', strtotime($injections[$id][2]));
+            $injection_status   = $injections[$id][5] == 'on' ? 'checked' : '';
+            $injectiondate      = date('Y-m-d', strtotime($injections[$id][1]));
+            $injectionfinish    = date('Y-m-d', strtotime($injections[$id][2]));
         } elseif ( $_GET['action'] == 'new' ) {
             $action_type = 'ins';
         }
