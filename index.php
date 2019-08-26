@@ -338,10 +338,8 @@ EOD;
 } elseif ( $str == 'inj' ) {
     if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
         $string_injection = '';
-        foreach ( $injections as $injection_id => $injection ){
-            $injection_sign     = $injection[5] == 'on' ? '&#10004;' : '';
-            
-            $string_injection .= "<tr><td><a href='index.php?str=inj&action=mod&id=".$injection_id."'>".$injection_id."</a></td><td>".$injection[0]."</td><td>".date('d-m-Y', strtotime($injection[1]))."</td><td>".date('d-m-Y', strtotime($injection[2]))."</td><td>".$injection[3]."</td><td>".$injection[4]."</td><td>".$injection_sign."</td><td><div class='erase' str='inj' id='".$injection_id."'>&Cross;</div></td></tr>";
+        foreach ( $injections as $injection ){
+              $string_injection .= $injection->getHTML();
         }
         $string_middle = "<table class='ferma'>
             <tr><th>ID Вакцины</th><th>Тип вакцины</th><th>Дата вакцинации</th><th>Дата следующей</th><th>ID Кролика</th><th>ID Окрола</th><th>C</th><th></th></tr>
