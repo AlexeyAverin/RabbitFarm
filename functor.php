@@ -8,11 +8,11 @@ require 'vendor/autoload.php';
 require 'secret.php';
 require 'setting.php';
 include 'NotORM.php';
+include 'classes/Injection.php';
 ini_set('display_errors', 1);
 ini_set('display_atartup_errors',1);
 ini_set('error_reporting', E_ALL);
 mb_internal_encoding("UTF-8");
-
 
 
 //Передаем массивы дынных для построения форм по ajax php -> js
