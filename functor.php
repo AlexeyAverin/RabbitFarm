@@ -8,7 +8,7 @@ require 'vendor/autoload.php';
 require 'secret.php';
 require 'setting.php';
 include 'NotORM.php';
-include 'classes/Injection.php';
+spl_autoload_register( function ($class) { include 'classes/'.$class.'.php'; });
 ini_set('display_errors', 1);
 ini_set('display_atartup_errors',1);
 ini_set('error_reporting', E_ALL);
@@ -362,8 +362,9 @@ function injection_update_dbase( $mysql ) {
 }
 
 
-function injection_insert_dbase( $mysql, $injections_arr ){
+/*function injection_insert_dbase( $mysql, $injections_arr ){
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+
     $connect_dbase->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $injectionfinish = date_next_injection($_GET['injectiondate'], $injections_arr[trim($_GET['injectiontype'])], 1);
     try {
@@ -372,8 +373,9 @@ function injection_insert_dbase( $mysql, $injections_arr ){
 
         echo $e->getCode().':'.$e->getMessage();
     }
+
     $connect_dbase = null;
-}
+}*/
 
 function injection_delete_dbase( $mysql) {
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);

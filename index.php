@@ -89,7 +89,7 @@ if ( $str == 'inj' ) { // Функции вакцин
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a class="selected" href="index.php?str=inj">Вакцины</a></nav>';
     if ( isset($_GET['action']) ) {
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-            injection_insert_dbase( $mysql, $injections_arr );
+            Injection::insertDBase($mysql, $injections_arr); //injection_insert_dbase( $mysql, $injections_arr );
         } elseif ( $_GET['action'] == 'del' ) {
             injection_delete_dbase( $mysql );
         } elseif ( $_GET['action'] == 'upd' ) {
@@ -338,8 +338,10 @@ EOD;
 } elseif ( $str == 'inj' ) {
     if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
         $string_injection = '';
+        $counter = 0;
         foreach ( $injections as $injection ){
-              $string_injection .= $injection->getHTML();
+              $string_injection .= $injection->getHTML($counter); // $injection->getHTML()
+              $counter++;
         }
         $string_middle = "<table class='ferma'>
             <tr><th>ID Вакцины</th><th>Тип вакцины</th><th>Дата вакцинации</th><th>Дата следующей</th><th>ID Кролика</th><th>ID Окрола</th><th>C</th><th></th></tr>
@@ -348,36 +350,16 @@ EOD;
             <tr><td><a href='index.php?str=inj&action=new'>Добавить новую вакцинацию</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td><td>.</td></tr>
             </table>";
     } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
-
-        $id = isset($_GET['id']) ? $_GET['id'] : null;
-        $injectiondate      = $injections[$id][1] ? date('Y-m-d', strtotime($injections[$id][1])) : date('Y-m-d', time());
-        $injectionfinish    = $injections[$id][2] ? date('Y-m-d', strtotime($injections[$id][2])) : date('Y-m-d', time());
         $mens_womens = array_unique(array_merge($mens, $womens));
         sort($mens_womens);
-        
         if ( $_GET['action'] == 'mod' ) {
-            $name = isset($injections[$id][3]) ? $injections[$id][3] : 'Нет данных';
-            $action_type = 'upd';
-            $injection_status   = $injections[$id][5] == 'on' ? 'checked' : '';
-            
-           
+            $id = isset($_GET['id']) ? $_GET['id'] : null; // Как это сделать
+            $string_middle = $injections[$id]->getEditForm($mens_womens, $injections_arr); //$injections[0]->getEditForm
         } elseif ( $_GET['action'] == 'new' ) {
-            $action_type = 'ins';
-            $injection_status   = 'checked';
-            $name = isset($_GET['name']) ? $_GET['name'] : 'Нет данных';
+            $string_middle = Injection::getNewForm($mens_womens, $injections_arr); //Injection::getNewForm
         }
-        $string_middle = "<table class='rabbit'>
-        <tr><th colspan='5'>Учетные данные вакцины</th></tr>
-        <tr><td>ID Вакцины</td><td>Дата вакцинации</td><td>Тип вакцины</td><td>Дата следующей</td><td>ID Кролика</td><td>ID Окрола</td><td>С</td><td></td></tr>
-
-        <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='injectionid' value='".$id."' readonly ></td><td><input name='injectiondate' value='".$injectiondate."' type='date'></td><td>".fill_select(array_keys($injections_arr), 'injectiontype', $injections[$id][1])."</td><td><input name='injectionfinish' value='".$injectionfinish."' type='date'></td><td>".fill_select($mens_womens, 'name', $name)."</td><td><input name='breedingid' type='number' value='".$injections[$id][4]."' min='0'></td><td><input name='injectionstatus' ".$injection_status." type='checkbox'></td></tr>
-        <tr><td></td><td></td><td></td><td><td></td><td><input name='str' value='inj' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input value='Записать' type='submit'></td></form></tr>
-        <tr id='parcrtrab' colspan='5'></tr>
-        </table>";
-
     }
 }
-
 
 $string_down = <<<EOD
         </section>
