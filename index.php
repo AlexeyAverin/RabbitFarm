@@ -98,7 +98,7 @@ if ( $str == 'inj' ) { // Функции вакцин
         }
     }
     // Считывание данных базв по вакцинам
-    $injections = injections_from_dbase( $mysql );
+    $injections = new InjectionCollection( injections_from_dbase( $mysql ) ); //$injections = injections_from_dbase( $mysql );
 }
 
 // Отображение страницы
@@ -337,24 +337,14 @@ EOD;
 
 } elseif ( $str == 'inj' ) {
     if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
-        $string_injection = '';
-        $counter = 0;
-        foreach ( $injections as $injection ){
-              $string_injection .= $injection->getHTML($counter); // $injection->getHTML()
-              $counter++;
-        }
-        $string_middle = "<table class='ferma'>
-            <tr><th>ID Вакцины</th><th>Тип вакцины</th><th>Дата вакцинации</th><th>Дата следующей</th><th>ID Кролика</th><th>ID Окрола</th><th>C</th><th></th></tr>
-            $string_injection
-            <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td><td>.</td></tr>
-            <tr><td><a href='index.php?str=inj&action=new'>Добавить новую вакцинацию</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td><td>.</td></tr>
-            </table>";
+        $string_middle = $injections->getTABLE();
     } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
         $mens_womens = array_unique(array_merge($mens, $womens));
         sort($mens_womens);
         if ( $_GET['action'] == 'mod' ) {
-            $id = isset($_GET['id']) ? $_GET['id'] : null; // Как это сделать
-            $string_middle = $injections[$id]->getEditForm($mens_womens, $injections_arr); //$injections[0]->getEditForm
+            $id = $_GET['id'];
+
+            $string_middle = $injections->getInjection($id)->getEditForm($mens_womens, $injections_arr); //$injections[0]->getEditForm
         } elseif ( $_GET['action'] == 'new' ) {
             $string_middle = Injection::getNewForm($mens_womens, $injections_arr); //Injection::getNewForm
         }

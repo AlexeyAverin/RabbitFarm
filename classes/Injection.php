@@ -46,7 +46,7 @@ class Injection {
     }
 
 
-    public function getHTML($counter){
+    public function getTR($counter){
         /** Выводит строчку Вакцины*/
         $injection_sign = $this->injectionstatus == 'on' ? '&#10004;' : '';
         return "<tr>
