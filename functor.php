@@ -334,20 +334,18 @@ function copulation_update_dbase( $mysql ){
     }
 }
 
-function injections_from_dbase( $mysql ){
+/*function injections_from_dbase( $mysql ){
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
     try {
         $results = $connect_dbase->query('SELECT * FROM injections;');
         $injections = $results->fetchAll(PDO::FETCH_CLASS, "Injection");
-
     } catch (PDOException $e) {
         echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
         die();
     }
     $connect_dbase = null;
     return $injections;
-
-}
+}*/
 
 function injection_update_dbase( $mysql ) {
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);

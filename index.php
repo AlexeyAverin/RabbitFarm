@@ -98,7 +98,7 @@ if ( $str == 'inj' ) { // Функции вакцин
         }
     }
     // Считывание данных базв по вакцинам
-    $injections = new InjectionCollection( injections_from_dbase( $mysql ) ); //$injections = injections_from_dbase( $mysql );
+    $injections = new InjectionCollection( $mysql ); //injections_from_dbase( $mysql ) ); //$injections = injections_from_dbase( $mysql );
 }
 
 // Отображение страницы
@@ -342,10 +342,11 @@ EOD;
         $mens_womens = array_unique(array_merge($mens, $womens));
         sort($mens_womens);
         if ( $_GET['action'] == 'mod' ) {
-            $id = $_GET['id'];
 
+            $id = $_GET['id'];
             $string_middle = $injections->getInjection($id)->getEditForm($mens_womens, $injections_arr); //$injections[0]->getEditForm
         } elseif ( $_GET['action'] == 'new' ) {
+
             $string_middle = Injection::getNewForm($mens_womens, $injections_arr); //Injection::getNewForm
         }
     }
