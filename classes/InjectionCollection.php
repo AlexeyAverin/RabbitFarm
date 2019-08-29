@@ -8,19 +8,30 @@ class InjectionCollection {
 
 
     public function __construct( $mysql ) {
-        $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+        /** Загрузка из DBase и создание $injections */
 
+        $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
         try {
             $results = $connect_dbase->query('SELECT * FROM injections;');
-            $injections = $results->fetchAll(PDO::FETCH_CLASS, "Injection");
 
+            $injections = $results->fetchAll(PDO::FETCH_CLASS, "Injection");
         } catch (PDOException $e) {
             echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
             die();
         }
-        $connect_dbase = null;
 
+        $connect_dbase = null;
         $this->injections = $injections;
+    }
+
+    public function deleteDBase( $mysql, $counter ){
+        /** Удаление из коллекции и из DBase */
+        $id = $this->injections[$counter]->injectionid;
+        unset($this->injections[$counter]);
+        
+        $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+        $results_dbase = $connect_dbase->exec('DELETE FROM injections WHERE injectionid="'.$id.'";');
+        $connect_dbase = null;
     }
 
     public function getTABLE(){

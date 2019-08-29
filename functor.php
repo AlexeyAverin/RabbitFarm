@@ -359,12 +359,12 @@ function injection_update_dbase( $mysql ) {
     $connect_dbase = null;
 }
 
-
-/*function injection_insert_dbase( $mysql, $injections_arr ){
+function injection_insert_dbase( $mysql, $injections_arr ){
+ 
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
-
     $connect_dbase->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $injectionfinish = date_next_injection($_GET['injectiondate'], $injections_arr[trim($_GET['injectiontype'])], 1);
+
     try {
         $results_dbase = $connect_dbase->exec('INSERT INTO injections (injectiontype, injectiondate, injectionfinish, name, breedingid, injectionstatus) VALUES ("'.$_GET['injectiontype'].'", "'.$_GET['injectiondate'].'", "'.$injectionfinish.'", "'.$_GET['name'].'", "'.$_GET['breedingid'].'", "'.$_GET['injectionstatus'].'");');
     } catch ( PDOException $e ) {
@@ -373,7 +373,7 @@ function injection_update_dbase( $mysql ) {
     }
 
     $connect_dbase = null;
-}*/
+}
 
 function injection_delete_dbase( $mysql) {
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);

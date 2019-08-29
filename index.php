@@ -87,18 +87,20 @@ if ( $str == 'bre' ) { // Функции окролов
 if ( $str == 'inj' ) { // Функции вакцин
 
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a class="selected" href="index.php?str=inj">Вакцины</a></nav>';
+    // Считывание данных базв по вакцинам
+    $injections = new InjectionCollection( $mysql ); //injections_from_dbase( $mysql ) ); //$injections = injections_from_dbase( $mysql );
     if ( isset($_GET['action']) ) {
+
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
             Injection::insertDBase($mysql, $injections_arr); //injection_insert_dbase( $mysql, $injections_arr );
         } elseif ( $_GET['action'] == 'del' ) {
-            injection_delete_dbase( $mysql );
-        } elseif ( $_GET['action'] == 'upd' ) {
-            injection_update_dbase( $mysql );
 
+            $injections->deleteDBase( $mysql, $_GET['id'] ); //injection_delete_dbase( $mysql );
+        } elseif ( $_GET['action'] == 'upd' ) {
+            $injections->getInjection($_GET['id'])->updateDBase( $mysql ); //injection_update_dbase( $mysql );
         }
     }
-    // Считывание данных базв по вакцинам
-    $injections = new InjectionCollection( $mysql ); //injections_from_dbase( $mysql ) ); //$injections = injections_from_dbase( $mysql );
+    
 }
 
 // Отображение страницы
