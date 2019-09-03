@@ -3,18 +3,44 @@
 
 
 class Injection {
+    //use secretTrait;
+
     CONST ACTION_UPD = 'upd';
     CONST ACTION_INS = 'ins';
     CONST STR_INJ = 'inj';
 
+    //public $injectionid, $injectiontype, $injectiondate, $injectionfinish, $name, $breedingid, $injectionstatus;
 
 
 
 
+    function __construct(){
+        //echo var_dump($this->injectionid); //, $this->injectiontype, $this->injectiondate, $this->injectionfinish, $this->name, $this->breedingid, $this->injectionstatus,"<br>";
+        //if ( $this->injectionid == null ) {
+        //    $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+        //    $this->injectionid = $connect_dbase->query('SELECT LAST_INSERT_ID();');
+
+        //}
+    }
 
 
 
-    static public function getNewForm($mens_womens, $injections_arr){
+    /*static public function getNextId( $mysql ){
+        $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+        //$select_injection_id_from_dbase = $connect_dbase->query('SHOW TABLE STATUS LIKE "injections";')->fetch()['Auto_increment'];
+        $select_injection_id_from_dbase = $connect_dbase->query('SELECT AUTO_INCREMENT FROM information_schema.tables WHERE TABLE_NAME = "injections";')->fetch()[0];
+        $connect_dbase = null;
+        echo $select_injection_id_from_dbase;
+    }*/
+    
+    
+    static public function getNav(){
+        /**Строка навигации */
+        return '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a class="selected" href="index.php?str=inj">Вакцины</a></nav>';
+
+    }
+    
+    static public function getNewForm($mysql, $mens_womens, $injections_arr){
         /** Форма новой Вакцины */
         $injection_status   = 'checked';
         $name               = 'Нет данных';
@@ -22,9 +48,15 @@ class Injection {
     
         $injectiondate      = date('Y-m-d', time());
         $injectionfinish    = date('Y-m-d', time());
+
+        $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
+        $select_injection_id_from_dbase = $connect_dbase->query('SELECT AUTO_INCREMENT FROM information_schema.tables WHERE TABLE_NAME = "injections";')->fetch()[0];
+        $connect_dbase = null;
+
         return "<table class='rabbit'>
                     <tr><th colspan='5'>Учетные данные вакцины</th></tr>
-                    <tr><td>ID Вакцины</td><td>Дата вакцинации</td><td>Тип вакцины</td><td>Дата следующей</td><td>ID Кролика</td><td>ID Окрола</td><td>С</td><td></td></tr><tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='injectionid' value='' readonly ></td><td><input name='injectiondate' value='{$injectiondate}' type='date'></td><td>".fill_select(array_keys($injections_arr), 'injectiontype', $injectiontype)."</td><td><input name='injectionfinish' value='{$injectionfinish}' type='date'></td><td>".fill_select($mens_womens, 'name', $name)."</td><td><input name='breedingid' type='number' value='' min='0'></td><td><input name='injectionstatus' ".$injection_status." type='checkbox'></td></tr>
+                    <tr><td>ID Вакцины</td><td>Дата вакцинации</td><td>Тип вакцины</td><td>Дата следующей</td><td>ID Кролика</td><td>ID Окрола</td><td>С</td><td></td></tr>
+                    <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='injectionid' value='".$select_injection_id_from_dbase."' readonly ></td><td><input name='injectiondate' value='{$injectiondate}' type='date'></td><td>".fill_select(array_keys($injections_arr), 'injectiontype', $injectiontype)."</td><td><input name='injectionfinish' value='{$injectionfinish}' type='date'></td><td>".fill_select($mens_womens, 'name', $name)."</td><td><input name='breedingid' type='number' value='' min='0'></td><td><input name='injectionstatus' ".$injection_status." type='checkbox'></td></tr>
                     <tr><td></td><td></td><td></td><td><td></td><td><input name='str' value='".self::STR_INJ."' type='hidden'><input name='action' value='".self::ACTION_INS."' type='hidden'><input value='Записать' type='submit'></td></form></tr>
                     <tr id='parcrtrab' colspan='5'></tr>
                 </table>";
@@ -66,6 +98,10 @@ class Injection {
         $connect_dbase = null;
     }
 
+    public function delereBdase( $mysql ){
+        /** Метод удаления вакцины из базы данных */
+    }
+
     public function getTR($counter){
         /** Выводит строчку Вакцины*/
         $injection_sign = $this->injectionstatus == 'on' ? '&#10004;' : '';
@@ -91,7 +127,6 @@ class Injection {
                     <tr><td></td><td></td><td></td><td><td></td><td><input name='id' value='".$_GET['id']."' type='hidden'><input name='str' value='".self::STR_INJ."' type='hidden'><input name='action' value='".self::ACTION_UPD."' type='hidden'><input value='Записать' type='submit'></td></form></tr>
                     <tr id='parcrtrab' colspan='5'></tr>
                 </table>";
-
     }
 }
 

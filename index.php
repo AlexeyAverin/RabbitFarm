@@ -86,13 +86,13 @@ if ( $str == 'bre' ) { // Функции окролов
 
 if ( $str == 'inj' ) { // Функции вакцин
 
-    $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a class="selected" href="index.php?str=inj">Вакцины</a></nav>';
+    $string_nav = Injection::getNav();
     // Считывание данных базв по вакцинам
     $injections = new InjectionCollection( $mysql ); //injections_from_dbase( $mysql ) ); //$injections = injections_from_dbase( $mysql );
     if ( isset($_GET['action']) ) {
 
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-            Injection::insertDBase($mysql, $injections_arr); //injection_insert_dbase( $mysql, $injections_arr );
+            InjectionCollection::insertToCollection($injections_arr); //Injection::insertDBase($mysql, $injections_arr); //injection_insert_dbase( $mysql, $injections_arr );
         } elseif ( $_GET['action'] == 'del' ) {
 
             $injections->deleteDBase( $mysql, $_GET['id'] ); //injection_delete_dbase( $mysql );
@@ -344,12 +344,11 @@ EOD;
         $mens_womens = array_unique(array_merge($mens, $womens));
         sort($mens_womens);
         if ( $_GET['action'] == 'mod' ) {
-
             $id = $_GET['id'];
             $string_middle = $injections->getInjection($id)->getEditForm($mens_womens, $injections_arr); //$injections[0]->getEditForm
-        } elseif ( $_GET['action'] == 'new' ) {
 
-            $string_middle = Injection::getNewForm($mens_womens, $injections_arr); //Injection::getNewForm
+        } elseif ( $_GET['action'] == 'new' ) {
+            $string_middle = Injection::getNewForm($mysql, $mens_womens, $injections_arr); //Injection::getNewForm
         }
     }
 }

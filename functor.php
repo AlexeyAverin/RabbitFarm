@@ -184,6 +184,7 @@ function rabbits_from_dbase( $mysql, $mens, $womens ){//"Добрый день!!
         die();
     }
     $connect_dbase = null;
+
     $rabbits_mens_womens = array($rabbits, $mens, $womens);
     return $rabbits_mens_womens;
 }
