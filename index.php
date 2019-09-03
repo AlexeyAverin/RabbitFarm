@@ -88,16 +88,16 @@ if ( $str == 'inj' ) { // Функции вакцин
 
     $string_nav = Injection::getNav();
     // Считывание данных базв по вакцинам
-    $injections = new InjectionCollection( $mysql ); //injections_from_dbase( $mysql ) ); //$injections = injections_from_dbase( $mysql );
+    $injections = new InjectionCollection( $mysql );
     if ( isset($_GET['action']) ) {
 
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-            InjectionCollection::insertToCollection($injections_arr); //Injection::insertDBase($mysql, $injections_arr); //injection_insert_dbase( $mysql, $injections_arr );
+            Injection::insertDBase($mysql, $injections_arr);
         } elseif ( $_GET['action'] == 'del' ) {
 
-            $injections->deleteDBase( $mysql, $_GET['id'] ); //injection_delete_dbase( $mysql );
+            $injections->getInjection($_GET['id'])->deleteDBase( $mysql );
         } elseif ( $_GET['action'] == 'upd' ) {
-            $injections->getInjection($_GET['id'])->updateDBase( $mysql ); //injection_update_dbase( $mysql );
+            $injections->getInjection($_GET['id'])->updateDBase( $mysql );
         }
     }
     

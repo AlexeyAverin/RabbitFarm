@@ -348,7 +348,7 @@ function copulation_update_dbase( $mysql ){
     return $injections;
 }*/
 
-function injection_update_dbase( $mysql ) {
+/*function injection_update_dbase( $mysql ) {
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
 
     $connect_dbase->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -358,9 +358,9 @@ function injection_update_dbase( $mysql ) {
         echo $e->getCode().':'.$e->getMessage();
     }
     $connect_dbase = null;
-}
+}*/
 
-function injection_insert_dbase( $mysql, $injections_arr ){
+/*function injection_insert_dbase( $mysql, $injections_arr ){
  
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
     $connect_dbase->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -374,13 +374,13 @@ function injection_insert_dbase( $mysql, $injections_arr ){
     }
 
     $connect_dbase = null;
-}
+}*/
 
-function injection_delete_dbase( $mysql) {
+/*function injection_delete_dbase( $mysql) {
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
     $results_dbase = $connect_dbase->exec('DELETE FROM injections WHERE injectionid="'.$_GET['id'].'";');
     $connect_dbase = null;
-}
+}*/
 
 
 
