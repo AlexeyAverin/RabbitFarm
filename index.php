@@ -92,15 +92,18 @@ if ( $str == 'inj' ) { // Функции вакцин
     if ( isset($_GET['action']) ) {
 
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-            $string_middle = $injections->getTABLE();
-            Injection::insertDBase($mysql, $injections_arr);
+            $injection = new Injection($_GET['injectionid'], $_GET['injectiontype'], $_GET['injectiondate'], $_GET['injectionfinish'], $_GET['name'], $_GET['breedingid'], $_GET['injectionstatus']);
+            $injections->insertInIC($injection);
 
-        } elseif ( $_GET['action'] == 'del' ) {
+            $injection->insertDBase( $mysql, $injections_arr );
             $string_middle = $injections->getTABLE();
+        } elseif ( $_GET['action'] == 'del' ) {
             $injections->getInjection($_GET['id'])->deleteDBase( $mysql );
+            $injections->deleteFromIC($_GET['id']);
+
+            $string_middle = $injections->getTABLE();
         } elseif ( $_GET['action'] == 'upd' ) {
             $string_middle = $injections->getTABLE();
-
             $injections->getInjection($_GET['id'])->updateDBase( $mysql );
         } elseif ( $_GET['action'] == 'new' ) {
             $mens_womens = array_unique(array_merge($mens, $womens));

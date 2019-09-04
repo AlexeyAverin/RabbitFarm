@@ -15,30 +15,33 @@ class InjectionCollection {
 
 
             $injection = new Injection($injectionid, $injectiontype, $injectiondate, $injectionfinish, $name, $breedingid, $injectionstatus);
-            //$injections[] = $injection;
             return $injection;
         }
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
         try {
-            $results = $connect_dbase->query('SELECT * FROM injections;');
 
+            $results = $connect_dbase->query('SELECT * FROM injections;');
             $injections = $results->fetchAll(PDO::FETCH_FUNC, "createInjection"); //$injections = $results->fetchAll(PDO::FETCH_CLASS, "Injection");
-            // var_dump($injections);
         } catch (PDOException $e) {
             echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
             die();
         }
-
-
        $connect_dbase = null;
        $this->injections = $injections;
+
     }
 
     public function insertInIC( $injection ){
-        /**  */
-        
+        /** Добавляет в коллекцию */
+        array_push($this->injections, $injection);
     }
 
+
+
+    public function deleteFromIC($counter){
+        /** Удаляет из коллекции */
+        unset($this->injections[$counter]);
+    }
 
     public function getTABLE(){
         /** Создание Таблицы Вакцин */
