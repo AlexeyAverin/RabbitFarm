@@ -92,13 +92,31 @@ if ( $str == 'inj' ) { // Функции вакцин
     if ( isset($_GET['action']) ) {
 
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
+            $string_middle = $injections->getTABLE();
             Injection::insertDBase($mysql, $injections_arr);
-        } elseif ( $_GET['action'] == 'del' ) {
 
+        } elseif ( $_GET['action'] == 'del' ) {
+            $string_middle = $injections->getTABLE();
             $injections->getInjection($_GET['id'])->deleteDBase( $mysql );
         } elseif ( $_GET['action'] == 'upd' ) {
+            $string_middle = $injections->getTABLE();
+
             $injections->getInjection($_GET['id'])->updateDBase( $mysql );
+        } elseif ( $_GET['action'] == 'new' ) {
+            $mens_womens = array_unique(array_merge($mens, $womens));
+            sort($mens_womens);
+            $string_middle = Injection::getNewForm($mysql, $mens_womens, $injections_arr);
+        } elseif ( $_GET['action'] == 'mod' ) {
+            $mens_womens = array_unique(array_merge($mens, $womens));
+            sort($mens_womens);
+
+            $id = $_GET['id'];
+            $string_middle = $injections->getInjection($id)->getEditForm($mens_womens, $injections_arr);
+        } elseif ( $_GET['action'] == 'crtbre' ) {
+            $string_middle = $injections->getTABLE();
         }
+    } else {
+        $string_middle = $injections->getTABLE();
     }
     
 }
@@ -335,21 +353,6 @@ EOD;
                 <tr><td id='parcrtbre' colspan='5'></td></tr>
 
             </table>";
-    }
-
-} elseif ( $str == 'inj' ) {
-    if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
-        $string_middle = $injections->getTABLE();
-    } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
-        $mens_womens = array_unique(array_merge($mens, $womens));
-        sort($mens_womens);
-        if ( $_GET['action'] == 'mod' ) {
-            $id = $_GET['id'];
-            $string_middle = $injections->getInjection($id)->getEditForm($mens_womens, $injections_arr); //$injections[0]->getEditForm
-
-        } elseif ( $_GET['action'] == 'new' ) {
-            $string_middle = Injection::getNewForm($mysql, $mens_womens, $injections_arr); //Injection::getNewForm
-        }
     }
 }
 
