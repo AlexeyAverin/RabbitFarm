@@ -51,19 +51,37 @@ if ( $str == 'rab' ) { // Функции кроликов
  $mens = $rabbits_mens_womens[1];
  $womens = $rabbits_mens_womens[2];
 if ( $str == 'cop' ) { // Функции случек
-    $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a class="selected" href="index.php?str=cop">Случки</a><a href="index.php?str=inj">Вакцины</a></nav>';
+    $string_nav = Copulation::getNav(); //'<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a class="selected" href="index.php?str=cop">Случки</a><a href="index.php?str=inj">Вакцины</a></nav>';
+    $copulations = new CouplingCollection( $mysql );
     // Добавление случки
+
     if ( isset($_GET['action']) ) {
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
-            copulations_insert_dbase( $mysql );
+            $coupling = new Copulation($_GET['couplingid'], $_GET['couplingdate'], $_GET['couplingmen'], $_GET['couplingwomen'], $_GET['couplingplace']); //copulations_insert_dbase( $mysql );
+            $copulations->insertInCollection($coupling);
+            $coupling->insertDBase( $mysql );
+            $string_middle = $copulations->getTABLE();
         } elseif ( $_GET['action'] == 'del' ) {
-            copulation_delete_dbase( $mysql );
+            $copulations->getItem($_GET['id'])->deleteDBase( $mysql );
+
+            $copulations->deleteFromCollection($_GET['id']);
+            $string_middle = $copulations->getTABLE();
         } elseif ( $_GET['action'] == 'upd' ) {
-            copulation_update_dbase( $mysql );
+            $copulations->getItem($_GET['id'])->updateDBase( $mysql );
+            $string_middle = $copulations->getTABLE();
+        } elseif ( $_GET['action'] == 'new' ) {
+            $string_middle = Copulation::getNewForm($mysql, $mens, $womens, $places);
+        } elseif ( $_GET['action'] == 'mod' ) {
+            $id = $_GET['id'];
+            $string_middle = $copulations->getItem($id)->getEditForm( $mens, $womens, $mysql, $places );
         }
+
+
+    } else {
+        $string_middle = $copulations->getTABLE();
     }
     // Считывание данных MySQ по случке
-    $copulations = copulations_from_dbase( $mysql );
+    //$copulations = copulations_from_dbase( $mysql );
 }
 if ( $str == 'bre' ) { // Функции окролов
     $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a class="selected" href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a href="index.php?str=inj">Вакцины</a></nav>';
@@ -93,29 +111,29 @@ if ( $str == 'inj' ) { // Функции вакцин
 
         if ( $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
             $injection = new Injection($_GET['injectionid'], $_GET['injectiontype'], $_GET['injectiondate'], $_GET['injectionfinish'], $_GET['name'], $_GET['breedingid'], $_GET['injectionstatus']);
-            $injections->insertInIC($injection);
-
+            $injections->insertInCollection($injection);
             $injection->insertDBase( $mysql, $injections_arr );
             $string_middle = $injections->getTABLE();
         } elseif ( $_GET['action'] == 'del' ) {
-            $injections->getInjection($_GET['id'])->deleteDBase( $mysql );
-            $injections->deleteFromIC($_GET['id']);
+            $injections->getItem($_GET['id'])->deleteDBase( $mysql );
 
+            $injections->deleteFromCollection($_GET['id']);
             $string_middle = $injections->getTABLE();
         } elseif ( $_GET['action'] == 'upd' ) {
+            $injections->getItem($_GET['id'])->updateDBase( $mysql );
             $string_middle = $injections->getTABLE();
-            $injections->getInjection($_GET['id'])->updateDBase( $mysql );
         } elseif ( $_GET['action'] == 'new' ) {
             $mens_womens = array_unique(array_merge($mens, $womens));
             sort($mens_womens);
+
             $string_middle = Injection::getNewForm($mysql, $mens_womens, $injections_arr);
         } elseif ( $_GET['action'] == 'mod' ) {
             $mens_womens = array_unique(array_merge($mens, $womens));
             sort($mens_womens);
-
             $id = $_GET['id'];
-            $string_middle = $injections->getInjection($id)->getEditForm($mens_womens, $injections_arr);
+            $string_middle = $injections->getItem($id)->getEditForm($mens_womens, $injections_arr);
         } elseif ( $_GET['action'] == 'crtbre' ) {
+
             $string_middle = $injections->getTABLE();
         }
     } else {
@@ -323,39 +341,38 @@ EOD;
 }  elseif ( $str == 'cop' ) {
     if ( !isset($_GET['action']) || $_GET['action'] == 'ins' || $_GET['action'] == 'upd' || $_GET['action'] == 'del' ) {
 
-        $string_couplings = '';
-        foreach ( $copulations as $coupling_id => $coupling ){
-            $string_coupling = '<tr><td><a href="index.php?str=cop&action=mod&id='.$coupling_id.'">'.$coupling[0].'</a></td><td>'.date('d-m-Y', strtotime($coupling[1])).'</td><td>'.$coupling[2].'</td><td>'.$coupling[3].'</td><td>'.$coupling[4].'</td><td><div class="erase" str="cop" id="'.$coupling_id.'" href="">&Cross;</div></td></tr>';
-            $string_couplings .= $string_coupling;
+        //$string_couplings = '';
+        //foreach ( $copulations as $coupling_id => $coupling ){
+        //    $string_coupling = '<tr><td><a href="index.php?str=cop&action=mod&id='.$coupling_id.'">'.$coupling[0].'</a></td><td>'.date('d-m-Y', strtotime($coupling[1])).'</td><td>'.$coupling[2].'</td><td>'.$coupling[3].'</td><td>'.$coupling[4].'</td><td><div class="erase" str="cop" id="'.$coupling_id.'" href="">&Cross;</div></td></tr>';
+        //    $string_couplings .= $string_coupling;
 
-        }
-        $string_middle = "<table class='ferma'>
-        <tr><th>ID Случки</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Клетка</th><th></th></tr>
-
-        $string_couplings
-        <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-        <tr><td><a href='index.php?str=cop&action=new'>Добавить новую случку</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-        </table>";
+        //}
+        //$string_middle = "<table class='ferma'>
+        //<tr><th>ID Случки</th><th>Дата</th><th>Самец</th><th>Самка</th><th>Клетка</th><th></th></tr>
+        //$string_couplings
+        //<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        //<tr><td><a href='index.php?str=cop&action=new'>Добавить новую случку</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        //</table>";
     } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
 
         $id = isset($_GET['id']) ? $_GET['id'] : null;
         if ( $_GET['action'] == 'mod' ) {
-            $action_type = 'upd';
-            $couplingdate = date('Y-m-d', strtotime($copulations[$id][1]));
+            //$action_type = 'upd';
+            //$couplingdate = date('Y-m-d', strtotime($copulations[$id][1]));
         } elseif ( $_GET['action'] == 'new' ) {
-            $action_type = 'ins';
-            $couplingdate = date('Y-m-d', time());
+            //$action_type = 'ins';
+            //$couplingdate = date('Y-m-d', time());
         }
 
-        $string_middle = "
-            <table class='rabbit'>
-                <tr><th colspan='5'>Учетные данные случки</th></tr>
-                <tr><td>ID Случки</td><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td><td></td></tr>
-                <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' value='".$id."' name='couplingid' readonly></td><td><input name='couplingdate' value='".$couplingdate."' type='date'></td><td>".fill_select($mens, 'couplingmen', $copulations[$id][2])."</td><td>".fill_select($womens, 'couplingwomen', $copulations[$id][3])."</td><td>".fill_select($places, 'couplingplace', $copulations[$id][4])."</td><td><input name='str' value='cop' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input type='submit' value='Записать'></td></form></tr>
-                <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td></td><td> </td><td></td><td></td><td></td><td><input id='cmbcrtbre' couplingid='".$id."' type='button' value='Создать окрол'></td></form></tr>
-                <tr><td id='parcrtbre' colspan='5'></td></tr>
+       // $string_middle = "
+       //     <table class='rabbit'>
+       //         <tr><th colspan='5'>Учетные данные случки</th></tr>
+       //         <tr><td>ID Случки</td><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td><td></td></tr>
+       //         <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' value='".$id."' name='couplingid' readonly></td><td><input name='couplingdate' value='".$couplingdate."' type='date'></td><td>".fill_select($mens, 'couplingmen', $copulations[$id][2])."</td><td>".fill_select($womens, 'couplingwomen', $copulations[$id][3])."</td><td>".fill_select($places, 'couplingplace', $copulations[$id][4])."</td><td><input name='str' value='cop' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input type='submit' value='Записать'></td></form></tr>
+       //         <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td></td><td> </td><td></td><td></td><td></td><td><input id='cmbcrtbre' couplingid='".$id."' type='button' value='Создать окрол'></td></form></tr>
+       //         <tr><td id='parcrtbre' colspan='5'></td></tr>
+       //     </table>";
 
-            </table>";
     }
 }
 

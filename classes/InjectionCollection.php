@@ -3,7 +3,7 @@
 
 
 class InjectionCollection {
-    //use secretTrait;
+    
 
     public $injections = [];
 
@@ -31,14 +31,14 @@ class InjectionCollection {
 
     }
 
-    public function insertInIC( $injection ){
+    public function insertInCollection( $injection ){
         /** Добавляет в коллекцию */
         array_push($this->injections, $injection);
     }
 
 
 
-    public function deleteFromIC($counter){
+    public function deleteFromCollection($counter){
         /** Удаляет из коллекции */
         unset($this->injections[$counter]);
     }
@@ -62,7 +62,7 @@ class InjectionCollection {
         return $string_middle;
     }
 
-    public function getInjection($counter){
+    public function getItem($counter){
         /** Возращает эллемент класса по попорядковому номеру */
         return $this->injections[$counter];
     }

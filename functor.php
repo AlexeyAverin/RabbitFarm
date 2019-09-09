@@ -289,7 +289,7 @@ function fill_select( $array, $name, $value ){
 }
 
 // Считывание данных случек из mysql
-function copulations_from_dbase( $mysql ){
+/*function copulations_from_dbase( $mysql ){
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
 
     $notorm = new NotORM($connect_dbase);
@@ -301,18 +301,18 @@ function copulations_from_dbase( $mysql ){
         $copulations[$copulation['couplingid']] = array( $copulation['couplingid'], $copulation['couplingdate'], $copulation['couplingmen'], $copulation['couplingwomen'], $copulation['couplingplace'] );
     }
     return $copulations;
-}
+}*/
 
-function copulations_insert_dbase( $mysql ){
+/*function copulations_insert_dbase( $mysql ){
     $connect_dbase =  new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
     $notorm = new NotORM($connect_dbase);
 
     $insert_array = array('couplingdate' => $_GET['couplingdate'], 'couplingmen' => $_GET['couplingmen'], 'couplingwomen' => $_GET['couplingwomen'], 'couplingplace' => $_GET['couplingplace']);
     $results_dbase = $notorm->copulations()->insert($insert_array);
-}
+}*/
 
 
-function copulation_delete_dbase( $mysql ){
+/*function copulation_delete_dbase( $mysql ){
     $connect_dbase =  new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
     $notorm = new NotORM($connect_dbase);
     $coupling = $notorm->copulations->where('couplingid', [$_GET['id']]);
@@ -321,10 +321,10 @@ function copulation_delete_dbase( $mysql ){
         $coupling->delete();
     }
 
-}
+}*/
 
+/*function copulation_update_dbase( $mysql ){
 
-function copulation_update_dbase( $mysql ){
     $connect_dbase =  new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
     $notorm = new NotORM($connect_dbase);
     $coupling = $notorm->copulations->where('couplingid', [$_GET['couplingid']]);
@@ -333,7 +333,7 @@ function copulation_update_dbase( $mysql ){
     if ( $coupling ) { // Исключение ошибок
         $coupling->update($update_array);
     }
-}
+}*/
 
 /*function injections_from_dbase( $mysql ){
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);

@@ -3,15 +3,15 @@
 
 
 class Injection {
-    //use secretTrait;
+    
 
     CONST ACTION_UPD = 'upd';
     CONST ACTION_INS = 'ins';
-    CONST STR_INJ = 'inj';
-
+    CONST ACTION_MOD = 'mod';
+    CONST DBTABLE = 'injections';
+    CONST STR = 'inj';
 
     public $injectionid, $injectiontype, $injectiondate, $injectionfinish, $name, $breedingid, $injectionstatus;
-
 
 
     function __construct($injectionid, $injectiontype, $injectiondate, $injectionfinish, $name, $breedingid, $injectionstatus){
@@ -42,14 +42,14 @@ class Injection {
         $injectionfinish    = date('Y-m-d', time());
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
 
-        $select_injection_id_from_dbase = $connect_dbase->query('SELECT AUTO_INCREMENT FROM information_schema.tables WHERE TABLE_NAME = "injections";')->fetch()[0];
+        $id_from_dbase = $connect_dbase->query("SELECT AUTO_INCREMENT FROM information_schema.tables WHERE TABLE_NAME = '".self::DBTABLE."';")->fetch()[0];
         $connect_dbase = null;
         return "<table class='rabbit'>
 
                     <tr><th colspan='5'>Учетные данные вакцины</th></tr>
                     <tr><td>ID Вакцины</td><td>Дата вакцинации</td><td>Тип вакцины</td><td>Дата следующей</td><td>ID Кролика</td><td>ID Окрола</td><td>С</td><td></td></tr>
-                    <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='injectionid' value='".$select_injection_id_from_dbase."' readonly ></td><td><input name='injectiondate' value='{$injectiondate}' type='date'></td><td>".fill_select(array_keys($injections_arr), 'injectiontype', $injectiontype)."</td><td><input name='injectionfinish' value='{$injectionfinish}' type='date'></td><td>".fill_select($mens_womens, 'name', $name)."</td><td><input name='breedingid' type='number' value='' min='0'></td><td><input name='injectionstatus' ".$injection_status." type='checkbox'></td></tr>
-                    <tr><td></td><td></td><td></td><td><td></td><td><input name='str' value='".self::STR_INJ."' type='hidden'><input name='action' value='".self::ACTION_INS."' type='hidden'><input value='Записать' type='submit'></td></form></tr>
+                    <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='injectionid' value='".$id_from_dbase."' readonly ></td><td><input name='injectiondate' value='{$injectiondate}' type='date'></td><td>".fill_select(array_keys($injections_arr), 'injectiontype', $injectiontype)."</td><td><input name='injectionfinish' value='{$injectionfinish}' type='date'></td><td>".fill_select($mens_womens, 'name', $name)."</td><td><input name='breedingid' type='number' value='' min='0'></td><td><input name='injectionstatus' ".$injection_status." type='checkbox'></td></tr>
+                    <tr><td></td><td></td><td></td><td><td></td><td><input name='str' value='".self::STR."' type='hidden'><input name='action' value='".self::ACTION_INS."' type='hidden'><input value='Записать' type='submit'></td></form></tr>
                     <tr id='parcrtrab' colspan='5'></tr>
                 </table>";
 
@@ -62,7 +62,7 @@ class Injection {
         $injectionfinish = date_next_injection($_GET['injectiondate'], $injections_arr[trim($_GET['injectiontype'])], 1);
         try {
 
-            $results_dbase = $connect_dbase->exec('INSERT INTO injections (injectiontype, injectiondate, injectionfinish, name, breedingid, injectionstatus) VALUES ("'.$_GET['injectiontype'].'", "'.$_GET['injectiondate'].'", "'.$injectionfinish.'", "'.$_GET['name'].'", "'.$_GET['breedingid'].'", "'.$_GET['injectionstatus'].'");');
+            $results_dbase = $connect_dbase->exec("INSERT INTO ".self::DBTABLE." (injectiontype, injectiondate, injectionfinish, name, breedingid, injectionstatus) VALUES ('".$_GET['injectiontype']."', '".$_GET['injectiondate']."', '".$injectionfinish."', '".$_GET['name']."', '".$_GET['breedingid']."', '".$_GET['injectionstatus']."');");
         } catch ( PDOException $e ) {
             echo $e->getCode().':'.$e->getMessage();
         }
@@ -82,7 +82,7 @@ class Injection {
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
         $connect_dbase->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try {
-            $results_dbase = $connect_dbase->exec("UPDATE injections SET injectiontype='{$this->injectiontype}', injectiondate='{$this->injectiondate}', injectionfinish='{$this->injectionfinish}', name='{$this->name}', breedingid='{$this->breedingid}', injectionstatus='{$this->injectionstatus}' WHERE injectionid='{$this->injectionid}';");
+            $results_dbase = $connect_dbase->exec("UPDATE ".self::DBTABLE." SET injectiontype='{$this->injectiontype}', injectiondate='{$this->injectiondate}', injectionfinish='{$this->injectionfinish}', name='{$this->name}', breedingid='{$this->breedingid}', injectionstatus='{$this->injectionstatus}' WHERE injectionid='{$this->injectionid}';");
         } catch ( PDOException $e ) {
             echo $e->getCode().':'.$e->getMessage();
 
@@ -92,9 +92,10 @@ class Injection {
 
     public function deleteDBase( $mysql ){
         /** Метод удаления вакцины из базы данных */
-        
+
+ 
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
-        $results_dbase = $connect_dbase->exec("DELETE FROM injections WHERE injectionid='{$this->injectionid}';");
+        $results_dbase = $connect_dbase->exec("DELETE FROM ".self::DBTABLE." WHERE injectionid='{$this->injectionid}';");
         $connect_dbase = null;
     }
 
@@ -102,7 +103,7 @@ class Injection {
         /** Выводит строчку Вакцины*/
         $injection_sign = $this->injectionstatus == 'on' ? '&#10004;' : '';
         return "<tr>
-                <td><a href='index.php?str=inj&action=mod&id={$counter}'>{$this->injectionid}</a></td>
+                <td><a href='index.php?str=".self::STR."&action=".self::ACTION_MOD."&id={$counter}'>{$this->injectionid}</a></td>
                 <td>{$this->injectiontype}</td>
                 <td>{$this->injectiondate}</td>
                 <td>{$this->injectionfinish}</td>
@@ -110,17 +111,18 @@ class Injection {
                 <td>{$this->breedingid}</td>
                 <td>{$injection_sign}</td>
                 
-                <td><div class='erase' str=".self::STR_INJ." id='{$counter}'>&Cross;</div></td>
+                <td><div class='erase' str=".self::STR." id='{$counter}'>&Cross;</div></td>
                 </tr>";
     }
 
     public function getEditForm($mens_womens, $injections_arr){
         /** Форма редактирования Вакцины */
         $injection_status = $this->injectionstatus == 'on' ? 'checked' : '';
+
         return "<table class='rabbit'>
                     <tr><th colspan='5'>Учетные данные вакцины</th></tr>
                     <tr><td>ID Вакцины</td><td>Дата вакцинации</td><td>Тип вакцины</td><td>Дата следующей</td><td>ID Кролика</td><td>ID Окрола</td><td>С</td><td></td></tr><tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='injectionid' value='{$this->injectionid}' readonly ></td><td><input name='injectiondate' value='{$this->injectiondate}' type='date'></td><td>".fill_select(array_keys($injections_arr), 'injectiontype', $this->injectiontype)."</td><td><input name='injectionfinish' value='{$this->injectionfinish}' type='date'></td><td>".fill_select($mens_womens, 'name', $this->name)."</td><td><input name='breedingid' type='number' value='{$this->breedingid}' min='0'></td><td><input name='injectionstatus' ".$injection_status." type='checkbox'></td></tr>
-                    <tr><td></td><td></td><td></td><td><td></td><td><input name='id' value='".$_GET['id']."' type='hidden'><input name='str' value='".self::STR_INJ."' type='hidden'><input name='action' value='".self::ACTION_UPD."' type='hidden'><input value='Записать' type='submit'></td></form></tr>
+                    <tr><td></td><td></td><td></td><td><td></td><td><input name='id' value='".$_GET['id']."' type='hidden'><input name='str' value='".self::STR."' type='hidden'><input name='action' value='".self::ACTION_UPD."' type='hidden'><input value='Записать' type='submit'></td></form></tr>
                     <tr id='parcrtrab' colspan='5'></tr>
                 </table>";
     }
