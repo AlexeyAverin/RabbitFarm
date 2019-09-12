@@ -43,7 +43,7 @@ class Copulation {
                     <tr><th colspan='5'>Учетные данные случки</th></tr>
                     <tr><td>ID Случки</td><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td><td></td></tr>
                     <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' value='".$select_injection_id_from_dbase."' name='couplingid' readonly></td><td><input name='couplingdate' value='".$couplingdate."' type='date'></td><td>".fill_select($mens, 'couplingmen', $name)."</td><td>".fill_select($womens, 'couplingwomen', $name)."</td><td>".fill_select($places, 'couplingplace', $place)."</td><td><input name='str' value='".self::STR."' type='hidden'><input name='action' value='".self::ACTION_INS."' type='hidden'><input type='submit' value='Записать'></td></form></tr>
-                    <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td></td><td> </td><td></td><td></td><td></td><td><input id='cmbcrtbre' couplingid='".$id."' type='button' value='Создать окрол'></td></form></tr>
+                    <!--<tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td></td><td> </td><td></td><td></td><td></td><td><input id='cmbcrtbre' couplingid='".$id."' type='button' value='Создать окрол'></td></form></tr>-->
                     <tr><td id='parcrtbre' colspan='5'></td></tr>
                 </table>";
 
@@ -86,7 +86,7 @@ class Copulation {
         /** Метод удаления Случки из базы данных */
         
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
-        $results_dbase = $connect_dbase->exec("DELETE FROM copulations WHERE couplingid='{$this->couplingid}';");
+        $results_dbase = $connect_dbase->exec("DELETE FROM ".self::DBTABLE." WHERE couplingid='{$this->couplingid}';");
         $connect_dbase = null;
     }
 

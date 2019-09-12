@@ -75,30 +75,41 @@ if ( $str == 'cop' ) { // Функции случек
             $id = $_GET['id'];
             $string_middle = $copulations->getItem($id)->getEditForm( $mens, $womens, $mysql, $places );
         }
-
-
     } else {
+
         $string_middle = $copulations->getTABLE();
     }
     // Считывание данных MySQ по случке
-    //$copulations = copulations_from_dbase( $mysql );
 }
+
 if ( $str == 'bre' ) { // Функции окролов
-    $string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a class="selected" href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a href="index.php?str=inj">Вакцины</a></nav>';
+    $string_nav = Breeding::getNav(); //'<nav><a href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a class="selected" href="index.php?str=cop">Случки</a><a href="index.php?str=inj">Вакцины</a></nav>';
+    $breedings = new BreedingCollection( $mysql ); //$string_nav = '<nav><a href="index.php?str=rab">Кролики</a><a class="selected" href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a href="index.php?str=inj">Вакцины</a></nav>';
+
     // Добавление нового окрола из случки
     if ( isset($_GET['action']) ) {
-        if ( $_GET['action'] == 'ins' || $_GET['action'] == 'crtbre' ) {
+        if ( $_GET['action'] == 'ins' ) {
             // Создание нового окрола в том числе из окрола
-            breeding_from_copulation_to_mysql( $mysql );
+            //breeding_from_copulation_to_mysql( $mysql );
         } elseif ( $_GET['action'] == 'del' ) {
-            breeding_delete_mysql( $mysql );
+            //breeding_delete_mysql( $mysql );
         } elseif ( $_GET['action'] == 'upd' ) {
-            breeding_update_mysql( $mysql );
-        }
+            //breeding_update_mysql( $mysql );
 
+        } elseif ( $_GET['action'] == 'new' ) {
+            //$string_middle = Copulation::getNewForm($mysql, $mens, $womens, $places);
+        } elseif ( $_GET['action'] == 'mod' ) {
+            //$id = $_GET['id'];
+            //$string_middle = $copulations->getItem($id)->getEditForm( $mens, $womens, $mysql, $places );
+
+        } elseif ( $_GET['action'] == 'crtbre' ) {
+
+        }
+    } else {
+        //Считывание данных MySQL по окролам
+        $string_middle = $breedings->getTable();
     }
-    //Считывание данных MySQL по окролам
-    $breedings = breedings_from_mysql( $mysql );
+
 }
 
 
@@ -303,39 +314,36 @@ EOD;
 
 } elseif ( $str == 'bre' ) {
     if ( !isset($_GET['action']) || $_GET['action'] == 'crtbre' || $_GET['action'] == 'upd' || $_GET['action'] == 'ins' || $_GET['action'] == 'del' ) {
-        $string_breedings = '';
-        foreach ( $breedings as $breeding_id => $breeding ){
-            $string_breeding = '<tr><td><a href="index.php?str=bre&action=mod&id='.$breeding_id.'">'.$breeding_id.'</a></td><td>'.date('d-m-Y', strtotime($breeding[1])).'</td><td>'.$breeding[2].'</td><td>'.$breeding[3].'</td><td>'.$breeding[4].'</td><td>'.$breeding[5].'</td><td>'.$breeding[6].'</td><td><div class="erase" str="bre" id="'.$breeding_id.'">&Cross;</div></td></tr>';
-            $string_breedings .= $string_breeding;
-        }
-        $string_middle = "<table class='ferma'>
-
-        <tr><th>ID Окрола</th><th>Дата окрола</th><th>Кол-во общее</th><th>Кол-во живых</th><th>Самец</th><th>Самка</th><th>ID Случки</th><th></th></tr>
-        $string_breedings
-        <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-
-        <tr><td><a href='index.php?str=bre&action=new'>Добавить новый окрол</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
-        </table>";
+        //$string_breedings = '';
+        //foreach ( $breedings as $breeding_id => $breeding ){
+        //    $string_breeding = '<tr><td><a href="index.php?str=bre&action=mod&id='.$breeding_id.'">'.$breeding_id.'</a></td><td>'.date('d-m-Y', strtotime($breeding[1])).'</td><td>'.$breeding[2].'</td><td>'.$breeding[3].'</td><td>'.$breeding[4].'</td><td>'.$breeding[5].'</td><td>'.$breeding[6].'</td><td><div class="erase" str="bre" id="'.$breeding_id.'">&Cross;</div></td></tr>';
+        //    $string_breedings .= $string_breeding;
+        //}
+        //$string_middle = "<table class='ferma'>
+        //<tr><th>ID Окрола</th><th>Дата окрола</th><th>Кол-во общее</th><th>Кол-во живых</th><th>Самец</th><th>Самка</th><th>ID Случки</th><th></th></tr>
+        //$string_breedings
+        //<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        //<tr><td><a href='index.php?str=bre&action=new'>Добавить новый окрол</a></td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>.</td></tr>
+        //</table>";
     } elseif ( $_GET['action'] == 'new' || $_GET['action'] == 'mod' ) {
-        $id = isset($_GET['id']) ? $_GET['id'] : null;
+        //$id = isset($_GET['id']) ? $_GET['id'] : null;
 
         if ( $_GET['action'] == 'mod' ) {
-            $action_type = 'upd';
-            $breedingdate = date('Y-m-d', strtotime($breedings[$id][1]));
+        //    $action_type = 'upd';
+        //    $breedingdate = date('Y-m-d', strtotime($breedings[$id][1]));
 
         } elseif ( $_GET['action'] == 'new' ) {
-            $action_type = 'ins';
-            $breedingdate = date('Y-m-d', time());
+        //    $action_type = 'ins';
+        //    $breedingdate = date('Y-m-d', time());
         }
 
-        $string_middle = "<table class='rabbit'>
-        <tr><th colspan='5'>Учетные данные окрола</th></tr>
-        <tr><td>ID Окрола</td><td>Дата</td><td>Кол-во всего</td><td>Кол-во живых</td><td>ID Случки</td></tr>
-
-        <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='breedingid' value='".$id."' readonly ></td><td><input name='breedingdate' value='".$breedingdate."' type='date'></td><td><input name='breedingnumberall' value='".$breedings[$id][2]."' min='0' max='99' type='number'></td><td><input name='breedingnumberlive' value='".$breedings[$id][3]."' min='0' max='99' type='number'></td><td><input name='couplingid' type='number' value='".$breedings[$id][6]."' min='0'></td></tr>
-        <tr><td></td><td></td><td></td><td><input name='str' value='bre' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input value='Записать' type='submit'></td></form><td><input id='cmdcrtrab' couplingid='".$breedings[$id][6]."' breedingid='".$id."' birth='".$breedingdate."' type='button' value='Создать Кролика'></td></tr>
-        <tr id='parcrtrab' colspan='5'></tr>
-        </table>";
+        //$string_middle = "<table class='rabbit'>
+        //<tr><th colspan='5'>Учетные данные окрола</th></tr>
+        //<tr><td>ID Окрола</td><td>Дата</td><td>Кол-во всего</td><td>Кол-во живых</td><td>ID Случки</td></tr>
+        //<tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='breedingid' value='".$id."' readonly ></td><td><input name='breedingdate' value='".$breedingdate."' type='date'></td><td><input name='breedingnumberall' value='".$breedings[$id][2]."' min='0' max='99' type='number'></td><td><input name='breedingnumberlive' value='".$breedings[$id][3]."' min='0' max='99' type='number'></td><td><input name='couplingid' type='number' value='".$breedings[$id][6]."' min='0'></td></tr>
+        //<tr><td></td><td></td><td></td><td><input name='str' value='bre' type='hidden'><input name='action' value='".$action_type."' type='hidden'><input value='Записать' type='submit'></td></form><td><input id='cmdcrtrab' couplingid='".$breedings[$id][6]."' breedingid='".$id."' birth='".$breedingdate."' type='button' value='Создать Кролика'></td></tr>
+        //<tr id='parcrtrab' colspan='5'></tr>
+        //</table>";
 
     }
 }  elseif ( $str == 'cop' ) {
