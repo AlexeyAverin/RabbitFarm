@@ -42,7 +42,7 @@ class Breeding {
             <tr><th colspan='5'>Учетные данные окрола</th></tr>
             <tr><td>ID Окрола</td><td>Дата</td><td>Кол-во всего</td><td>Кол-во живых</td><td>ID Случки</td></tr>
             <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='breedingid' value='".$select_item_id."' readonly ></td><td><input name='breedingdate' value='".$breedingdate."' type='date'></td><td><input name='breedingnumberall' value='0' min='0' max='99' type='number'></td><td><input name='breedingnumberlive' value='0' min='0' max='99' type='number'></td><td><input name='couplingid' type='number' value='0' min='0'></td></tr>
-            <tr><td></td><td></td><td></td><td><input name='str' value='".self::STR."' type='hidden'><input name='action' value='".self::ACTION_INS."' type='hidden'><input value='Записать' type='submit'></td></form><td><!--<input id='cmdcrtrab' couplingid='".$breedings[$id][6]."' breedingid='".$id."' birth='".$breedingdate."' type='button' value='Создать Кролика'>--></td></tr>
+            <tr><td></td><td></td><td></td><td></td><td><input name='str' value='".self::STR."' type='hidden'><input name='action' value='".self::ACTION_INS."' type='hidden'><input value='Записать' type='submit'></form></td></tr>
             <tr id='parcrtrab' colspan='5'></tr>
         </table>";
 
@@ -73,7 +73,7 @@ class Breeding {
         $connect_dbase->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try {
 
-            $results_dbase = $connect_dbase->exec("UPDATE ".self::DBTABLE." UPDATE breedings SET breedingdate='{$this->breedingdate}', breedingnumberall='{$this->breedingnumberall}', breedingnumberlive='{$this->breedingnumberlive}', couplingid='{$this->couplingid}' WHERE breedingid='{$this->breedingid}';");
+            $results_dbase = $connect_dbase->exec("UPDATE ".self::DBTABLE." SET breedingdate='{$this->breedingdate}', breedingnumberall='{$this->breedingnumberall}', breedingnumberlive='{$this->breedingnumberlive}', couplingid='{$this->couplingid}' WHERE breedingid='{$this->breedingid}';");
         } catch ( PDOException $e ) {
             echo $e->getCode().':'.$e->getMessage();
 
@@ -109,11 +109,11 @@ class Breeding {
     public function getEditForm( $mysql ){
         /** Форма редактирования Случки */
         return "<table class='rabbit'>
-            <tr><th colspan='5'>Учетные данные окрола</th></tr>
+            <tr><th colspan='6'>Учетные данные окрола</th></tr>
             <tr><td>ID Окрола</td><td>Дата</td><td>Кол-во всего</td><td>Кол-во живых</td><td>ID Случки</td></tr>
-            <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='breedingid' value='{$this->breedingid}' readonly ></td><td><input name='breedingdate' value='{$this->breedingdate}' type='date'></td><td><input name='breedingnumberall' value='{$this->breedingnumberall}' min='0' max='99' type='number'></td><td><input name='breedingnumberlive' value='{$this->breedingnumberlive}' min='0' max='99' type='number'></td><td><input name='couplingid' type='number' value='{$this->couplingid}' min='0'></td></tr>
-            <tr><td></td><td></td><td></td><td><input name='str' value='".self::STR."' type='hidden'><input name='action' value='".self::ACTION_INS."' type='hidden'><input value='Записать' type='submit'></td></form><td><input id='cmdcrtrab' couplingid='".$breedings[$id][6]."' breedingid='".$id."' birth='".$breedingdate."' type='button' value='Создать Кролика'></td></tr>
-            <tr id='parcrtrab' colspan='5'></tr>
+            <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' name='breedingid' value='{$this->breedingid}' readonly ></td><td><input name='breedingdate' value='{$this->breedingdate}' type='date'></td><td><input name='breedingnumberall' value='{$this->breedingnumberall}' min='0' max='99' type='number'></td><td><input name='breedingnumberlive' value='{$this->breedingnumberlive}' min='0' max='99' type='number'></td><td><input name='couplingid' type='number' value='{$this->couplingid}' min='0'><input name='str' value='".self::STR."' type='hidden'><input name='action' value='".self::ACTION_UPD."' type='hidden'></td><td><input name='id' type='hidden' value='".$_GET['id']."'><input value='Записать' type='submit'></form></td></tr>
+            <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td></td><td></td><td></td><td></td><td><input id='cmdcrtrab' couplingid='{$this->couplingid}' breedingid='{$this->breedingid}' birth='{$this->breedingdate}' type='button' value='Создать Кролика'></td></form></tr>
+            <tr id='parcrtrab' colspan='6'></tr>
         </table>";
     }
 }

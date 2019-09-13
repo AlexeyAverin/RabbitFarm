@@ -28,10 +28,10 @@ if ( !isset($str) ) {
 if ( $str == 'rab' ) { // Функции кроликов
     $string_nav = '<nav><a class="selected" href="index.php?str=rab">Кролики</a><a href="index.php?str=bre">Окролы</a><a href="index.php?str=cop">Случки</a><a href="index.php?str=inj">Вакцины</a></nav>';
     // Добавление данных зайца в MySQL
+
     if ( isset($_GET['action']) && $_GET['action'] == 'ins' ) {//echo "Good Day!!!";
         rabbit_insert_dbase( $mysql, $injections_arr );
     }
-
 
     // Удаление данных кролика из MySQL
     if ( (isset($_GET['id'])) && $_GET['action'] == 'del' ) {//echo "Добрый вечер!!!";
@@ -42,7 +42,11 @@ if ( $str == 'rab' ) { // Функции кроликов
     if ( (isset($_GET['rabbitid'])) && $_GET['action'] == 'upd' ) {
         rabbit_update_dbase( $mysql, $_GET['rabbitid'] ); ###
     }
- }
+    if ( isset($_GET['action']) && $_GET['action'] == 'cmdcrtrab' ) {//echo "Good Day!!!";
+        rabbit_insert_dbase( $mysql, $injections_arr );
+    }
+
+}
  // Считывание данных MySQL с целью того что массивы $mens и $women нужны в Кроликах и случках
  //$rabbits_mens_womens = array_from_mysql( $mysql, $mens, $womens );
 
@@ -72,8 +76,8 @@ if ( $str == 'cop' ) { // Функции случек
         } elseif ( $_GET['action'] == 'new' ) {
             $string_middle = Copulation::getNewForm($mysql, $mens, $womens, $places);
         } elseif ( $_GET['action'] == 'mod' ) {
-            $id = $_GET['id'];
-            $string_middle = $copulations->getItem($id)->getEditForm( $mens, $womens, $mysql, $places );
+            //$id = $_GET['id'];
+            $string_middle = $copulations->getItem($_GET['id'])->getEditForm( $mens, $womens, $mysql, $places );
         }
     } else {
 
@@ -90,20 +94,30 @@ if ( $str == 'bre' ) { // Функции окролов
     if ( isset($_GET['action']) ) {
         if ( $_GET['action'] == 'ins' ) {
             // Создание нового окрола в том числе из окрола
-            //breeding_from_copulation_to_mysql( $mysql );
+
+            $breeding = new Breeding($_GET['breedingid'], $_GET['breedingdate'], $_GET['breedingnumberall'], $_GET['breedingnumberlive'], '', '', $_GET['couplingid']);
+            $breedings->insertInCollection($breeding);
+            $breeding->insertDBase( $mysql );
+
+            $string_middle = $breedings->getTable();
         } elseif ( $_GET['action'] == 'del' ) {
-            //breeding_delete_mysql( $mysql );
+            $breedings->getItem($_GET['id'])->deleteDBase( $mysql );
+            $breedings->deleteFromCollection($_GET['id']);
+            $string_middle = $breedings->getTable();
+
         } elseif ( $_GET['action'] == 'upd' ) {
-            //breeding_update_mysql( $mysql );
-
+            $breedings->getItem($_GET['id'])->updateDBase( $mysql );
+            $string_middle = $breedings->getTable();
         } elseif ( $_GET['action'] == 'new' ) {
-            //$string_middle = Copulation::getNewForm($mysql, $mens, $womens, $places);
+            $string_middle = Breeding::getNewForm( $mysql );//$string_middle = Copulation::getNewForm($mysql, $mens, $womens, $places);
         } elseif ( $_GET['action'] == 'mod' ) {
-            //$id = $_GET['id'];
-            //$string_middle = $copulations->getItem($id)->getEditForm( $mens, $womens, $mysql, $places );
-
+            $string_middle = $breedings->getItem($_GET['id'])->getEditForm( $mysql );
         } elseif ( $_GET['action'] == 'crtbre' ) {
 
+            $breeding = new Breeding('', $_GET['breedingdate'], $_GET['breedingnumberall'], $_GET['breedingnumberlive'], '', '', $_GET['couplingid']);
+            $breedings->insertInCollection($breeding);
+            $breeding->insertDBase( $mysql );
+            $string_middle = $breedings->getTable();
         }
     } else {
         //Считывание данных MySQL по окролам

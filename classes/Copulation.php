@@ -43,7 +43,6 @@ class Copulation {
                     <tr><th colspan='5'>Учетные данные случки</th></tr>
                     <tr><td>ID Случки</td><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td><td></td></tr>
                     <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' value='".$select_injection_id_from_dbase."' name='couplingid' readonly></td><td><input name='couplingdate' value='".$couplingdate."' type='date'></td><td>".fill_select($mens, 'couplingmen', $name)."</td><td>".fill_select($womens, 'couplingwomen', $name)."</td><td>".fill_select($places, 'couplingplace', $place)."</td><td><input name='str' value='".self::STR."' type='hidden'><input name='action' value='".self::ACTION_INS."' type='hidden'><input type='submit' value='Записать'></td></form></tr>
-                    <!--<tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td></td><td> </td><td></td><td></td><td></td><td><input id='cmbcrtbre' couplingid='".$id."' type='button' value='Создать окрол'></td></form></tr>-->
                     <tr><td id='parcrtbre' colspan='5'></td></tr>
                 </table>";
 
@@ -112,7 +111,7 @@ class Copulation {
 
             <tr><td>ID Случки</td><td>Дата</td><td>Самец</td><td>Самка</td><td>Клетка</td><td></td></tr>
             <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td><input type='text' value='{$this->couplingid}' name='couplingid' readonly></td><td><input name='couplingdate' value='{$this->couplingdate}' type='date'></td><td>".fill_select($mens, 'couplingmen', $this->couplingmen)."</td><td>".fill_select($womens, 'couplingwomen', $this->couplingwomen)."</td><td>".fill_select($places, 'couplingplace', $this->couplingplace)."</td><td><input name='str' value='".self::STR."' type='hidden'><input name='id' type='hidden' value='".$_GET['id']."'><input name='action' value='".self::ACTION_UPD."' type='hidden'><input type='submit' value='Записать'></td></form></tr>
-            <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td></td><td> </td><td></td><td></td><td></td><td><input id='".self::CMBCRTBRE."' id='".$_GET['id']."' type='button' value='Создать окрол'></td></form></tr>
+            <tr><form method='GET' action='index.php' enctype='application/x-www-form-urlncoded'><td></td><td> </td><td></td><td></td><td></td><td><input id='".self::CMBCRTBRE."' couplingid='{$this->couplingid}' type='button' value='Создать окрол'></td></form></tr>
             <tr><td id='parcrtbre' colspan='5'></td></tr>";
     }
 }

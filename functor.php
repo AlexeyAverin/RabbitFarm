@@ -34,7 +34,7 @@ if ( isset($_POST['metod']) && $_POST['metod'] === 'arrays_php_js' ) {
 }
 
 if ( isset($_GET['metod']) && $_GET['metod'] === 'string_to_mysql' ) {
-    string_to_mysql( $mysql );
+    rabbit_insert_dbase( $mysql, $injections_arr ); //string_to_mysql( $mysql );
 }
 
 // Отправляет письмо
