@@ -279,15 +279,12 @@ EOD;
             $string_middle .= "<tr><td><a href='index.php?str=cop&action=mod&id=".$copulation_id."'>".$copulation_id."</a></td><td>".date('d-m-Y', strtotime($copulation[1]))."</td><td>".$copulation[2]."</td><td>".$copulation[3]."</td><td>".date_next_injection($copulation[1], '30')."</td></tr>";
             $count_copulations += 1;
         }
+
         $string_middle .= "
-        
             <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
             <tr><td>Суммарно случек: ".$count_copulations."</td><td></td><td></td><td></td><td></td></tr>
+
         </table>";
-
-
-        
-        
         $breedings_rabbit = breedings_rabbit( $mysql, $rabbit_name );
         $string_middle .= "<table class='ferma'>
         <tr><td colspan='3'>Данные по окролу</td></tr>
@@ -295,8 +292,8 @@ EOD;
         <tr><th>ID Окрола</th><th>Дата окрола</th><th>Общее кол-во</th><th>Кол-во живых</th><th>ID Случки</th></tr>";
         $sum_number_all = 0;
         $sum_number_live = 0;
-        $count_breedings = 0;
 
+        $count_breedings = 0;
         foreach ( $breedings_rabbit as $breeding_id => $breeding ){
             $string_middle .= "<tr><td><a href='index.php?str=bre&action=mod&id=".$breeding_id."'>".$breeding_id."</a></td><td>".date('d-m-Y', strtotime($breeding[1]))."</td><td>".$breeding[2]."</td><td>".$breeding[3]."</td><td>".$breeding[4]."</td></tr>";
 
@@ -308,21 +305,18 @@ EOD;
                            <tr><td>Суммарно окролов: ".$count_breedings."</td><td></td><td>".$sum_number_all."</td><td>".$sum_number_live."</td><td></td></tr>
 
                         </table>";
-
         $injections_rabbit = injections_select_rabbit( $mysql, $rabbit_name );
         $string_middle .= "<table class='ferma'>
                 <tr><td colspan='5'>Данные по вакцинации</td></tr>
                 <tr><th>ID вакцины</th><th>Тип вакцины</th><th>Дата вакцинации</th><th>Дата следующей</th><th>С</th></tr>";
         foreach ( $injections_rabbit as $injection_id => $injection ){
             $injection_sign     = $injection[5] == 'on' ? '&#10004;' : '';
+
             $string_middle .= "<tr><td><a href='index.php?str=inj&action=mod&id=".$injection_id."'>".$injection_id."</a></td><td>".$injection[0]."</td><td>".date('d-m-Y', strtotime($injection[1]))."</td><td>".date('d-m-Y', strtotime($injection[2]))."</td><td>".$injection_sign."</td></tr>";
         }
-        
         $string_middle .= "<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
-        
             <tr><td>Суммарно вакцин</td><td></td><td></td><td></td><td></td></tr>
             </table>";
-
 }
     }
 

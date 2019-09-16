@@ -16,8 +16,8 @@ class BreedingCollection {
             /** Создает эллемент  Injection */
 
 
-            $items = new Breeding($breedingid, $breedingdate, $breedingnumberall, $breedingnumberlive, $couplingmen, $couplingwomen, $couplingid);
-            return $items;
+            $item = new Breeding($breedingid, $breedingdate, $breedingnumberall, $breedingnumberlive, $couplingmen, $couplingwomen, $couplingid);
+            return $item;
         }
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
 

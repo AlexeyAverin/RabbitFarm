@@ -185,6 +185,8 @@ function rabbits_from_dbase( $mysql, $mens, $womens ){//"Добрый день!!
     }
     $connect_dbase = null;
 
+    $mens = array_unique($mens);
+    $womens = array_unique($womens);
     $rabbits_mens_womens = array($rabbits, $mens, $womens);
     return $rabbits_mens_womens;
 }
@@ -222,7 +224,7 @@ function rabbit_insert_dbase( $mysql, $injections_arr ){
 function rabbit_update_dbase( $mysql, $rabbit_id ){
     try{
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
-        $query_dbase = 'UPDATE rabbits SET name="'.$_GET['name'].'", status="'.$_GET['status'].'", breedingid="'.$_GET['breedingid'].'", breed="'.$_GET['breed'].'", birthdate="'.$_GET['birth'].'", gender="'.$_GET['gender'].'", label="'.$_GET['label'].'", women="'.$_GET['women'].'", men="'.$_GET['men'].'", place="'.$_GET['place'].'", injectiondate="'.$_GET['injectiondate'].'", injectiontype="'.$_GET['injectiontype'].'" WHERE id="'.$rabbit_id.'";'; //echo $query_mysql;
+        $query_dbase = 'UPDATE rabbits SET name="'.$_GET['name'].'", status="'.$_GET['status'].'", breedingid="'.$_GET['breedingid'].'", breed="'.$_GET['breed'].'", birthdate="'.$_GET['birth'].'", gender="'.$_GET['gender'].'", label="'.$_GET['label'].'", women="'.$_GET['women'].'", men="'.$_GET['men'].'", place="'.$_GET['place'].'" WHERE id="'.$rabbit_id.'";'; //echo $query_mysql;
         $results_dbase = $connect_dbase->exec($query_dbase);
 
         if ( $results_dbase === false )
@@ -385,15 +387,17 @@ function fill_select( $array, $name, $value ){
 
 
 function injections_select_rabbit( $mysql, $rabbit_name ){
+    $injections = [];
     $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
     $connect_dbase->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     try {
+
         foreach($connect_dbase->query('SELECT * FROM injections WHERE name="'.$rabbit_name.'";') as $row){
             $injections[$row['injectionid']] = array($row['injectiontype'], $row['injectiondate'], $row['injectionfinish'], $row['name'], $row['breedingid'], $row['injectionstatus']);
         }
     } catch (PDOException $e) {
-
         echo $e->getCode().':'.$e->getMessage();
+
     }
     return $injections;
 }
@@ -428,7 +432,7 @@ function copulations_rabbit_mysql( $mysql, $rabbit_name ){
 
 
 // Считывание базы случек по ID случки
-function copulation_id_mysql( $mysql, $couplingid ){
+/*function copulation_id_mysql( $mysql, $couplingid ){
     $connect_mysql = connect_mysql( $mysql );
     $query_mysql = 'SELECT * FROM copulations WHERE couplingid="'.$couplingid.'";';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
@@ -437,13 +441,15 @@ function copulation_id_mysql( $mysql, $couplingid ){
     $string_mysql = $results_mysql->fetch_array(MYSQLI_ASSOC);
     $men = $string_mysql['couplingmen'];
     $women = $string_mysql['couplingwomen'];
+
     $arr = array($men, $women);
     $results_mysql->close();
     $connect_mysql->close();// $arr = array('Крол', 'Крольчиха');
-    return $arr;
-}
 
-function breedings_from_mysql( $mysql ){
+    return $arr;
+}*/
+
+/*function breedings_from_mysql( $mysql ){
     $connect_mysql = connect_mysql( $mysql );
     $query_mysql = 'SELECT * FROM copulations NATURAL JOIN breedings ORDER BY breedingdate;';
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
@@ -468,9 +474,9 @@ function breedings_from_mysql( $mysql ){
     $results_mysql->close();
     $connect_mysql->close();
     return $breedings;
-}
+}*/
 
-function breeding_update_mysql( $mysql ){
+/*function breeding_update_mysql( $mysql ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
     $query_mysql = 'UPDATE breedings SET breedingdate="'.$_GET['breedingdate'].'", breedingnumberall="'.$_GET['breedingnumberall'].'", breedingnumberlive="'.$_GET['breedingnumberlive'].'", couplingid="'.$_GET['couplingid'].'" WHERE breedingid="'.$_GET['breedingid'].'";';
@@ -478,7 +484,7 @@ function breeding_update_mysql( $mysql ){
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     //$results_mysql->close();
     $connect_mysql->close();
-}
+}*/
 
 function breedings_rabbit( $mysql, $rabbit_name ){
     $breedings_rabbit = array();
@@ -501,17 +507,16 @@ function breedings_rabbit( $mysql, $rabbit_name ){
     return $breedings_rabbit;
 }
 
-function breeding_from_copulation_to_mysql( $mysql ){
+/*function breeding_from_copulation_to_mysql( $mysql ){
     $connect_mysql = connect_mysql( $mysql );
     $query_mysql = 'INSERT INTO breedings (breedingdate, breedingnumberall, breedingnumberlive, couplingid) VALUES ("'.$_GET['breedingdate'].'", "'.$_GET['breedingnumberall'].'", "'.$_GET['breedingnumberlive'].'", "'.$_GET['couplingid'].'");';
-
     $results_mysql = send_query_mysql( $connect_mysql, $query_mysql );
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     //$results_mysql->close();
     $connect_mysql->close();
-}
+}*/
 
-function breeding_delete_mysql( $mysql ){
+/*function breeding_delete_mysql( $mysql ){
     $connect_mysql = new mysqli( $mysql['node'], $mysql['user'], $mysql['passwd'], $mysql['dbase']);
     if ( $connect_mysql->connect_error ) die ( $connect_mysql->connect_error );
     $query_mysql = 'DELETE FROM breedings WHERE breedingid="'.$_GET["id"].'";';
@@ -519,5 +524,5 @@ function breeding_delete_mysql( $mysql ){
     if ( !$results_mysql ) die ( $connect_mysql->connect_error );
     //$results_mysql->close();
     $connect_mysql->close();
-    }
+    }*/
 ?>

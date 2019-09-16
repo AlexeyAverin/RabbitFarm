@@ -4,51 +4,52 @@
 
 class InjectionCollection {
     
+    const DBTABLE = 'injections';
 
-    public $injections = [];
+    public $items = [];
 
     public function __construct( $mysql ) {
         /** Загрузка из DBase и создание $injections */
 
-        function createInjection($injectionid, $injectiontype, $injectiondate, $injectionfinish, $name, $breedingid, $injectionstatus){
+        function createInjection($injectionid, $injectiontype, $injectiondate, $injectionfinish, $name, $breedingid, $injectiontatus){
             /** Создает эллемент  Injection */
 
 
-            $injection = new Injection($injectionid, $injectiontype, $injectiondate, $injectionfinish, $name, $breedingid, $injectionstatus);
-            return $injection;
+            $item = new Injection($injectionid, $injectiontype, $injectiondate, $injectionfinish, $name, $breedingid, $injectiontatus);
+            return $item;
         }
         $connect_dbase = new PDO('mysql:host=' . $mysql['node'] . ";" . 'dbname=' . $mysql['dbase'], $mysql['user'], $mysql['passwd']);
         try {
 
-            $results = $connect_dbase->query('SELECT * FROM injections;');
-            $injections = $results->fetchAll(PDO::FETCH_FUNC, "createInjection"); //$injections = $results->fetchAll(PDO::FETCH_CLASS, "Injection");
+            $results = $connect_dbase->query('SELECT * FROM '.self::DBTABLE.';');
+            $items = $results->fetchAll(PDO::FETCH_FUNC, "createInjection"); //$injections = $results->fetchAll(PDO::FETCH_CLASS, "Injection");
         } catch (PDOException $e) {
             echo ("Good day!!!<br> Error: " . $e->getMessage()."<br>");
             die();
         }
        $connect_dbase = null;
-       $this->injections = $injections;
+       $this->items = $items;
 
     }
 
-    public function insertInCollection( $injection ){
+    public function insertInCollection( $item ){
         /** Добавляет в коллекцию */
-        array_push($this->injections, $injection);
+        array_push($this->items, $item);
     }
 
 
 
     public function deleteFromCollection($counter){
         /** Удаляет из коллекции */
-        unset($this->injections[$counter]);
+        unset($this->items[$counter]);
     }
 
     public function getTABLE(){
         /** Создание Таблицы Вакцин */
         $string_injection = '';
         $counter = 0;
-        foreach ( $this->injections as $injection ){
-            $string_injection .= $injection->getTR($counter);
+        foreach ( $this->items as $item ){
+            $string_injection .= $item->getTR($counter);
 
             $counter++;
         }
@@ -64,7 +65,7 @@ class InjectionCollection {
 
     public function getItem($counter){
         /** Возращает эллемент класса по попорядковому номеру */
-        return $this->injections[$counter];
+        return $this->items[$counter];
     }
 
 }
