@@ -2,7 +2,7 @@
 Информация по баззам!!!
 
 
-####### MySQL #######
+##### MySQL #####
 
 sudo apt-get install mysql-server
 sudo apt-get install mysql-client
@@ -21,7 +21,44 @@ GRANT ALL ON rabbitfarm.* TO farmer@host IDENTIFIED BY 'farmer575';
 exit
 
 REVOKE ALL ON rabbitfarm.* FROM farmer@host;
+
 CREATE TABLE rabbits (
     id int(30) NOT NUL auto_increment PRIMARY KEY,
-    
-)
+    name VARCHAR(30),
+    dridingdate DATE
+) ENGINE MyISAM;
+
+
+DESCRIBE rabbits;
+ALTER TABLE rabbits CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;
+SHOW VARIABLES;
+SHOW VARIABLES LIKE '%character%';
+SHOW VARIABLES LIKE '%collation%';
+character_set_client   - кодировка поступления данных с клиентской стороны
+             _database - кодировка используемая базой по умолчанию
+             _results  - кодировка в которой сервер отправляет данные клиенту
+
+             _server   - кодировка используемая по умолчанию на сревере
+
+collation_connection   - представления ...
+
+         _database     - ...
+         _server       - ...
+
+
+SHOW COLLATION LIKE 'utf8%';
+SHOW CREATE TABLE rabbits; - информация о таблице
+SET collation_server = utf8_unicode_ci; - для всех представлений
+
+
+##### PostgreSQL #####
+sudo apt-get install postgresql
+sudo -u postgres postgresql
+
+CREATE DATABASE rabbitfarm; (DROP DATABASE rabbitfarm);
+CREATE USER farmer WITH password 'farmer575';
+GRANT ALL ON DATABASE rabbitfarm TO farmer;
+\q
+
+psql -h localhost rabbitfarm farmer
+
