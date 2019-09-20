@@ -25,7 +25,7 @@ REVOKE ALL ON rabbitfarm.* FROM farmer@host;
 CREATE TABLE rabbits (
     id int(30) NOT NUL auto_increment PRIMARY KEY,
     name VARCHAR(30),
-    dridingdate DATE
+    breedingdate DATE
 ) ENGINE MyISAM;
 
 
@@ -62,3 +62,16 @@ GRANT ALL ON DATABASE rabbitfarm TO farmer;
 
 psql -h localhost rabbitfarm farmer
 
+CREATE TABLE rabbits (
+    id SERIAL NOT NUL PRIMARY KEY,
+    name VARCHAR(30),
+    breedingdate DATE
+);
+
+\d rabbits - отобразить таблицу
+\dt        - отобразить список таблиц
+
+sudo apt-get install php5-pgsql
+sudo service apache2 restart
+
+$cb = new PDO('pgsql:host=localhost;port=5432;dname=rabbitsfarm;farmer;farmer575');
