@@ -5,3 +5,23 @@
 ####### MySQL #######
 
 sudo apt-get install mysql-server
+sudo apt-get install mysql-client
+
+sudo /etc/init.d/mysql status
+sudo /etc/init.d/mysql restart
+
+mysql -u root -p
+
+
+
+CREATE DATABASE rabbitfarm;
+CHARACTER SET utf-8 COLLATE utf8_unicode_ci;
+USE rabbitfarm;
+GRANT ALL ON rabbitfarm.* TO farmer@host IDENTIFIED BY 'farmer575';
+exit
+
+REVOKE ALL ON rabbitfarm.* FROM farmer@host;
+CREATE TABLE rabbits (
+    id int(30) NOT NUL auto_increment PRIMARY KEY,
+    
+)
