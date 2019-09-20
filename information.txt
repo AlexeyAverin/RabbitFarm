@@ -1,0 +1,7 @@
+Добрый день!!!
+Информация по баззам!!!
+
+
+####### MySQL #######
+
+sudo apt-get install mysql-server
