@@ -2,6 +2,9 @@
 Информация по баззам!!!
 
 
+
+
+
 ##### MySQL #####
 
 sudo apt-get install mysql-server
@@ -9,10 +12,7 @@ sudo apt-get install mysql-client
 
 sudo /etc/init.d/mysql status
 sudo /etc/init.d/mysql restart
-
 mysql -u root -p
-
-
 
 CREATE DATABASE rabbitfarm;
 CHARACTER SET utf-8 COLLATE utf8_unicode_ci;
@@ -51,7 +51,11 @@ SHOW CREATE TABLE rabbits; - информация о таблице
 SET collation_server = utf8_unicode_ci; - для всех представлений
 
 
+
+
+
 ##### PostgreSQL #####
+
 sudo apt-get install postgresql
 sudo -u postgres postgresql
 
@@ -70,8 +74,45 @@ CREATE TABLE rabbits (
 
 \d rabbits - отобразить таблицу
 \dt        - отобразить список таблиц
-
 sudo apt-get install php5-pgsql
 sudo service apache2 restart
 
 $cb = new PDO('pgsql:host=localhost;port=5432;dname=rabbitsfarm;farmer;farmer575');
+psql rabbitfarm < rabbitfarm.sql        - востановление из дампа
+
+SELECT rolename FROM pg_roles - список существующих ролей
+\du                           - список существующих ролей
+
+LOGIN               - подключение
+SUPERUSER           - суперпользователь
+
+CREATEDB            - создавать базы
+CREATEROLE          - создание ролей
+REPLICATION LOGIN   - запуск репликации
+PASSWORD            - установка пароля
+
+ALTER ROLE farmer CREATEROLE CREATEDB
+ALTER DATABASE  ### OWNER TO ###;       - изменить владельца базы
+ALTER TABLE rabbits OWNER TO farmer;    - изменить владельца таблицы
+
+GRANT yurist TO farmer;                 - включить в yurist для farmer ( в учетке postgres )
+
+
+
+
+
+##### SQLite #####
+
+sudo apt-get install sqlite
+sudo apt-get install php5-sqlite 
+sudo service apache2 restart
+
+sqlite3 rabbitfarm                  - создание базы
+.exit                               - выход из консоли
+
+$cb = new PDO('sqlite:rabbitfarm'); - подключение к базе
+CREATE TABLE rabbits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(70),
+    birthdate DATE
+);
