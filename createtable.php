@@ -4,7 +4,8 @@
 
 /**
  * Файл создает таблицы и заполняет их строками
- * ./creatable.php
+ * chmode +x createtable.php
+ * ./createtable.php
  */
 
 
