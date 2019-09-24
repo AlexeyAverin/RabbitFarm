@@ -116,3 +116,19 @@ CREATE TABLE rabbits (
     name VARCHAR(70),
     birthdate DATE
 );
+
+
+
+
+
+##### MongoDB #####
+
+sudo apt-get install mongodb        - устанавливаем базу
+sudo service mongodb status         - перезапускаем 
+sudo apt-get install php-pear       - устанавливаем PECL (установщик)
+sudo apt-get install php-dev
+
+sudo pecl install mongodb           - устанавливаем SASL [no]
+sudo nano /etc/php5/apache2/php.ini - редактируем
+    extension=mongo.SHOW            - добавляем
+sudo service apache2 restart        - перезапускаем ( phpinfo() )
