@@ -129,6 +129,27 @@ sudo apt-get install php-pear       - устанавливаем PECL (уста�
 sudo apt-get install php-dev
 
 sudo pecl install mongodb           - устанавливаем SASL [no]
-sudo nano /etc/php5/apache2/php.ini - редактируем
-    extension=mongo.SHOW            - добавляем
-sudo service apache2 restart        - перезапускаем ( phpinfo() )
+* Apache2
+    sudo nano /etc/php5/apache2/php.ini - редактируем
+        extension=mongo.so              - добавляем
+    sudo service apache2 restart        - перезапускаем ( phpinfo() )
+* Bash
+    sudo nano /etc/php5/cli/php.ini     - редактируем
+        extension=mongo.so              - добавляем
+
+$cm = new \MongoClient();                                // создаем соединение
+$bas = $cm->cinema;                                     // подключаемся к базе, не обязательно должна быть создана заранее
+$col = $bas->movies;                                    // подключаемся к коллекции, на таблицу похоже
+$doc = array("title" => "Plane Crazy Mickey Mouse",     // создаем документ
+             "time" => "6",
+             "color" => "No");
+$col->insert( $doc );                                   // вставляем документ
+
+$document = $col->findOne();                            // получение одного документа
+//var_dump( $document );
+//echo $col->count();                                   // подсчет документов коллекции
+$que = array('time' => "6");                            // установка критериев запроса
+$csr = $col->find( $que );
+while ( $csr->hasNext() ) {
+    var_dump( $csr->getNext() );
+}
